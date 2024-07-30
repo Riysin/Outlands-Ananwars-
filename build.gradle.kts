@@ -39,6 +39,12 @@ fairy {
     bukkitProperties().bukkitApi = "1.13"
 }
 
+tasks {
+    withType<JavaCompile> {
+        options.encoding = "UTF-8"
+    }
+}
+
 runServer {
     version.set(properties("spigot.version"))
 }
