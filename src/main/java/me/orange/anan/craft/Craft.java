@@ -6,12 +6,19 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public interface Craft {
-    String getID();
-    String getName();
+    ItemStack getItemStack();
+    List<ItemStack> getRecipe();
     int getTime();
     CraftTier getTier();
     CraftType getType();
-    List<ItemStack> getRecipe();
     XMaterial getMenuIcon();
-    ItemStack getItemStack();
+    String getID();
+    String getName();
+    List<String> getLore();
+
+
+
+
+
+
 }

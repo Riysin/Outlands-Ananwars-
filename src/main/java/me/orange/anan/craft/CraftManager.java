@@ -3,8 +3,11 @@ package me.orange.anan.craft;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.container.InjectableComponent;
-import me.orange.anan.craft.building.WoodPlank;
-import me.orange.anan.craft.tool.WoodenPickaxe;
+import me.orange.anan.craft.building.*;
+import me.orange.anan.craft.tool.WoodenHoe;
+import me.orange.anan.craft.usage.Anvil;
+import me.orange.anan.craft.usage.ClassUpgrader;
+import me.orange.anan.craft.usage.CraftingTable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,8 +24,27 @@ public class CraftManager {
     }
 
     public CraftManager() {
-        registerCraft(new WoodenPickaxe());
+        //build
         registerCraft(new WoodPlank());
+        registerCraft(new BuildLv1());
+        registerCraft(new BuildLv2());
+        registerCraft(new BuildLv3());
+        registerCraft(new BuildLv4());
+        registerCraft(new BuildLv5());
+        registerCraft(new Chest());
+        registerCraft(new IronDoor());
+        registerCraft(new Ladder());
+        registerCraft(new WoodDoor());
+        registerCraft(new WoodFence());
+        registerCraft(new WoodSlab());
+        registerCraft(new WoodStair());
+        registerCraft(new WoodTrapdoor());
+        //tools
+        registerCraft(new WoodenHoe());
+        //usage
+        registerCraft(new Anvil());
+        registerCraft(new ClassUpgrader());
+        registerCraft(new CraftingTable());
     }
 
     public void registerCraft(Craft item) {
@@ -67,5 +89,16 @@ public class CraftManager {
         }
 
         return playerAmount >= requiredAmount;
+    }
+
+    public int getPlayerItemAmount(Player player,ItemStack itemStack){
+        String requiredNBT = NBTModifier.get().getString(itemStack, NBTKey.create("resource"));
+        int playerAmount = 0;
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && requiredNBT.equals(NBTModifier.get().getString(item, NBTKey.create("resource")))) {
+                playerAmount += item.getAmount();
+            }
+        }
+        return playerAmount;
     }
 }

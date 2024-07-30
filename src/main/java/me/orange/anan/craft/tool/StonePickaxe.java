@@ -1,4 +1,4 @@
-package me.orange.anan.craft.usage;
+package me.orange.anan.craft.tool;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.nbt.NBTKey;
@@ -12,22 +12,22 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 
-public class Anvil implements Craft {
+public class StonePickaxe implements Craft {
     @Override
     public ItemStack getItemStack() {
-        return ItemBuilder.of(XMaterial.ANVIL)
-                .name("鐵砧")
-                .lore("§f用樹枝堆砌而成", "§f容易被破壞")
-                .tag("anvil", "usage")
+        return ItemBuilder.of(XMaterial.WOODEN_HOE)
+                .name("石鎬")
+                .lore("§f石鎬", "§f初階石製工具", "§f適合輕度挖掘")
+                .tag("stonePickaxe", "tool")
                 .build();
     }
 
     @Override
     public List<ItemStack> getRecipe() {
         return Arrays.asList(
-                ItemBuilder.of(XMaterial.STICK)
+                ItemBuilder.of(XMaterial.STONE_BUTTON)
                         .amount(4)
-                        .tag("stick", "resource")
+                        .tag("stoneButton", "resource")
                         .build()
         );
     }
@@ -54,7 +54,7 @@ public class Anvil implements Craft {
 
     @Override
     public String getID() {
-        return NBTModifier.get().getString(getItemStack(), NBTKey.create("usage"));
+        return NBTModifier.get().getString(getItemStack(), NBTKey.create("tool"));
     }
 
     @Override
@@ -68,4 +68,3 @@ public class Anvil implements Craft {
     }
 
 }
-

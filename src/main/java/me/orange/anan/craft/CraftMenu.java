@@ -87,7 +87,8 @@ public class CraftMenu {
                     for (ItemStack itemStack : craft.getRecipe()) {
                         String itemName = itemStack.getType().name();
                         boolean hasEnough = craftManager.hasEnough(player, itemStack);
-                        loreLines.add((hasEnough ? "§7" : "§c") + itemName);
+                        int playerAmount = craftManager.getPlayerItemAmount(player,itemStack);
+                        loreLines.add((hasEnough ? "§7" : "§c") + itemName + " §7(" + playerAmount +"/" +itemStack.getAmount() + ")");
                     }
                     loreLines.add("§c材料不足");
 

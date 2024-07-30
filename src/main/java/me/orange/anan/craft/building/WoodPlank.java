@@ -1,6 +1,8 @@
 package me.orange.anan.craft.building;
 
 import com.cryptomorin.xseries.XMaterial;
+import io.fairyproject.bukkit.nbt.NBTKey;
+import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftTier;
@@ -12,13 +14,22 @@ import java.util.List;
 
 public class WoodPlank implements Craft {
     @Override
-    public String getID() {
-        return "woodPlank";
+    public ItemStack getItemStack() {
+        return ItemBuilder.of(XMaterial.INFESTED_STONE)
+                .name("樹枝建材")
+                .lore("§f用樹枝堆砌而成", "§f容易被破壞")
+                .tag("buildLv1", "build")
+                .build();
     }
 
     @Override
-    public String getName() {
-        return "木材";
+    public List<ItemStack> getRecipe() {
+        return Arrays.asList(
+                ItemBuilder.of(XMaterial.STICK)
+                        .amount(4)
+                        .tag("stick", "resource")
+                        .build()
+        );
     }
 
     @Override
@@ -37,26 +48,23 @@ public class WoodPlank implements Craft {
     }
 
     @Override
-    public List<ItemStack> getRecipe() {
-        return Arrays.asList(
-                ItemBuilder.of(XMaterial.STICK)
-                        .amount(2)
-                        .tag("stick","resource")
-                        .build()
-        );
-    }
-
-    @Override
     public XMaterial getMenuIcon() {
-        return XMaterial.OAK_PLANKS;
+        return XMaterial.matchXMaterial(getItemStack().getType());
     }
 
     @Override
-    public ItemStack getItemStack() {
-        return ItemBuilder.of(XMaterial.OAK_PLANKS)
-                .name("木材")
-                .lore("§f這是一個木材", "§f可以送神")
-                .tag("kurWood","resource")
-                .build();
+    public String getID() {
+        return NBTModifier.get().getString(getItemStack(), NBTKey.create("build"));
     }
+
+    @Override
+    public String getName() {
+        return getItemStack().getItemMeta().getDisplayName();
+    }
+
+    @Override
+    public List<String> getLore() {
+        return getItemStack().getItemMeta().getLore();
+    }
+
 }
