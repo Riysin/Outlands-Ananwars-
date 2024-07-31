@@ -10,7 +10,9 @@ import io.fairyproject.container.InjectableComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,6 +50,7 @@ public class BlockEventListener implements Listener {
         }
 
         Material type = block.getType();
+        Boolean isDrop = true;
         byte data = block.getData();
         if (type == Material.LOG /* && data == 0 */) {
             dropItem(player, ItemBuilder.of(XMaterial.STICK)
@@ -61,8 +64,13 @@ public class BlockEventListener implements Listener {
                     .lore("§7可以用來合成石製物品")
                     .tag("stoneButton", "resource")
                     .build());
+        } else if (player.getGameMode() != GameMode.CREATIVE){
+            event.setCancelled(true);
+            isDrop = false;
         }
 
+        if(isDrop)
+            player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
     }
 
     private void dropItem(Player player, ItemStack itemStack) {
