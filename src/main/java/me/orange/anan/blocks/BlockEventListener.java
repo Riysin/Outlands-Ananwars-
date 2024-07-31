@@ -56,8 +56,8 @@ public class BlockEventListener implements Listener {
                     .lore("§7可以用來合成石製物品")
                     .tag("stoneButton", "resource")
                     .build());
-        } else
-            event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
+        } else if (player.getGameMode() == GameMode.CREATIVE)
+            event.setCancelled(false);
     }
 
     private void dropItem(Player player, ItemStack itemStack) {
