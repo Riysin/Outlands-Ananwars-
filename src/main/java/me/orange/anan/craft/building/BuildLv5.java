@@ -49,7 +49,7 @@ public class BuildLv5 implements Craft {
 
     @Override
     public XMaterial getMenuIcon() {
-        return XMaterial.matchXMaterial(getItemStack().getType());
+        return XMaterial.INFESTED_CHISELED_STONE_BRICKS;
     }
 
     @Override

@@ -15,10 +15,10 @@ import java.util.List;
 public class WoodTrapdoor implements Craft {
     @Override
     public ItemStack getItemStack() {
-        return ItemBuilder.of(XMaterial.INFESTED_STONE)
+        return ItemBuilder.of(XMaterial.OAK_TRAPDOOR)
                 .name("地板門")
                 .lore("§f可用於垂直通行")
-                .tag("buildLv1", "build")
+                .tag("oakTrapdoor", "build")
                 .build();
     }
 

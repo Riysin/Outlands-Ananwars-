@@ -34,7 +34,7 @@ public class CraftingTable implements Craft {
 
     @Override
     public int getTime() {
-        return 0;
+        return 10;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class CraftingTable implements Craft {
 
     @Override
     public CraftType getType() {
-        return CraftType.BUILD;
+        return CraftType.USAGE;
     }
 
     @Override

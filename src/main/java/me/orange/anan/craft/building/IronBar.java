@@ -12,22 +12,22 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 
-public class BuildLv1 implements Craft {
+public class IronBar implements Craft {
     @Override
     public ItemStack getItemStack() {
-        return ItemBuilder.of(XMaterial.INFESTED_STONE)
-                .name("樹枝建材")
-                .lore("§f用樹枝堆砌而成", "§f容易被破壞")
-                .tag("buildLv1", "build")
+        return ItemBuilder.of(XMaterial.IRON_BARS)
+                .name("鐵柵欄")
+                .lore("§f堅韌的柵欄", "§f可用來觀察敵人", "§f也有強大的防禦力")
+                .tag("ironBars", "build")
                 .build();
     }
 
     @Override
     public List<ItemStack> getRecipe() {
         return Arrays.asList(
-                ItemBuilder.of(XMaterial.STICK)
-                        .amount(4)
-                        .tag("stick", "resource")
+                ItemBuilder.of(XMaterial.IRON_INGOT)
+                        .amount(10)
+                        .tag("ironIngot", "resource")
                         .build()
         );
     }
@@ -49,7 +49,7 @@ public class BuildLv1 implements Craft {
 
     @Override
     public XMaterial getMenuIcon() {
-        return XMaterial.INFESTED_STONE;
+        return XMaterial.matchXMaterial(getItemStack().getType());
     }
 
     @Override

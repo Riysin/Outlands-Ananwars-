@@ -44,7 +44,7 @@ public class WoodenHoe implements Craft {
 
     @Override
     public CraftType getType() {
-        return CraftType.BUILD;
+        return CraftType.TOOL;
     }
 
     @Override

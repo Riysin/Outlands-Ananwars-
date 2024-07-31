@@ -49,7 +49,7 @@ public class BuildLv2 implements Craft {
 
     @Override
     public XMaterial getMenuIcon() {
-        return XMaterial.matchXMaterial(getItemStack().getType());
+        return XMaterial.INFESTED_COBBLESTONE;
     }
 
     @Override

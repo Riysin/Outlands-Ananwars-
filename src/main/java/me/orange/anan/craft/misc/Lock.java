@@ -1,4 +1,4 @@
-package me.orange.anan.craft.building;
+package me.orange.anan.craft.misc;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.nbt.NBTKey;
@@ -12,29 +12,29 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.List;
 
-public class BuildLv1 implements Craft {
+public class Lock implements Craft {
     @Override
     public ItemStack getItemStack() {
-        return ItemBuilder.of(XMaterial.INFESTED_STONE)
-                .name("樹枝建材")
-                .lore("§f用樹枝堆砌而成", "§f容易被破壞")
-                .tag("buildLv1", "build")
+        return ItemBuilder.of(XMaterial.TRIPWIRE_HOOK)
+                .name("鎖")
+                .lore("§f可將箱子上鎖","§f對箱子按右鍵使用")
+                .tag("lock", "misc")
                 .build();
     }
 
     @Override
     public List<ItemStack> getRecipe() {
         return Arrays.asList(
-                ItemBuilder.of(XMaterial.STICK)
-                        .amount(4)
-                        .tag("stick", "resource")
+                ItemBuilder.of(XMaterial.IRON_INGOT)
+                        .amount(10)
+                        .tag("ironIngot", "resource")
                         .build()
         );
     }
 
     @Override
     public int getTime() {
-        return 0;
+        return 30;
     }
 
     @Override
@@ -44,17 +44,17 @@ public class BuildLv1 implements Craft {
 
     @Override
     public CraftType getType() {
-        return CraftType.BUILD;
+        return CraftType.USAGE;
     }
 
     @Override
     public XMaterial getMenuIcon() {
-        return XMaterial.INFESTED_STONE;
+        return XMaterial.matchXMaterial(getItemStack().getType());
     }
 
     @Override
     public String getID() {
-        return NBTModifier.get().getString(getItemStack(), NBTKey.create("build"));
+        return NBTModifier.get().getString(getItemStack(), NBTKey.create("misc"));
     }
 
     @Override
@@ -68,3 +68,4 @@ public class BuildLv1 implements Craft {
     }
 
 }
+

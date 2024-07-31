@@ -15,10 +15,10 @@ import java.util.List;
 public class Chest implements Craft {
     @Override
     public ItemStack getItemStack() {
-        return ItemBuilder.of(XMaterial.INFESTED_STONE)
+        return ItemBuilder.of(XMaterial.CHEST)
                 .name("木箱")
                 .lore("§f堅固的木箱", "§f橡木製成", "§f可儲藏寶物和補給品")
-                .tag("buildLv1", "build")
+                .tag("chest", "build")
                 .build();
     }
 

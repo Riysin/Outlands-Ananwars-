@@ -4,6 +4,8 @@ import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.building.*;
+import me.orange.anan.craft.misc.Lock;
+import me.orange.anan.craft.tool.StonePickaxe;
 import me.orange.anan.craft.tool.WoodenHoe;
 import me.orange.anan.craft.usage.Anvil;
 import me.orange.anan.craft.usage.ClassUpgrader;
@@ -32,6 +34,8 @@ public class CraftManager {
         registerCraft(new BuildLv4());
         registerCraft(new BuildLv5());
         registerCraft(new Chest());
+        registerCraft(new GlassPane());
+        registerCraft(new IronBar());
         registerCraft(new IronDoor());
         registerCraft(new Ladder());
         registerCraft(new WoodDoor());
@@ -41,10 +45,13 @@ public class CraftManager {
         registerCraft(new WoodTrapdoor());
         //tools
         registerCraft(new WoodenHoe());
+        registerCraft(new StonePickaxe());
         //usage
         registerCraft(new Anvil());
         registerCraft(new ClassUpgrader());
         registerCraft(new CraftingTable());
+        //misc
+        registerCraft(new Lock());
     }
 
     public void registerCraft(Craft item) {

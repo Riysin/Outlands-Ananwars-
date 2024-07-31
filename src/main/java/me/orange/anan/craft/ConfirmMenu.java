@@ -48,6 +48,8 @@ public class ConfirmMenu {
             Bukkit.getServer().dispatchCommand(player1, "craft menu");
         }));
 
+        pane.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
+
         gui.addPane(pane);
         gui.open(player);
     }

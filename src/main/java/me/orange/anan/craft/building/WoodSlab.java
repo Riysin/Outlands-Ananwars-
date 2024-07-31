@@ -49,7 +49,7 @@ public class WoodSlab implements Craft {
 
     @Override
     public XMaterial getMenuIcon() {
-        return XMaterial.matchXMaterial(getItemStack().getType());
+        return XMaterial.OAK_SLAB;
     }
 
     @Override

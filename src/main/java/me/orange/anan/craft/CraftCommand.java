@@ -6,7 +6,7 @@ import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
 
 @InjectableComponent
-@Command(value = "craft", permissionNode = "craft.admin")
+@Command(value = "craft")
 public class CraftCommand extends BaseCommand {
     private final CraftMenu craftMenu;
     private final OngoingCraftMenu ongoingCraftMenu;

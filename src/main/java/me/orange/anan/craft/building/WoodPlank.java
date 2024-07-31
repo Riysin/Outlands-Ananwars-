@@ -15,10 +15,10 @@ import java.util.List;
 public class WoodPlank implements Craft {
     @Override
     public ItemStack getItemStack() {
-        return ItemBuilder.of(XMaterial.INFESTED_STONE)
-                .name("樹枝建材")
-                .lore("§f用樹枝堆砌而成", "§f容易被破壞")
-                .tag("buildLv1", "build")
+        return ItemBuilder.of(XMaterial.OAK_PLANKS)
+                .name("木材")
+                .lore("§ftesting")
+                .tag("oakPlanks", "build")
                 .build();
     }
 
@@ -49,7 +49,7 @@ public class WoodPlank implements Craft {
 
     @Override
     public XMaterial getMenuIcon() {
-        return XMaterial.matchXMaterial(getItemStack().getType());
+        return XMaterial.OAK_PLANKS;
     }
 
     @Override

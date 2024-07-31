@@ -10,6 +10,7 @@ import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,35 +36,78 @@ public class CraftMenu {
         NormalPane pane = Pane.normal(9, 6);
         pane.setSlot(1, 0, GuiSlot.of(ItemBuilder.of(XMaterial.GRASS_BLOCK)
                 .name("§7全部")
-                .build()));
+                .build(),clicker->{
+            removeItemOnCraftMenu(gui,pane);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.ALL);
+            gui.update(clicker);
+        }));
         pane.setSlot(2, 0, GuiSlot.of(ItemBuilder.of(XMaterial.WOODEN_SWORD)
                 .name("§7武器")
-                .build()));
+                .build(),clicker -> {
+            removeItemOnCraftMenu(gui,pane);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.WEAPON);
+            gui.update(clicker);
+        }));
         pane.setSlot(3, 0, GuiSlot.of(ItemBuilder.of(XMaterial.WOODEN_PICKAXE)
                 .name("§7工具")
-                .build()));
+                .build(),clicker->{
+            removeItemOnCraftMenu(gui,pane);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.TOOL);
+            gui.update(clicker);
+        }));
         pane.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.LEATHER_HELMET)
                 .name("§7裝備")
-                .build()));
+                .build(),clicker->{
+            removeItemOnCraftMenu(gui,pane);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.ARMOR);
+            gui.update(clicker);
+        }));
         pane.setSlot(5, 0, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_PLANKS)
                 .name("§7建材")
-                .build()));
+                .build(),clicker->{
+            removeItemOnCraftMenu(gui,pane);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.BUILD);
+            gui.update(clicker);
+        }));
         pane.setSlot(6, 0, GuiSlot.of(ItemBuilder.of(XMaterial.CRAFTING_TABLE)
-                .name("§7爆破物")
-                .build()));
-        pane.setSlot(7, 0, GuiSlot.of(ItemBuilder.of(XMaterial.TNT)
+                .name("§7用途")
+                .build(),clicker->{
+            removeItemOnCraftMenu(gui,pane);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.USAGE);
+            gui.update(clicker);
+        }));
+        pane.setSlot(7, 0, GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_DYE)
                 .name("§7其他")
-                .build()));
+                .build(),clicker->{
+            removeItemOnCraftMenu(gui,pane);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.MISC);
+            gui.update(clicker);
+        }));
+
+        addItemToCraftMenu(gui, pane, player, CraftType.ALL);
+
+        pane.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
+
+        gui.addPane(pane);
+
+        gui.open(player);
+    }
+
+    private void addItemToCraftMenu(Gui gui, NormalPane pane, Player player, CraftType craftType) {
         // Add craftable item
         gui.onDrawCallback(updatePlayer -> {
             AtomicInteger i = new AtomicInteger(18);
             craftManager.getCrafts().forEach((k, craft) -> {
+                if (craftType != CraftType.ALL && craft.getType() != craftType) {
+                    return;
+                }
                 if (craftManager.canCraft(player, craft)) {
                     List<String> loreLines = new ArrayList<>();
                     //setup recipe lore
                     for (ItemStack itemStack : craft.getRecipe()) {
                         String itemName = itemStack.getType().name();
-                        loreLines.add("§7" + itemName);
+                        int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
+                        loreLines.add("§7" + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
                     }
                     loreLines.add("§f點擊合成此物品");
 
@@ -81,14 +125,17 @@ public class CraftMenu {
             });
 
             craftManager.getCrafts().forEach((k, craft) -> {
+                if (craftType != CraftType.ALL && craft.getType() != craftType) {
+                    return;
+                }
                 if (!craftManager.canCraft(player, craft)) {
                     List<String> loreLines = new ArrayList<>();
                     //setup recipe lore
                     for (ItemStack itemStack : craft.getRecipe()) {
                         String itemName = itemStack.getType().name();
                         boolean hasEnough = craftManager.hasEnough(player, itemStack);
-                        int playerAmount = craftManager.getPlayerItemAmount(player,itemStack);
-                        loreLines.add((hasEnough ? "§7" : "§c") + itemName + " §7(" + playerAmount +"/" +itemStack.getAmount() + ")");
+                        int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
+                        loreLines.add((hasEnough ? "§7" : "§c") + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
                     }
                     loreLines.add("§c材料不足");
 
@@ -105,11 +152,13 @@ public class CraftMenu {
                 }
             });
         });
+    }
 
-        pane.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
-
-        gui.addPane(pane);
-
-        gui.open(player);
+    private void removeItemOnCraftMenu(Gui gui,NormalPane pane) {
+        gui.onDrawCallback($->{
+            for (int i = 0; i < pane.getUsedSlots().length; i++) {
+                pane.setSlot(i,2,GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE), gui::update));
+            }
+        });
     }
 }

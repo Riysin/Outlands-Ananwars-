@@ -8,6 +8,7 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.bukkit.xseries.XMaterialSerializer;
 import io.fairyproject.container.InjectableComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -32,35 +33,41 @@ public class BlockEventListener implements Listener {
         Block block = event.getBlock();
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
-        if (blockStats.getBlockType() == BlockType.BUILDING) {
+        if (blockStats.getBlockType() == BlockType.BUILDING && player.getGameMode() != GameMode.CREATIVE) {
             blockStatsManager.breakBlock(player, block);
             if (blockStatsManager.checkBlockBreak(block))
                 blockStatsManager.getBlockStatsMap().remove(event.getBlock());
-            else
+            else {
                 event.setCancelled(true);
-            return;
+            }
         }
 
         Material type = block.getType();
         byte data = block.getData();
-        if (type == Material.LOG && data == 0) {
+        if (type == Material.LOG /* && data == 0 */) {
             dropItem(player, ItemBuilder.of(XMaterial.STICK)
-                    .lore("§fuse this to craft wood block")
-                    .tag("stick","resource")
+                    .name("§f樹枝")
+                    .lore("§7可以用來合成木製物品")
+                    .tag("stick", "resource")
                     .build());
-        }else {
-            event.setCancelled(true);
-        }
+        } else if (type == Material.STONE) {
+            dropItem(player, ItemBuilder.of(XMaterial.STONE_BUTTON)
+                    .name("§f石頭")
+                    .lore("§7可以用來合成石製物品")
+                    .tag("stoneButton", "resource")
+                    .build());
+        } else
+            event.setCancelled(player.getGameMode() != GameMode.CREATIVE);
     }
 
     private void dropItem(Player player, ItemStack itemStack) {
-        player.getInventory().addItem(itemStack).forEach((k,v)-> {
-            player.getWorld().dropItem(player.getLocation(),v);
+        player.getInventory().addItem(itemStack).forEach((k, v) -> {
+            player.getWorld().dropItem(player.getLocation(), v);
         });
     }
 
     @EventHandler
-    public void onBlockPlaced(BlockPlaceEvent event){
+    public void onBlockPlaced(BlockPlaceEvent event) {
         blockStatsManager.placeBlock(event.getPlayer(), event.getBlockPlaced());
     }
 }

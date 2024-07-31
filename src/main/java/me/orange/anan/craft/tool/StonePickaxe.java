@@ -15,9 +15,9 @@ import java.util.List;
 public class StonePickaxe implements Craft {
     @Override
     public ItemStack getItemStack() {
-        return ItemBuilder.of(XMaterial.WOODEN_HOE)
+        return ItemBuilder.of(XMaterial.STONE_PICKAXE)
                 .name("石鎬")
-                .lore("§f石鎬", "§f初階石製工具", "§f適合輕度挖掘")
+                .lore("§f初階石製工具", "§f適合輕度挖掘")
                 .tag("stonePickaxe", "tool")
                 .build();
     }
@@ -25,6 +25,10 @@ public class StonePickaxe implements Craft {
     @Override
     public List<ItemStack> getRecipe() {
         return Arrays.asList(
+                ItemBuilder.of(XMaterial.STICK)
+                        .amount(4)
+                        .tag("stick", "resource")
+                        .build(),
                 ItemBuilder.of(XMaterial.STONE_BUTTON)
                         .amount(4)
                         .tag("stoneButton", "resource")
@@ -34,7 +38,7 @@ public class StonePickaxe implements Craft {
 
     @Override
     public int getTime() {
-        return 0;
+        return 30;
     }
 
     @Override
@@ -44,7 +48,7 @@ public class StonePickaxe implements Craft {
 
     @Override
     public CraftType getType() {
-        return CraftType.BUILD;
+        return CraftType.TOOL;
     }
 
     @Override
