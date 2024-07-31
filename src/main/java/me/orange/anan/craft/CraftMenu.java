@@ -4,19 +4,20 @@ import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;
 import io.fairyproject.bukkit.gui.GuiFactory;
 import io.fairyproject.bukkit.gui.pane.NormalPane;
-import io.fairyproject.bukkit.gui.pane.PaginatedPane;
 import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 @InjectableComponent
 public class CraftMenu {
@@ -96,61 +97,61 @@ public class CraftMenu {
     private void addItemToCraftMenu(Gui gui, NormalPane pane, Player player, CraftType craftType) {
         // Add craftable item
         gui.onDrawCallback(updatePlayer -> {
-            AtomicInteger i = new AtomicInteger(18);
-            craftManager.getCrafts().forEach((k, craft) -> {
+            List<GuiSlot> canCrafts = new ArrayList<>(), cannotCrafts = new ArrayList<>();
+
+            craftManager.getCrafts().forEach((key, craft) -> {
                 if (craftType != CraftType.ALL && craft.getType() != craftType) {
                     return;
                 }
-                if (craftManager.canCraft(player, craft)) {
-                    List<String> loreLines = new ArrayList<>();
-                    //setup recipe lore
-                    for (ItemStack itemStack : craft.getRecipe()) {
-                        String itemName = itemStack.getType().name();
-                        int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
-                        loreLines.add("§7" + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
-                    }
-                    loreLines.add("§f點擊合成此物品");
+                List<String> loreLines = new ArrayList<>();
+                boolean canCraft = craftManager.canCraft(player, craft);
 
-                    pane.setSlot(i.get(), GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
+                loreLines.add("§8" + craft.getType().name());
+                loreLines.add("");
+                loreLines.addAll(craft.getLore());
+                loreLines.add("");
+                loreLines.add("§e所需材料:");
+
+                //setup recipe lore
+                for (ItemStack itemStack : craft.getRecipe()) {
+                    String itemName = itemStack.getItemMeta().getDisplayName();
+                    int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
+                    boolean hasEnough = craftManager.hasEnough(player, itemStack);
+                    loreLines.add((hasEnough ? "§a   " : "§c   ")  + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
+                }
+
+                loreLines.add("");
+                loreLines.add((canCraft ? "§e點擊合成此物品" : "§c材料不足"));
+
+                if (canCraft) {
+                    canCrafts.add(GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
                             .clearLore()
-                            .name(craft.getName())
+                            .name("§e" + craft.getName())
                             .lore(loreLines)
                             .amount(1)
+                            .itemFlag(ItemFlag.HIDE_ATTRIBUTES)
                             .build(), clicker -> {
-                        confirmMenu.open(player, craft);
-                        gui.update(clicker);
-                    }));
-                    i.incrementAndGet();
-                }
-            });
-
-            craftManager.getCrafts().forEach((k, craft) -> {
-                if (craftType != CraftType.ALL && craft.getType() != craftType) {
-                    return;
-                }
-                if (!craftManager.canCraft(player, craft)) {
-                    List<String> loreLines = new ArrayList<>();
-                    //setup recipe lore
-                    for (ItemStack itemStack : craft.getRecipe()) {
-                        String itemName = itemStack.getType().name();
-                        boolean hasEnough = craftManager.hasEnough(player, itemStack);
-                        int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
-                        loreLines.add((hasEnough ? "§7" : "§c") + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
-                    }
-                    loreLines.add("§c材料不足");
-
-                    pane.setSlot(i.get(), GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
+                                confirmMenu.open(player, craft);
+                                gui.update(clicker);
+                            }));
+                } else {
+                    cannotCrafts.add(GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
                             .clearLore()
                             .name("§c" + craft.getName())
                             .lore(loreLines)
                             .amount(0)
+                            .itemFlag(ItemFlag.HIDE_ATTRIBUTES)
                             .build(), clicker -> {
-                        clicker.sendMessage("§cYou do not have enough material to craft this item");
-                        gui.update(clicker);
-                    }));
-                    i.incrementAndGet();
+                                clicker.sendMessage("§cYou do not have enough material to craft this item");
+                                clicker.playSound(clicker.getLocation(), Sound.VILLAGER_NO, 1 ,1);
+                                gui.update(clicker);
+                            }));
                 }
             });
+
+            AtomicInteger i = new AtomicInteger(18);
+            Stream.concat(canCrafts.stream(), cannotCrafts.stream())
+                    .forEach(slot -> pane.setSlot(i.getAndIncrement(), slot));
         });
     }
 

@@ -1,6 +1,5 @@
 package me.orange.anan.clan;
 
-import com.sun.org.apache.xpath.internal.axes.PredicatedNodeTest;
 import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.container.InjectableComponent;
 import org.bukkit.Bukkit;

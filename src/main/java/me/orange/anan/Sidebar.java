@@ -50,7 +50,7 @@ public class Sidebar implements SidebarAdapter {
             sidebar.add(Component.text("§f正在製作:"));
             int i = 4;
             for (CraftTimer craftTimer : craftTimerManager.getPlayerCraftTimerList(player)) {
-                sidebar.add(Component.text(craftTimer.getCraft().getName() + " - " + craftTimer.getTime() + "s"));
+                sidebar.add(Component.text("   §f" + craftTimer.getCraft().getName() + " - §6" + craftTimer.getTime() + "s"));
                 i--;
                 if (i == 0)
                     break;
