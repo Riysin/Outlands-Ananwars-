@@ -41,14 +41,7 @@ public class ClanCommand extends BaseCommand {
             player.sendMessage("§cYour clan name can't be longer than 10 letters!");
             return;
         }
-
-        clanManager.setClanMap(clanName, new Clan(clanName));
-        Clan clan = clanManager.getClanByTeamName(clanName);
-        clan.addPlayer(player);
-        clan.setOwner(player.getUniqueId());
-        clan.setPrefix("§2[" + clanName + "]§r ");
-        clanConfig.addClan(clanName);
-        clanConfig.saveOwner(clanName, player.getName());
+        clanManager.setUpClan(clanName,player);
 
         player.sendMessage("§aClan " + clanName + " has been successfully created.");
         Bukkit.getPluginManager().callEvent(new PlayerJoinClanEvent(player));

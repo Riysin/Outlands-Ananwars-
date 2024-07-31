@@ -2,6 +2,7 @@ package me.orange.anan.clan;
 
 import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.clan.config.ClanConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -14,6 +15,11 @@ import java.util.concurrent.atomic.AtomicReference;
 @InjectableComponent
 public class ClanManager {
     private Map<String, Clan> clanMap = new HashMap<>();
+    private final ClanConfig clanConfig;
+
+    public ClanManager(ClanConfig clanConfig) {
+        this.clanConfig = clanConfig;
+    }
 
     public Map<String, Clan> getClanMap() {
         return clanMap;
@@ -21,10 +27,6 @@ public class ClanManager {
 
     public Clan getClanByTeamName(String teamname) {
         return clanMap.get(teamname);
-    }
-
-    public void setClanMap(String teamname, Clan clan) {
-        clanMap.put(teamname, clan);
     }
 
     public boolean hasClan(String teamname) {
@@ -131,6 +133,15 @@ public class ClanManager {
         });
     }
 
-    public void setUpClan (){}
+    public void setUpClan (String name, Player player){
+        clanMap.put(name, new Clan(name));
+        Clan clan = getClanByTeamName(name);
+        clan.addPlayer(player);
+        clan.setOwner(player.getUniqueId());
+        clan.setPrefix("§2[" + name + "]§r ");
+        clanConfig.addClan(name);
+        clanConfig.saveOwner(name, player.getName());
+
+    }
 
 }
