@@ -7,6 +7,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.bukkit.xseries.XMaterialSerializer;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.craft.CraftManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -24,9 +25,11 @@ import org.bukkit.inventory.ItemStack;
 @RegisterAsListener
 public class BlockEventListener implements Listener {
     private final BlockStatsManager blockStatsManager;
+    private final CraftManager craftManager;
 
-    public BlockEventListener(BlockStatsManager blockStatsManager) {
+    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager) {
         this.blockStatsManager = blockStatsManager;
+        this.craftManager = craftManager;
     }
 
     @EventHandler
@@ -38,7 +41,7 @@ public class BlockEventListener implements Listener {
         if (blockStats.getBlockType() == BlockType.BUILDING) {
 
             blockStatsManager.breakBlock(player, block);
-            if(player.getGameMode() == GameMode.CREATIVE)
+            if (player.getGameMode() == GameMode.CREATIVE)
                 blockStats.setHealth(0);
 
             if (blockStatsManager.checkBlockBreak(block))
@@ -52,24 +55,19 @@ public class BlockEventListener implements Listener {
         Material type = block.getType();
         Boolean isDrop = true;
         byte data = block.getData();
-        if (type == Material.LOG /* && data == 0 */) {
-            dropItem(player, ItemBuilder.of(XMaterial.STICK)
-                    .name("§f樹枝")
-                    .lore("§7可以用來合成木製物品")
-                    .tag("stick", "resource")
-                    .build());
-        } else if (type == Material.STONE) {
-            dropItem(player, ItemBuilder.of(XMaterial.STONE_BUTTON)
-                    .name("§f石頭")
-                    .lore("§7可以用來合成石製物品")
-                    .tag("stoneButton", "resource")
-                    .build());
-        } else if (player.getGameMode() != GameMode.CREATIVE){
+
+        if (type == Material.LOG /* && data == 0 */)
+            dropItem(player, craftManager.getCrafts().get("stick").getItemStack());
+
+//        else if (type == Material.STONE)
+//            dropItem(player, resourceManager.getItem(player, "stoneButton"));
+
+        else if (player.getGameMode() != GameMode.CREATIVE) {
             event.setCancelled(true);
             isDrop = false;
         }
 
-        if(isDrop)
+        if (isDrop)
             player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
     }
 

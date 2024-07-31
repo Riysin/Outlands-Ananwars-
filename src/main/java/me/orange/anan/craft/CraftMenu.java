@@ -43,10 +43,10 @@ public class CraftMenu {
             gui.update(clicker);
         }));
         pane.setSlot(2, 0, GuiSlot.of(ItemBuilder.of(XMaterial.WOODEN_SWORD)
-                .name("§7武器")
+                .name("§7戰鬥")
                 .build(),clicker -> {
             removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.WEAPON);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.BATTLE);
             gui.update(clicker);
         }));
         pane.setSlot(3, 0, GuiSlot.of(ItemBuilder.of(XMaterial.WOODEN_PICKAXE)
@@ -56,11 +56,11 @@ public class CraftMenu {
             addItemToCraftMenu(gui,pane,clicker,CraftType.TOOL);
             gui.update(clicker);
         }));
-        pane.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.LEATHER_HELMET)
-                .name("§7裝備")
+        pane.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.GUNPOWDER)
+                .name("§7資源")
                 .build(),clicker->{
             removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.ARMOR);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.RESOURCE);
             gui.update(clicker);
         }));
         pane.setSlot(5, 0, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_PLANKS)
@@ -100,7 +100,7 @@ public class CraftMenu {
             List<GuiSlot> canCrafts = new ArrayList<>(), cannotCrafts = new ArrayList<>();
 
             craftManager.getCrafts().forEach((key, craft) -> {
-                if (craftType != CraftType.ALL && craft.getType() != craftType) {
+                if (craftType != CraftType.ALL && craft.getType() != craftType || craft.getRecipe().isEmpty()) {
                     return;
                 }
                 List<String> loreLines = new ArrayList<>();

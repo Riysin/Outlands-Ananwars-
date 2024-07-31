@@ -8,16 +8,9 @@ import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.mc.scheduler.MCSchedulers;
-import io.fairyproject.scheduler.repeat.RepeatPredicate;
-import io.fairyproject.scheduler.response.FailureTaskResponse;
-import io.fairyproject.scheduler.response.TaskResponse;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
 
 @InjectableComponent
 public class ConfirmMenu {
