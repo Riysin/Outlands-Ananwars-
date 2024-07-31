@@ -131,4 +131,6 @@ public class ClanManager {
         });
     }
 
+    public void setUpClan (){}
+
 }

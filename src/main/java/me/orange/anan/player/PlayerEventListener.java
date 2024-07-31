@@ -55,15 +55,9 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        event.setJoinMessage(event.getPlayer().getName() + "§3 hi");
-        Player player = event.getPlayer();
+        playerDataManager.setUpPlayer(event);
+        clanManager.setUpClan();
 
-        Map<UUID, PlayerData> playerDataMap = playerDataManager.getPlayerDataMap();
-        if (!playerDataMap.containsKey(player.getUniqueId())) {
-            playerDataMap.put(player.getUniqueId(), new PlayerData());
-            playerConfig.addPlayer(event.getPlayer().getName());
-        }
-        playerDataMap.get(player.getUniqueId()).setSkin(Skin.load(player.getUniqueId()));
         nameTagService.update(MCPlayer.from(event.getPlayer()));
     }
 

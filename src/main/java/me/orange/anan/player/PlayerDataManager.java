@@ -4,22 +4,30 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
+import io.fairyproject.mc.tablist.util.Skin;
 import me.orange.anan.clan.Clan;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @InjectableComponent
 public class PlayerDataManager {
+    private final PlayerConfig playerConfig;
     private NameTagService nameTagService;
     private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
+
+    public PlayerDataManager(PlayerConfig playerConfig) {
+        this.playerConfig = playerConfig;
+    }
 
     public Map<UUID, PlayerData> getPlayerDataMap() {
         return playerDataMap;
@@ -69,5 +77,19 @@ public class PlayerDataManager {
 
     public void addCanCraft(Player player, String ID){
         getPlayerData(player).getCanCraftItems().add(ID);
+    }
+
+    public PlayerData setUpPlayer(PlayerJoinEvent event){
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+        event.setJoinMessage(player.getName() + "§3 hi");
+
+        if (!playerDataMap.containsKey(uuid)) {
+            playerDataMap.put(uuid, new PlayerData());
+            playerConfig.addPlayer(player.getName());
+        }
+        PlayerData playerData = playerDataMap.get(uuid);
+        playerData.setSkin(Skin.load(uuid));
+        return playerData;
     }
 }
