@@ -33,13 +33,18 @@ public class BlockEventListener implements Listener {
         Block block = event.getBlock();
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
-        if (blockStats.getBlockType() == BlockType.BUILDING && player.getGameMode() != GameMode.CREATIVE) {
+        if (blockStats.getBlockType() == BlockType.BUILDING) {
+
             blockStatsManager.breakBlock(player, block);
+            if(player.getGameMode() == GameMode.CREATIVE)
+                blockStats.setHealth(0);
+
             if (blockStatsManager.checkBlockBreak(block))
                 blockStatsManager.getBlockStatsMap().remove(event.getBlock());
             else {
                 event.setCancelled(true);
             }
+            return;
         }
 
         Material type = block.getType();
@@ -56,8 +61,8 @@ public class BlockEventListener implements Listener {
                     .lore("§7可以用來合成石製物品")
                     .tag("stoneButton", "resource")
                     .build());
-        } else if (player.getGameMode() == GameMode.CREATIVE)
-            event.setCancelled(false);
+        }
+
     }
 
     private void dropItem(Player player, ItemStack itemStack) {
