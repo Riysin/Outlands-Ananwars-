@@ -6,10 +6,13 @@ import io.fairyproject.config.annotation.ConfigurationElement;
 public class ClanPlayerElement {
     private String name;
 
-    public ClanPlayerElement(){}
+    public ClanPlayerElement() {
+    }
+
     public ClanPlayerElement(String name) {
         this.name = name;
     }
+
     public String getName() {
         return name;
     }

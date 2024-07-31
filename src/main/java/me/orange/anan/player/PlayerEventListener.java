@@ -56,7 +56,6 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         playerDataManager.setUpPlayer(event);
-        clanManager.setUpClan();
 
         nameTagService.update(MCPlayer.from(event.getPlayer()));
     }

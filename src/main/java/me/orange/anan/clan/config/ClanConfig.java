@@ -20,13 +20,15 @@ public class ClanConfig extends YamlConfiguration {
         super(plugin.getDataFolder().resolve("clan.yml"));
     }
 
-    public void addClan(String name){
-        clanElementMap.put(name, new ClanConfigElement());
-        this.save();
-        this.load();
+    public void addClan(String name) {
+        if (!clanElementMap.containsKey(name)) {
+            clanElementMap.put(name, new ClanConfigElement());
+            this.save();
+            this.load();
+        }
     }
 
-    public void removeClan(String name){
+    public void removeClan(String name) {
         clanElementMap.remove(name);
         this.save();
         this.load();
@@ -44,15 +46,15 @@ public class ClanConfig extends YamlConfiguration {
         return getClanElementMap().get(name);
     }
 
-    public void saveOwner(String clanName, String owner){
+    public void saveOwner(String clanName, String owner) {
         getClanElement(clanName).setOwnerName(owner);
     }
 
-    public void savePrefix(String clanName, String prefix){
+    public void savePrefix(String clanName, String prefix) {
         getClanElement(clanName).setPrefix(prefix);
     }
 
-    public void saveSuffix(String clanName, String suffix){
+    public void saveSuffix(String clanName, String suffix) {
         getClanElement(clanName).setPrefix(suffix);
     }
 }
