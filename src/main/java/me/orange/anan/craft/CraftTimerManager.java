@@ -5,6 +5,7 @@ import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.util.*;
@@ -36,14 +37,14 @@ public class CraftTimerManager {
         craftTimerList.add(craftTimer);
 
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
-            if(craftTimer.isFailed()) {
+            if (craftTimer.isFailed()) {
                 return TaskResponse.failure("cancelled");
             }
-            craftTimer.setTime(craftTimer.getTime()-1);
+            craftTimer.setTime(craftTimer.getTime() - 1);
             return TaskResponse.continueTask();
-        },0,20, RepeatPredicate.length(Duration.ofSeconds(craft.getTime()))).getFuture();
+        }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(craft.getTime()))).getFuture();
 
-        future.thenRun(()->{
+        future.thenRun(() -> {
             player.getInventory().addItem(craft.getItemStack());
             player.sendMessage("crafting finished");
             removeCraftTimer(craftTimer);
@@ -52,19 +53,27 @@ public class CraftTimerManager {
 
     public boolean isCrafting(Player player) {
         for (CraftTimer craftTimer : getPlayerCraftTimerList(player)) {
-            if(craftTimer.getPlayer()==player)
+            if (craftTimer.getPlayer() == player)
                 return true;
         }
         return false;
     }
 
-    public void removeCraftTimer(CraftTimer craftTimer){
+    public void removeCraftTimer(CraftTimer craftTimer) {
         craftTimerList.remove(craftTimer);
     }
 
-    public void craftingFailed(Player player, CraftTimer craftTimer){
+    public void craftingFailed(Player player, CraftTimer craftTimer) {
         craftTimer.setFailed(true);
         removeCraftTimer(craftTimer);
         player.sendMessage("stoped");
+        returnItems(player, craftTimer.getCraft());
+    }
+
+    //return player items back if crafting failed
+    public void returnItems(Player player, Craft craft) {
+        for (ItemStack item : craft.getRecipe()) {
+            player.getInventory().addItem(item);
+        }
     }
 }

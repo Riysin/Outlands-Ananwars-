@@ -8,6 +8,8 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.bukkit.xseries.XMaterialSerializer;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.CraftManager;
+import me.orange.anan.craft.config.NatureBlockConfig;
+import me.orange.anan.craft.config.NatureBlockElement;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -26,10 +28,12 @@ import org.bukkit.inventory.ItemStack;
 public class BlockEventListener implements Listener {
     private final BlockStatsManager blockStatsManager;
     private final CraftManager craftManager;
+    private final NatureBlockConfig natureBlockConfig;
 
-    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager) {
+    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig) {
         this.blockStatsManager = blockStatsManager;
         this.craftManager = craftManager;
+        this.natureBlockConfig = natureBlockConfig;
     }
 
     @EventHandler
@@ -52,29 +56,34 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        Material type = block.getType();
-        Boolean isDrop = true;
+        Integer id = block.getTypeId();
         byte data = block.getData();
+        boolean drop = false;
 
-        if (type == Material.LOG /* && data == 0 */)
-            dropItem(player, craftManager.getCrafts().get("stick").getItemStack());
+        for (NatureBlockElement natureBlock : natureBlockConfig.getNatureBlocks()) {
+            Integer natureBlockData = natureBlock.getData();
+            Integer natureBlockBlockId = natureBlock.getBlockId();
 
-//        else if (type == Material.STONE)
-//            dropItem(player, resourceManager.getItem(player, "stoneButton"));
-
-        else if (player.getGameMode() != GameMode.CREATIVE) {
-            event.setCancelled(true);
-            isDrop = false;
+            if (id.equals(natureBlockBlockId) && (natureBlockData == -1 || data == natureBlockData)) {
+                for (String key : natureBlock.getDrops().keySet()) {
+                    ItemStack itemStack = craftManager.getCrafts().get(key).getItemStack();
+                    itemStack.setAmount(natureBlock.getDrops().get(key));
+                    dropItem(player, itemStack);
+                    drop = true;
+                }
+                break;
+            }
         }
 
-        if (isDrop)
-            player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
+        if(!drop && player.getGameMode() != GameMode.CREATIVE)
+            event.setCancelled(true);
     }
 
     private void dropItem(Player player, ItemStack itemStack) {
         player.getInventory().addItem(itemStack).forEach((k, v) -> {
             player.getWorld().dropItem(player.getLocation(), v);
         });
+        player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
     }
 
     @EventHandler

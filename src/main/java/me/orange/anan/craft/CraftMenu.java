@@ -37,60 +37,58 @@ public class CraftMenu {
         NormalPane pane = Pane.normal(9, 6);
         pane.setSlot(1, 0, GuiSlot.of(ItemBuilder.of(XMaterial.GRASS_BLOCK)
                 .name("§7全部")
-                .build(),clicker->{
-            removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.ALL);
+                .build(), clicker -> {
+            removeItemOnCraftMenu(gui, pane);
+            addItemToCraftMenu(gui, pane, clicker, CraftType.ALL);
             gui.update(clicker);
         }));
         pane.setSlot(2, 0, GuiSlot.of(ItemBuilder.of(XMaterial.WOODEN_SWORD)
                 .name("§7戰鬥")
-                .build(),clicker -> {
-            removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.COMBAT);
+                .build(), clicker -> {
+            removeItemOnCraftMenu(gui, pane);
+            addItemToCraftMenu(gui, pane, clicker, CraftType.COMBAT);
             gui.update(clicker);
         }));
         pane.setSlot(3, 0, GuiSlot.of(ItemBuilder.of(XMaterial.WOODEN_PICKAXE)
                 .name("§7工具")
-                .build(),clicker->{
-            removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.TOOL);
+                .build(), clicker -> {
+            removeItemOnCraftMenu(gui, pane);
+            addItemToCraftMenu(gui, pane, clicker, CraftType.TOOL);
             gui.update(clicker);
         }));
         pane.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.GUNPOWDER)
                 .name("§7資源")
-                .build(),clicker->{
-            removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.RESOURCE);
+                .build(), clicker -> {
+            removeItemOnCraftMenu(gui, pane);
+            addItemToCraftMenu(gui, pane, clicker, CraftType.RESOURCE);
             gui.update(clicker);
         }));
         pane.setSlot(5, 0, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_PLANKS)
                 .name("§7建材")
-                .build(),clicker->{
-            removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.BUILD);
+                .build(), clicker -> {
+            removeItemOnCraftMenu(gui, pane);
+            addItemToCraftMenu(gui, pane, clicker, CraftType.BUILD);
             gui.update(clicker);
         }));
         pane.setSlot(6, 0, GuiSlot.of(ItemBuilder.of(XMaterial.CRAFTING_TABLE)
                 .name("§7用途")
-                .build(),clicker->{
-            removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.USAGE);
+                .build(), clicker -> {
+            removeItemOnCraftMenu(gui, pane);
+            addItemToCraftMenu(gui, pane, clicker, CraftType.USAGE);
             gui.update(clicker);
         }));
         pane.setSlot(7, 0, GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_DYE)
                 .name("§7其他")
-                .build(),clicker->{
-            removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.MISC);
+                .build(), clicker -> {
+            removeItemOnCraftMenu(gui, pane);
+            addItemToCraftMenu(gui, pane, clicker, CraftType.MISC);
             gui.update(clicker);
         }));
 
         addItemToCraftMenu(gui, pane, player, CraftType.ALL);
 
         pane.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
-
         gui.addPane(pane);
-
         gui.open(player);
     }
 
@@ -117,7 +115,7 @@ public class CraftMenu {
                     String itemName = itemStack.getItemMeta().getDisplayName();
                     int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
                     boolean hasEnough = craftManager.hasEnough(player, itemStack);
-                    loreLines.add((hasEnough ? "§a   " : "§c   ")  + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
+                    loreLines.add((hasEnough ? "§a   " : "§c   ") + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
                 }
 
                 loreLines.add("");
@@ -131,9 +129,9 @@ public class CraftMenu {
                             .amount(1)
                             .itemFlag(ItemFlag.HIDE_ATTRIBUTES)
                             .build(), clicker -> {
-                                confirmMenu.open(player, craft);
-                                gui.update(clicker);
-                            }));
+                        confirmMenu.open(player, craft);
+                        gui.update(clicker);
+                    }));
                 } else {
                     cannotCrafts.add(GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
                             .clearLore()
@@ -142,10 +140,10 @@ public class CraftMenu {
                             .amount(0)
                             .itemFlag(ItemFlag.HIDE_ATTRIBUTES)
                             .build(), clicker -> {
-                                clicker.sendMessage("§cYou do not have enough material to craft this item");
-                                clicker.playSound(clicker.getLocation(), Sound.VILLAGER_NO, 1 ,1);
-                                gui.update(clicker);
-                            }));
+                        clicker.sendMessage("§cYou do not have enough material to craft this item");
+                        clicker.playSound(clicker.getLocation(), Sound.VILLAGER_NO, 1, 1);
+                        gui.update(clicker);
+                    }));
                 }
             });
 
@@ -155,10 +153,10 @@ public class CraftMenu {
         });
     }
 
-    private void removeItemOnCraftMenu(Gui gui,NormalPane pane) {
-        gui.onDrawCallback($->{
+    private void removeItemOnCraftMenu(Gui gui, NormalPane pane) {
+        gui.onDrawCallback($ -> {
             for (int i = 0; i < pane.getUsedSlots().length; i++) {
-                pane.setSlot(i,2,GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE), gui::update));
+                pane.setSlot(i, 2, GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE), gui::update));
             }
         });
     }
