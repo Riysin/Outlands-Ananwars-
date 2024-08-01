@@ -26,7 +26,11 @@ public class CraftManager {
 
     public CraftManager(CraftConfig config) {
         this.config = config;
+        loadConfigFile();
+    }
 
+    public void loadConfigFile(){
+        config.loadAndSave();
         config.getCraftTypes().forEach((type, element) -> {
             element.getCrafts().forEach((id, craftElement) -> {
                 Craft craft = new Craft();
@@ -51,7 +55,6 @@ public class CraftManager {
                     );
                 });
                 craft.setRecipe(recipe);
-
                 crafts.put(id, craft);
             });
         });
