@@ -19,11 +19,9 @@ import org.bukkit.entity.Player;
 @Command(value = {"clan", "c"})
 public class ClanCommand extends BaseCommand {
     private final ClanManager clanManager;
-    private final ClanConfig clanConfig;
 
-    public ClanCommand(ClanManager clanManager, ClanConfig clanConfig) {
+    public ClanCommand(ClanManager clanManager) {
         this.clanManager = clanManager;
-        this.clanConfig = clanConfig;
     }
 
     @Command("create")
@@ -41,7 +39,7 @@ public class ClanCommand extends BaseCommand {
             player.sendMessage("§cYour clan name can't be longer than 10 letters!");
             return;
         }
-        clanManager.setUpClan(clanName,player);
+        clanManager.createClan(clanName,player);
 
         player.sendMessage("§aClan " + clanName + " has been successfully created.");
         Bukkit.getPluginManager().callEvent(new PlayerJoinClanEvent(player));
@@ -76,7 +74,6 @@ public class ClanCommand extends BaseCommand {
         Component message = Component.text().append(accept).append(Component.text(" or ")).append(deny).build();
 
         MCPlayer.from(player).sendMessage(message);
-        clanConfig.getClanElement(clanManager.getClanName(sender)).addPlayer(sender.getName());
     }
 
     @Command("accept")
@@ -92,7 +89,7 @@ public class ClanCommand extends BaseCommand {
         player.sendMessage("§eYou joined " + clan.getDisplayName());
         clan.addPlayer(player);
         clan.getInvitations().remove(player.getUniqueId());
-        clanConfig.getClanElement(clanManager.getClanName(player)).addPlayer(player.getName());
+        clanManager.addPlayerToClan(invitor, player);
 
         Bukkit.getPluginManager().callEvent(new PlayerJoinClanEvent(player));
     }
@@ -120,7 +117,7 @@ public class ClanCommand extends BaseCommand {
         if (clanManager.isOwner(player)) {
             clanManager.sendOnlineClanPlayer(player, "§eThe clan is disbanded because the owner left!");
             clanManager.clanPlayerEvent(player, new PlayerLeftClanEvent(player));
-            clanConfig.getClanElementMap().remove(clanManager.getClanName(player));
+            clanManager.removePlayerFromClan(player);
             clanManager.getClanMap().remove(clanManager.getPlayerClan(player).getDisplayName());
         } else {
             clanManager.sendClanOwner(player, "§ePlayer " + player.getName() + " has left the clan.");
@@ -161,7 +158,7 @@ public class ClanCommand extends BaseCommand {
 
         clanManager.sendOnlineClanPlayer(player, "§eThis clan has been disbanded by the clan owner");
         clanManager.clanPlayerEvent(player, new PlayerLeftClanEvent(player));
-        clanConfig.getClanElementMap().remove(clanManager.getClanName(player));
+        clanManager.removePlayerFromClan(player);
         clanManager.getClanMap().remove(clanManager.getPlayerClan(player).getDisplayName());
     }
 
@@ -181,7 +178,7 @@ public class ClanCommand extends BaseCommand {
             return;
         }
 
-        clanManager.getPlayerClan(sender).removePlayer(player);
+        clanManager.removePlayerFromClan(player);
         player.sendMessage("§eYou have been removed from the clan by the owner.");
         sender.sendMessage(player.getName() + "§e has been removed from the clan.");
     }

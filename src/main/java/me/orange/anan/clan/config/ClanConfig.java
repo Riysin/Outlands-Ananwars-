@@ -6,6 +6,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.player.config.PlayerConfigElement;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,9 +21,15 @@ public class ClanConfig extends YamlConfiguration {
         super(plugin.getDataFolder().resolve("clan.yml"));
     }
 
-    public void addClan(String name) {
+    public void addClan(String name, Player player) {
         if (!clanElementMap.containsKey(name)) {
-            clanElementMap.put(name, new ClanConfigElement());
+            ClanConfigElement element = new ClanConfigElement();
+            element.setClanName(name);
+            element.setOwner(player.getUniqueId());
+            element.setPrefix("§2[" + name + "]§r ");
+            element.setSuffix("");
+            element.addPlayer(player);
+            clanElementMap.put(name, element);
             this.save();
             this.load();
         }
@@ -40,21 +47,5 @@ public class ClanConfig extends YamlConfiguration {
 
     public void setClanElementMap(Map<String, ClanConfigElement> clanElementMap) {
         this.clanElementMap = clanElementMap;
-    }
-
-    public ClanConfigElement getClanElement(String name) {
-        return getClanElementMap().get(name);
-    }
-
-    public void saveOwner(String clanName, String owner) {
-        getClanElement(clanName).setOwnerName(owner);
-    }
-
-    public void savePrefix(String clanName, String prefix) {
-        getClanElement(clanName).setPrefix(prefix);
-    }
-
-    public void saveSuffix(String clanName, String suffix) {
-        getClanElement(clanName).setPrefix(suffix);
     }
 }

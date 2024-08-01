@@ -127,6 +127,10 @@ public class Clan {
         players.add(player.getUniqueId());
     }
 
+    public void addPlayer(UUID uuid) {
+        players.add(uuid);
+    }
+
     public void removePlayer(Player player) {
         players.remove(player.getUniqueId());
     }

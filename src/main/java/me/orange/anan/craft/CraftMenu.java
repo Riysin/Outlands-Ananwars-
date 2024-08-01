@@ -46,7 +46,7 @@ public class CraftMenu {
                 .name("§7戰鬥")
                 .build(),clicker -> {
             removeItemOnCraftMenu(gui,pane);
-            addItemToCraftMenu(gui,pane,clicker,CraftType.BATTLE);
+            addItemToCraftMenu(gui,pane,clicker,CraftType.COMBAT);
             gui.update(clicker);
         }));
         pane.setSlot(3, 0, GuiSlot.of(ItemBuilder.of(XMaterial.WOODEN_PICKAXE)

@@ -3,7 +3,9 @@ package me.orange.anan.clan;
 import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.config.ClanConfig;
+import me.orange.anan.clan.config.ClanConfigElement;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
@@ -19,6 +21,28 @@ public class ClanManager {
 
     public ClanManager(ClanConfig clanConfig) {
         this.clanConfig = clanConfig;
+
+        clanConfig.getClanElementMap().forEach((clanName, element) -> {
+            Clan clan = new Clan(clanName);
+
+            element.getPlayers().forEach(clan::addPlayer);
+            clan.setDisplayName(clanName);
+            clan.setOwner(element.getOwner());
+            clan.setPrefix("§2[" + clanName + "]§r ");
+            clan.setSuffix("");
+
+            clanMap.put(clanName, clan);
+        });
+    }
+
+    public void addPlayerToClan(Player clanPlayer, Player player) {
+        getPlayerClanConfigElement(clanPlayer).addPlayer(player);
+        updateClanMap(getPlayerClan(clanPlayer));
+    }
+
+    public void removePlayerFromClan(Player player) {
+        getPlayerClanConfigElement(player).removePlayer(player);
+        updateClanMap(getPlayerClan(player));
     }
 
     public Map<String, Clan> getClanMap() {
@@ -51,6 +75,10 @@ public class ClanManager {
             }
         });
         return clan.get();
+    }
+
+    public ClanConfigElement getPlayerClanConfigElement(Player player) {
+        return clanConfig.getClanElementMap().get(getPlayerClan(player).getDisplayName());
     }
 
     public boolean inClan(Player player) {
@@ -133,15 +161,20 @@ public class ClanManager {
         });
     }
 
-    public void setUpClan (String name, Player player){
-        clanMap.put(name, new Clan(name));
-        Clan clan = getClanByTeamName(name);
-        clan.addPlayer(player);
-        clan.setOwner(player.getUniqueId());
-        clan.setPrefix("§2[" + name + "]§r ");
-        clanConfig.addClan(name);
-        clanConfig.saveOwner(name, player.getName());
-
+    public void createClan (String name, Player player){
+        clanConfig.addClan(name, player);
+        Clan clan = new Clan(name);
+        updateClanMap(clan);
     }
 
+    public void updateClanMap(Clan clan){
+        String clanName = clan.getDisplayName();
+        ClanConfigElement element =  clanConfig.getClanElementMap().get(clanName);
+
+        element.getPlayers().forEach(clan::addPlayer);
+        clan.setDisplayName(clanName);
+        clan.setOwner(element.getOwner());
+        clan.setPrefix("§2[" + clanName + "]§r ");
+        clan.setSuffix("");
+    }
 }
