@@ -119,6 +119,7 @@ public class CraftMenu {
                 }
 
                 loreLines.add("");
+                loreLines.add("§8需要花費" + craft.getTime() + "秒製作");
                 loreLines.add((canCraft ? "§e點擊合成此物品" : "§c材料不足"));
 
                 if (canCraft) {
