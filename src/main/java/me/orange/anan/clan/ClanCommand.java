@@ -158,7 +158,6 @@ public class ClanCommand extends BaseCommand {
 
         clanManager.sendOnlineClanPlayer(player, "§eThis clan has been disbanded by the clan owner");
         clanManager.clanPlayerEvent(player, new PlayerLeftClanEvent(player));
-        clanManager.removePlayerFromClan(player);
         clanManager.getClanMap().remove(clanManager.getPlayerClan(player).getDisplayName());
     }
 

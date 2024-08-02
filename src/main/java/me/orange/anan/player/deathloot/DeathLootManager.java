@@ -4,9 +4,6 @@ import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
-import io.fairyproject.scheduler.repeat.RepeatPredicate;
-import io.fairyproject.scheduler.response.TaskResponse;
-import me.orange.anan.player.PlayerDataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -15,19 +12,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
-import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 @InjectableComponent
 public class DeathLootManager {
     Map<UUID, DeathLoot> deathLootMap = new HashMap<>();
-    private final PlayerDataManager playerDataManager;
-
-    public DeathLootManager(PlayerDataManager playerDataManager) {
-        this.playerDataManager = playerDataManager;
-    }
 
     public Map<UUID, DeathLoot> getDeathLootMap() {
         return deathLootMap;
@@ -41,7 +34,8 @@ public class DeathLootManager {
         ArmorStand armorStand = player.getWorld().spawn(location.clone().add(0, -0.3, 0), ArmorStand.class);
         armorStand.setMarker(false);
 
-        armorStand.setHelmet(ItemBuilder.of(XMaterial.PLAYER_HEAD).skull(playerDataManager.getPlayerData(player).getSkin().skinValue).build());
+
+        armorStand.setHelmet(ItemBuilder.of(XMaterial.PLAYER_HEAD).skull(player).build());
         armorStand.setChestplate(player.getInventory().getChestplate());
         armorStand.setLeggings(player.getInventory().getLeggings());
         armorStand.setBoots(player.getInventory().getBoots());

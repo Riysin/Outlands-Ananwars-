@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Clan {
-    private String displayName = null;
+    private String displayName;
     private List<UUID> players = new ArrayList<>();
     private UUID owner;
     private List<UUID> invitations = new ArrayList<>();
@@ -22,6 +22,9 @@ public class Clan {
     private NametagVisibility nametagVisibility = NametagVisibility.always;
     private boolean showNameTagToClicker = false;
 
+    public Clan(String displayName) {
+        this.displayName = displayName;
+    }
     public NametagVisibility getNametagVisibility() {
         return nametagVisibility;
     }
@@ -56,10 +59,6 @@ public class Clan {
 
     public void setOwner(UUID owner) {
         this.owner = owner;
-    }
-
-    public Clan(String displayName) {
-        this.displayName = displayName;
     }
 
     public boolean isShowNameTagToClicker() {

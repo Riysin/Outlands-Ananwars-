@@ -9,9 +9,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 @InjectableComponent
@@ -22,10 +22,14 @@ public class ClanManager {
     public ClanManager(ClanConfig clanConfig) {
         this.clanConfig = clanConfig;
 
+        loadClan();
+    }
+
+    public void loadClan() {
         clanConfig.getClanElementMap().forEach((clanName, element) -> {
             Clan clan = new Clan(clanName);
 
-            element.getPlayers().forEach(clan::addPlayer);
+            clan.setPlayers(element.getPlayers());
             clan.setDisplayName(clanName);
             clan.setOwner(element.getOwner());
             clan.setPrefix("§2[" + clanName + "]§r ");
@@ -35,14 +39,33 @@ public class ClanManager {
         });
     }
 
+    public void createClan(String name, Player player) {
+        clanConfig.addClan(name, player);
+        Clan clan = new Clan(name);
+
+        updateClan(clan);
+        clanMap.put(name, clan);
+    }
+
+    public void updateClan(Clan clan) {
+        String clanName = clan.getDisplayName();
+        ClanConfigElement element = clanConfig.getClanElementMap().get(clanName);
+
+        clan.setPlayers(element.getPlayers());
+        clan.setDisplayName(clanName);
+        clan.setOwner(element.getOwner());
+        clan.setPrefix("§2[" + clanName + "]§r ");
+        clan.setSuffix("");
+    }
+
     public void addPlayerToClan(Player clanPlayer, Player player) {
         getPlayerClanConfigElement(clanPlayer).addPlayer(player);
-        updateClanMap(getPlayerClan(clanPlayer));
+        updateClan(getPlayerClan(clanPlayer));
     }
 
     public void removePlayerFromClan(Player player) {
         getPlayerClanConfigElement(player).removePlayer(player);
-        updateClanMap(getPlayerClan(player));
+        updateClan(getPlayerClan(player));
     }
 
     public Map<String, Clan> getClanMap() {
@@ -110,7 +133,7 @@ public class ClanManager {
     }
 
     public boolean isOwner(Player player) {
-        return getPlayerClan(player).getOwnerUUID() == player.getUniqueId();
+        return getPlayerClan(player).getOwnerUUID().equals(player.getUniqueId());
     }
 
     public String getOwnerName(Player player) {
@@ -159,22 +182,5 @@ public class ClanManager {
                 Bukkit.getPluginManager().callEvent(event);
             }
         });
-    }
-
-    public void createClan (String name, Player player){
-        clanConfig.addClan(name, player);
-        Clan clan = new Clan(name);
-        updateClanMap(clan);
-    }
-
-    public void updateClanMap(Clan clan){
-        String clanName = clan.getDisplayName();
-        ClanConfigElement element =  clanConfig.getClanElementMap().get(clanName);
-
-        element.getPlayers().forEach(clan::addPlayer);
-        clan.setDisplayName(clanName);
-        clan.setOwner(element.getOwner());
-        clan.setPrefix("§2[" + clanName + "]§r ");
-        clan.setSuffix("");
     }
 }

@@ -14,9 +14,6 @@ public class ClanConfigElement {
     private String clanName = "";
     private String owner = "";
     private List<String> players = new ArrayList<>();
-    private String prefix = "";
-    private String suffix = "";
-
     public String getClanName() {
         return clanName;
     }
@@ -54,19 +51,4 @@ public class ClanConfigElement {
         this.owner = uuid.toString();
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
 }

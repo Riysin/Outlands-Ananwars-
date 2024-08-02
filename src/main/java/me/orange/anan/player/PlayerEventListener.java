@@ -13,6 +13,7 @@ import io.fairyproject.mc.tablist.util.Skin;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
 import me.orange.anan.clan.ClanManager;
+import me.orange.anan.events.PlayerLeftClanEvent;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.deathloot.DeathLootManager;
 import net.kyori.adventure.text.Component;
@@ -56,7 +57,6 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         playerDataManager.setUpPlayer(event);
-
         nameTagService.update(MCPlayer.from(event.getPlayer()));
     }
 
@@ -136,9 +136,14 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler
-    public void onHitArmorStand(EntityDamageByPlayerEvent event){
-        if (event.getEntity() instanceof ArmorStand){
+    public void onHitArmorStand(EntityDamageByPlayerEvent event) {
+        if (event.getEntity() instanceof ArmorStand) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onPlayerLeft(PlayerQuitEvent event) {
+        event.setQuitMessage("§e" + event.getPlayer() + " has left!");
     }
 }

@@ -26,8 +26,6 @@ public class ClanConfig extends YamlConfiguration {
             ClanConfigElement element = new ClanConfigElement();
             element.setClanName(name);
             element.setOwner(player.getUniqueId());
-            element.setPrefix("§2[" + name + "]§r ");
-            element.setSuffix("");
             element.addPlayer(player);
             clanElementMap.put(name, element);
             this.save();

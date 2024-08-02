@@ -10,6 +10,7 @@ import me.orange.anan.events.PlayerLeftClanEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 
 @InjectableComponent
 @RegisterAsListener
@@ -34,5 +35,4 @@ public class GeneralEventListener implements Listener {
     public void onLeftTeam(PlayerLeftClanEvent event) {
         nameTagService.update(MCPlayer.from(event.getPlayer()));
     }
-
 }

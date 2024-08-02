@@ -1,6 +1,8 @@
 package me.orange.anan;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.command.event.BukkitCommandContext;
+import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.command.BaseCommand;
 import io.fairyproject.command.annotation.Arg;
 import io.fairyproject.command.annotation.Command;
@@ -15,6 +17,7 @@ import me.orange.anan.player.PlayerStatsMenu;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
@@ -73,5 +76,10 @@ public class TcCommand extends BaseCommand {
         craftManager.loadConfigFile();
         natureBlockConfig.loadAndSave();
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Config reloaded");
+    }
+
+    @Command("head")
+    public void givePlayerHead(BukkitCommandContext ctx, @Arg("name") Player player){
+        ctx.getPlayer().getInventory().addItem(ItemBuilder.of(XMaterial.PLAYER_HEAD).skull(player.getName()).build());
     }
 }
