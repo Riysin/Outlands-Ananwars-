@@ -19,6 +19,7 @@ public class ClanConfig extends YamlConfiguration {
 
     public ClanConfig(Anan plugin) {
         super(plugin.getDataFolder().resolve("clan.yml"));
+        this.loadAndSave();
     }
 
     public void addClan(String name, Player player) {

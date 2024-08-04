@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class Clan {
     private String displayName;
-    private List<UUID> players = new ArrayList<>();
+    private List<UUID> players;
     private UUID owner;
     private List<UUID> invitations = new ArrayList<>();
     private String prefix = "";

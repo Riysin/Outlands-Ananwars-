@@ -42,8 +42,9 @@ public class CraftCommand extends BaseCommand {
     }
 
     @Command(value = "give", permissionNode = "craft.give")
-    public void giveItem(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("craft") Craft craft) {
+    public void giveItem(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("craft") Craft craft,@Arg("amount") Integer amount) {
         ItemStack item = craft.getItemStack();
+        item.setAmount(amount);
         player.getInventory().addItem(item);
     }
 }

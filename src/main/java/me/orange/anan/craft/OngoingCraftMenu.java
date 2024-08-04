@@ -30,17 +30,24 @@ public class OngoingCraftMenu {
 
 
         gui.onDrawCallback(updatePlayer -> {
+            for (int usedSlot : pane.getUsedSlots()) {
+                pane.setSlot(usedSlot,GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
+            }
+
             int i = 0;
             for (CraftTimer craftTimer : craftTimerManager.getPlayerCraftTimerList(player)) {
-                List<String> loreLines = new ArrayList<>(craftTimer.getCraft().getLore());
+                Craft craft = craftTimer.getCraft();
+                List<String> loreLines = new ArrayList<>();
+                loreLines.addAll(craft.getLore());
                 loreLines.add("§e還剩 " + craftTimer.getTime() + "s");
                 loreLines.add("§cclick to stop");
 
-                pane.setSlot(i, GuiSlot.of(ItemBuilder.of(craftTimer.getCraft().getItemStack())
-                        .name(craftTimer.getCraft().getName())
+                pane.setSlot(i, GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
+                        .clearLore()
+                        .name(craft.getName())
                         .lore(loreLines)
                         .build(), clicker -> {
-                    craftTimerManager.craftingFailed(clicker, craftTimer);
+                    craftTimerManager.craftingFailed(clicker, craftTimer);;
                     gui.update(clicker);
                 }));
                 i++;

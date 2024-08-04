@@ -118,7 +118,7 @@ public class ClanCommand extends BaseCommand {
             clanManager.sendOnlineClanPlayer(player, "§eThe clan is disbanded because the owner left!");
             clanManager.clanPlayerEvent(player, new PlayerLeftClanEvent(player));
             clanManager.removePlayerFromClan(player);
-            clanManager.getClanMap().remove(clanManager.getPlayerClan(player).getDisplayName());
+            clanManager.removeClan(player);
         } else {
             clanManager.sendClanOwner(player, "§ePlayer " + player.getName() + " has left the clan.");
             clanManager.getPlayerClan(player).removePlayer(player);
@@ -158,7 +158,7 @@ public class ClanCommand extends BaseCommand {
 
         clanManager.sendOnlineClanPlayer(player, "§eThis clan has been disbanded by the clan owner");
         clanManager.clanPlayerEvent(player, new PlayerLeftClanEvent(player));
-        clanManager.getClanMap().remove(clanManager.getPlayerClan(player).getDisplayName());
+        clanManager.removeClan(player);
     }
 
     @Command("kick")
@@ -202,8 +202,7 @@ public class ClanCommand extends BaseCommand {
     public void transferOwner(BukkitCommandContext ctx, @Arg("New Owner") Player player) {
         if (!clanManager.sameClan(ctx.getPlayer(), player)) {
             if (clanManager.isOwner(ctx.getPlayer())) {
-                clanManager.getPlayerClan(ctx.getPlayer()).setOwner(player.getUniqueId());
-                player.sendMessage("§aYou are the clan owner now");
+                clanManager.transferOwner(player);
                 ctx.getPlayer().sendMessage(player.getName() + "§e has become the owner.");
             } else {
                 ctx.getPlayer().sendMessage("§cYou don't have the permission to do this.");
@@ -216,6 +215,11 @@ public class ClanCommand extends BaseCommand {
     @Command("owner")
     public void showOwner(BukkitCommandContext ctx){
         ctx.getPlayer().sendMessage(clanManager.getOwnerName(ctx.getPlayer()));
+    }
+
+    @Command(value = "config", permissionNode = "clan.admin")
+    public void reloadConfig(BukkitCommandContext ctx){
+        clanManager.loadClan();
     }
 }
 

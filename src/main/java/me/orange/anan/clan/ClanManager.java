@@ -47,6 +47,11 @@ public class ClanManager {
         clanMap.put(name, clan);
     }
 
+    public void removeClan(Player player){
+        clanConfig.removeClan(getClanName(player));
+        updateClan(getPlayerClan(player));
+    }
+
     public void updateClan(Clan clan) {
         String clanName = clan.getDisplayName();
         ClanConfigElement element = clanConfig.getClanElementMap().get(clanName);
@@ -148,6 +153,10 @@ public class ClanManager {
         }
     }
 
+    public void transferOwner(Player player){
+        getPlayerClanConfigElement(player).setOwner(player.getUniqueId());
+        updateClan(getPlayerClan(player));
+    }
     public void sendClanOwner(Player player, String message) {
         if (Bukkit.getOnlinePlayers().contains(getPlayerClan(player).getOwner()))
             getPlayerClan(player).getOwner().sendMessage(message);
@@ -182,5 +191,10 @@ public class ClanManager {
                 Bukkit.getPluginManager().callEvent(event);
             }
         });
+    }
+
+    public void renameClan(Player player, String name){
+        getPlayerClanConfigElement(player).setClanName(name);
+        updateClan(getPlayerClan(player));
     }
 }
