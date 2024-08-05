@@ -53,6 +53,7 @@ public class OngoingCraftMenu {
                         .clearLore()
                         .name(craft.getName())
                         .lore(loreLines)
+                        .amount(craftTimer.getAmount())
                         .build(), clicker -> {
                     craftTimerManager.craftingFailed(clicker, craftTimer);
                     gui.update(clicker);

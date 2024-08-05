@@ -1,10 +1,13 @@
 package me.orange.anan.blocks;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
-import io.fairyproject.bukkit.util.items.ItemBuilder;
-import io.fairyproject.bukkit.xseries.XMaterialSerializer;
+import io.fairyproject.bukkit.nbt.NBTKey;
+import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.blocks.config.BuildConfig;
+import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
+import me.orange.anan.craft.CraftType;
 import me.orange.anan.craft.config.NatureBlockConfig;
 import me.orange.anan.craft.config.NatureBlockElement;
 import org.bukkit.Bukkit;
@@ -24,11 +27,13 @@ public class BlockEventListener implements Listener {
     private final BlockStatsManager blockStatsManager;
     private final CraftManager craftManager;
     private final NatureBlockConfig natureBlockConfig;
+    private final BuildConfig buildConfig;
 
-    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig) {
+    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig) {
         this.blockStatsManager = blockStatsManager;
         this.craftManager = craftManager;
         this.natureBlockConfig = natureBlockConfig;
+        this.buildConfig = buildConfig;
     }
 
     @EventHandler
@@ -83,6 +88,45 @@ public class BlockEventListener implements Listener {
 
     @EventHandler
     public void onBlockPlaced(BlockPlaceEvent event) {
-        blockStatsManager.placeBlock(event.getPlayer(), event.getBlockPlaced());
+        Player player = event.getPlayer();
+        ItemStack item = event.getItemInHand();
+        Block block = event.getBlock();
+        String nbtValue = NBTModifier.get().getString(item, NBTKey.create("craft"));
+        Craft craft = craftManager.getCrafts().get(nbtValue);
+
+        if(craft == null || craft.getType() != CraftType.BUILD){
+            if(player.getGameMode() != GameMode.CREATIVE)
+                event.setCancelled(true);
+            return;
+        }
+        else if(isBesideNatureBlock(block)){
+            event.setCancelled(true);
+            player.sendMessage("§c你不能在可挖掘的資源旁建造方塊!");
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);
+            return;
+        }
+
+        int health = buildConfig.getBuildBlocks().get(nbtValue);
+        blockStatsManager.placeBlock(event.getPlayer(), event.getBlockPlaced(), health);
+    }
+
+    private boolean isBesideNatureBlock(Block block){
+        return isNatureBlock(block.getLocation().clone().add(0, 1, 0).getBlock())
+                || isNatureBlock(block.getLocation().clone().add(0, -1, 0).getBlock())
+                || isNatureBlock(block.getLocation().clone().add(1, 0, 0).getBlock())
+                || isNatureBlock(block.getLocation().clone().add(-1, 0, 0).getBlock())
+                || isNatureBlock(block.getLocation().clone().add(0, 0, 1).getBlock())
+                || isNatureBlock(block.getLocation().clone().add(0, 0, -1).getBlock());
+    }
+
+    private boolean isNatureBlock(Block block){
+        Integer id = block.getTypeId();
+
+        for (NatureBlockElement natureBlock : natureBlockConfig.getNatureBlocks()) {
+            Integer data = natureBlock.getData();
+            if(id.equals(natureBlock.getBlockId()) && (data == -1 || block.getData() == data))
+                return true;
+        }
+        return false;
     }
 }

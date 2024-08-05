@@ -31,12 +31,14 @@ public class TcCommand extends BaseCommand {
     private final ClanConfig clanConfig;
     private final NatureBlockConfig natureBlockConfig;
     private final CraftManager craftManager;
+    private final BuildConfig buildConfig;
 
     public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig) {
         this.clanConfig = clanConfig;
         this.playerConfig = playerConfig;
         this.natureBlockConfig = natureBlockConfig;
         this.craftManager = craftManager;
+        this.buildConfig = buildConfig;
     }
 
     @Command("test")

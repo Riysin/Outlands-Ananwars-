@@ -15,7 +15,7 @@ public class BlockStatsManager {
 
     public BlockStats getBlockStats(Block block) {
         if (!getBlockStatsMap().containsKey(block)) {
-            BlockStats bs = new BlockStats(10);
+            BlockStats bs = new BlockStats();
             getBlockStatsMap().put(block, bs);
         }
         return blockStatsMap.get(block);
@@ -40,9 +40,10 @@ public class BlockStatsManager {
         return blockStats.getHealth() <= 0;
     }
 
-    public void placeBlock(Player player, Block block){
+    public void placeBlock(Player player, Block block, Integer health){
         BlockStats blockStats = getBlockStats(block);
         blockStats.setBreakable(true);
+        blockStats.setHealth(health);
         blockStats.setBlockType(BlockType.BUILDING);
     }
 }

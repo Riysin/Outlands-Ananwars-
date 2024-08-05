@@ -5,8 +5,7 @@ public class BlockStats {
     private int health;
     private boolean breakable;
 
-    public BlockStats(int health) {
-        this.health = health;
+    public BlockStats() {
         this.breakable =false;
     }
 
