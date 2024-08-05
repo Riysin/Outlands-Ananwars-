@@ -131,10 +131,14 @@ public class ClanManager {
 
 
     public boolean sameClan(Player player1, Player player2) {
-        if (getPlayerClan(player1) == null || getPlayerClan(player2) == null) {
+        Clan clan1 = getPlayerClan(player1);
+        Clan clan2 = getPlayerClan(player2);
+
+        if (clan1 == null || clan2 == null) {
             return false;
         }
-        return getPlayerClan(player1) == getPlayerClan(player2);
+
+        return clan1.getDisplayName().equals(clan2.getDisplayName());
     }
 
     public boolean isOwner(Player player) {
@@ -193,8 +197,4 @@ public class ClanManager {
         });
     }
 
-    public void renameClan(Player player, String name){
-        getPlayerClanConfigElement(player).setClanName(name);
-        updateClan(getPlayerClan(player));
-    }
 }

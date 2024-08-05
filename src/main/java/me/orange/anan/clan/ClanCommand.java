@@ -182,34 +182,19 @@ public class ClanCommand extends BaseCommand {
         sender.sendMessage(player.getName() + "§e has been removed from the clan.");
     }
 
-    @Command("rename")
-    public void renameClan(BukkitCommandContext ctx, @Arg("New Name") String name) {
-        Player player = ctx.getPlayer();
-        if (!clanManager.isOwner(player)) {
-            player.sendMessage("§cYou don't have the permission to do this.");
-            return;
-        }
-        if (name.length() > 10) {
-            player.sendMessage("§cYour clan name can't be longer than 10 letters!");
-            return;
-        }
-
-        clanManager.getPlayerClan(player).setDisplayName(name);
-        player.sendMessage("§aYou have changed your clan name to " + name);
-    }
-
     @Command("transfer")
     public void transferOwner(BukkitCommandContext ctx, @Arg("New Owner") Player player) {
         if (!clanManager.sameClan(ctx.getPlayer(), player)) {
-            if (clanManager.isOwner(ctx.getPlayer())) {
-                clanManager.transferOwner(player);
-                ctx.getPlayer().sendMessage(player.getName() + "§e has become the owner.");
-            } else {
-                ctx.getPlayer().sendMessage("§cYou don't have the permission to do this.");
-            }
-        } else {
             ctx.getPlayer().sendMessage("§cYou are not in the same clan with this player!");
+            return;
         }
+        if (clanManager.isOwner(ctx.getPlayer())) {
+            ctx.getPlayer().sendMessage("§cYou don't have the permission to do this.");
+            return;
+        }
+
+        clanManager.transferOwner(player);
+        ctx.getPlayer().sendMessage(player.getName() + "§e has become the owner.");
     }
 
     @Command("owner")

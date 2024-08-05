@@ -129,4 +129,33 @@ public class CraftManager {
         }
         return playerAmount;
     }
+
+    public int getCanCraftAmount(Player player, Craft craft) {
+        Map<String, Integer> playerMaterials = new HashMap<>();
+
+        // Count materials in the player's inventory
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null) {
+                String NBTValue = NBTModifier.get().getString(item, NBTKey.create("craft"));
+                int count = playerMaterials.getOrDefault(NBTValue, 0);
+                playerMaterials.put(NBTValue, count + item.getAmount());
+            }
+        }
+
+        // Check if player has enough materials for the recipe
+        int canCraftAmount = Integer.MAX_VALUE;
+        for (ItemStack requiredItem : craft.getRecipe()) {
+            String NBTValue = NBTModifier.get().getString(requiredItem, NBTKey.create("craft"));
+            int requiredAmount = requiredItem.getAmount();
+            int playerAmount = playerMaterials.getOrDefault(NBTValue, 0);
+
+            if (playerAmount < requiredAmount) {
+                return 0;
+            }
+
+            canCraftAmount = Math.min(canCraftAmount, playerAmount / requiredAmount);
+        }
+
+        return canCraftAmount;
+    }
 }
