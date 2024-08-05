@@ -15,7 +15,7 @@ public class CraftTimer {
     public CraftTimer(Player player, Craft craft, int time, int amount) {
         this.uuid = player.getUniqueId();
         this.craft = craft;
-        this.time = time;
+        this.time = time + 1;
         this.amount = amount;
         this.failed = false;
     }

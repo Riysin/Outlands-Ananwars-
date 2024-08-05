@@ -59,7 +59,7 @@ public class CraftTimerManager {
             craftTimer.setTime(craftTimer.getTime() - 1);
 
             return TaskResponse.continueTask();
-        }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(craftTimer.getCraft().getTime()))).getFuture();
+        }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(craftTimer.getCraft().getTime() - 1))).getFuture();
 
         future.thenRun(() -> {
             if (craftTimer.getAmount() > 1) {

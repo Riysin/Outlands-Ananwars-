@@ -46,7 +46,7 @@ public class OngoingCraftMenu {
                 Craft craft = craftTimer.getCraft();
                 List<String> loreLines = new ArrayList<>();
                 loreLines.addAll(craft.getLore());
-                loreLines.add("§e還剩 " + (craftTimer.getTime()-1) + "s");
+                loreLines.add("§e還剩 " + (craftTimer.getTime() - 1) + "s");
                 loreLines.add("§cclick to stop");
 
                 pane.setSlot(i, GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
