@@ -4,6 +4,8 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
+import me.orange.anan.events.CraftTimerCountDownEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -40,7 +42,9 @@ public class CraftTimerManager {
             if (craftTimer.isFailed()) {
                 return TaskResponse.failure("cancelled");
             }
+            Bukkit.getPluginManager().callEvent(new CraftTimerCountDownEvent(player, craftTimer));
             craftTimer.setTime(craftTimer.getTime() - 1);
+
             return TaskResponse.continueTask();
         }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(craft.getTime()))).getFuture();
 
@@ -48,6 +52,7 @@ public class CraftTimerManager {
             player.getInventory().addItem(craft.getItemStack());
             player.sendMessage("crafting finished");
             removeCraftTimer(craftTimer);
+            Bukkit.getPluginManager().callEvent(new CraftTimerCountDownEvent(player, craftTimer));
         });
     }
 

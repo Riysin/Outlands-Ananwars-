@@ -8,6 +8,7 @@ import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.events.CraftTimerCountDownEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -28,6 +29,12 @@ public class OngoingCraftMenu {
         Gui gui = guiFactory.create(Component.text("§f§l製作中的物品"));
         NormalPane pane = Pane.normal(9, 3);
 
+        gui.onOpenCallback($ -> {
+            gui.getEventNode().addListener(CraftTimerCountDownEvent.class, event -> {
+                if(event.getPlayer() == player)
+                    gui.update(player);
+            });
+        });
 
         gui.onDrawCallback(updatePlayer -> {
             for (int usedSlot : pane.getUsedSlots()) {
@@ -39,7 +46,7 @@ public class OngoingCraftMenu {
                 Craft craft = craftTimer.getCraft();
                 List<String> loreLines = new ArrayList<>();
                 loreLines.addAll(craft.getLore());
-                loreLines.add("§e還剩 " + craftTimer.getTime() + "s");
+                loreLines.add("§e還剩 " + (craftTimer.getTime() - 1) + "s");
                 loreLines.add("§cclick to stop");
 
                 pane.setSlot(i, GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
