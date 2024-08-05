@@ -37,23 +37,6 @@ public class TcCommand extends BaseCommand {
         this.craftManager = craftManager;
     }
 
-    @Command("menu")
-    public void openMenu(BukkitCommandContext ctx, @Arg("name") Player player) {
-        playerStatsMenu.open(ctx.getPlayer(), player);
-    }
-
-    @Command("kills")
-    public void showKills(BukkitCommandContext ctx) {
-        int killCount = playerConfig.getPlayerElement(ctx.getPlayer().getName()).getKills();
-        ctx.getPlayer().sendMessage(killCount + "");
-    }
-
-    @Command("deaths")
-    public void showDeaths(BukkitCommandContext ctx) {
-        int deathCount = playerConfig.getPlayerElement(ctx.getPlayer().getName()).getDeaths();
-        ctx.getPlayer().sendMessage(deathCount + "");
-    }
-
     @Command("test")
     public void test(BukkitCommandContext ctx) {
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {

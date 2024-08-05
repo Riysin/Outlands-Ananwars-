@@ -15,11 +15,11 @@ import org.bukkit.entity.Player;
 @InjectableComponent
 public class PlayerStatsMenu {
     private final GuiFactory guiFactory;
-    private final PlayerConfig playerConfig;
+    private final PlayerDataManager playerDataManager;
 
-    public PlayerStatsMenu(GuiFactory guiFactory, PlayerDataManager playerDataManager, PlayerConfig playerConfig) {
+    public PlayerStatsMenu(GuiFactory guiFactory, PlayerDataManager playerDataManager) {
         this.guiFactory = guiFactory;
-        this.playerConfig = playerConfig;
+        this.playerDataManager = playerDataManager;
     }
 
     public void open(Player ctx, Player player) {
@@ -30,8 +30,8 @@ public class PlayerStatsMenu {
                 .of(XMaterial.PLAYER_HEAD)
                 .skull(player.getName())
                 .name(player.getDisplayName())
-                .lore("擊殺數: " + playerConfig.getPlayerElement(ctx.getPlayer().getName()).getKills()
-                        , "死亡數: " + playerConfig.getPlayerElement(ctx.getPlayer().getName()).getDeaths())
+                .lore("擊殺數: " + playerDataManager.getPlayerData(player).getKills()
+                        , "死亡數: " + playerDataManager.getPlayerData(player).getDeaths())
                 .build()));
         pane.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
 

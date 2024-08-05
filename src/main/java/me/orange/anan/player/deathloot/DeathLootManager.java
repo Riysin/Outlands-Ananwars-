@@ -1,9 +1,13 @@
 package me.orange.anan.player.deathloot;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
+import me.orange.anan.player.PlayerDataManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -21,6 +25,11 @@ import java.util.concurrent.atomic.AtomicReference;
 @InjectableComponent
 public class DeathLootManager {
     Map<UUID, DeathLoot> deathLootMap = new HashMap<>();
+    private final PlayerDataManager playerDataManager;
+
+    public DeathLootManager(PlayerDataManager playerDataManager) {
+        this.playerDataManager = playerDataManager;
+    }
 
     public Map<UUID, DeathLoot> getDeathLootMap() {
         return deathLootMap;
@@ -35,7 +44,9 @@ public class DeathLootManager {
         armorStand.setMarker(false);
 
 
-        armorStand.setHelmet(ItemBuilder.of(XMaterial.PLAYER_HEAD).skull(player).build());
+        armorStand.setHelmet(ItemBuilder.of(XMaterial.PLAYER_HEAD).transformItemStack(itemStack -> {
+            return XSkull.of(itemStack).profile(Profileable.of(ProfileInputType.BASE64, playerDataManager.getPlayerData(player).getSkin().skinValue)).apply();
+        }).build());
         armorStand.setChestplate(player.getInventory().getChestplate());
         armorStand.setLeggings(player.getInventory().getLeggings());
         armorStand.setBoots(player.getInventory().getBoots());

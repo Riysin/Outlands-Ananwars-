@@ -27,6 +27,19 @@ public class PlayerDataManager {
 
     public PlayerDataManager(PlayerConfig playerConfig) {
         this.playerConfig = playerConfig;
+
+        loadConfig();
+    }
+
+    public void loadConfig(){
+        playerConfig.getPlayerElementMap().forEach((playerName, playerElement) -> {
+            UUID uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId();
+            PlayerData playerData = new PlayerData();
+            playerData.setKills(playerElement.getKills());
+            playerData.setDeaths(playerElement.getDeaths());
+
+            playerDataMap.put(uuid, playerData);
+        });
     }
 
     public Map<UUID, PlayerData> getPlayerDataMap() {
@@ -79,7 +92,7 @@ public class PlayerDataManager {
         getPlayerData(player).getCanCraftItems().add(ID);
     }
 
-    public PlayerData setUpPlayer(PlayerJoinEvent event){
+    public void setUpPlayer(PlayerJoinEvent event){
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
         event.setJoinMessage(player.getName() + "§3 hi");
@@ -90,6 +103,5 @@ public class PlayerDataManager {
         }
         PlayerData playerData = playerDataMap.get(uuid);
         playerData.setSkin(Skin.load(uuid));
-        return playerData;
     }
 }

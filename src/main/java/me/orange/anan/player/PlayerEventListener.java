@@ -57,7 +57,11 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         playerDataManager.setUpPlayer(event);
-        nameTagService.update(MCPlayer.from(event.getPlayer()));
+
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            nameTagService.update(MCPlayer.from(player));
+        });
+
     }
 
     @EventHandler
@@ -144,6 +148,6 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onPlayerLeft(PlayerQuitEvent event) {
-        event.setQuitMessage("§e" + event.getPlayer() + " has left!");
+        event.setQuitMessage("§e" + event.getPlayer().getName() + " has left!");
     }
 }
