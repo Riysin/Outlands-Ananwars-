@@ -49,7 +49,7 @@ public class ClanManager {
 
     public void removeClan(Player player){
         clanConfig.removeClan(getClanName(player));
-        updateClan(getPlayerClan(player));
+        clanMap.remove(getClanName(player));
     }
 
     public void updateClan(Clan clan) {
@@ -70,7 +70,7 @@ public class ClanManager {
 
     public void removePlayerFromClan(Player player) {
         getPlayerClanConfigElement(player).removePlayer(player);
-        updateClan(getPlayerClan(player));
+        getPlayerClan(player).getPlayers().remove(player.getUniqueId());
     }
 
     public Map<String, Clan> getClanMap() {
@@ -186,15 +186,6 @@ public class ClanManager {
 
     public String getClanName(Player player) {
         return getPlayerClan(player).getDisplayName();
-    }
-
-    public void clanPlayerEvent(Player player, Event event) {
-        getPlayerClan(player).getPlayers().forEach(uuid -> {
-            Player clanPlayer = Bukkit.getPlayer(uuid);
-            if (clanPlayer != null) {
-                Bukkit.getPluginManager().callEvent(event);
-            }
-        });
     }
 
 }

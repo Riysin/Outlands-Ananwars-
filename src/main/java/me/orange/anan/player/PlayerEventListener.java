@@ -1,22 +1,15 @@
 package me.orange.anan.player;
 
-import com.cryptomorin.xseries.XMaterial;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetTitleSubtitle;
 import io.fairyproject.bukkit.events.player.EntityDamageByPlayerEvent;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
-import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
 import io.fairyproject.mc.scheduler.MCSchedulers;
-import io.fairyproject.mc.tablist.util.Skin;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
-import io.fairyproject.scheduler.response.TaskResponse;
 import me.orange.anan.clan.ClanManager;
-import me.orange.anan.events.PlayerLeftClanEvent;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.deathloot.DeathLootManager;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -27,14 +20,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.util.Vector;
 
 import java.time.Duration;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @InjectableComponent

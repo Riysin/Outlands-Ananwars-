@@ -1,5 +1,6 @@
 package me.orange.anan.craft;
 
+import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
@@ -34,10 +35,22 @@ public class CraftTimerManager {
         return craftingList;
     }
 
-    public void addCraftTimer(Player player, Craft craft) {
-        CraftTimer craftTimer = new CraftTimer(player, craft, craft.getTime());
-        craftTimerList.add(craftTimer);
+    public CraftTimer getPlayerFirstCraftTimer(Player player) {
+        for (CraftTimer craftTimer : getPlayerCraftTimerList(player)) {
+            if (craftTimer.getPlayer() == player)
+                return craftTimer;
+        }
+        return null;
+    }
 
+    public void addCraftTimer(Player player, Craft craft, int amount) {
+        CraftTimer craftTimer = new CraftTimer(player, craft, craft.getTime(), amount);
+        craftTimerList.add(craftTimer);
+        if (craftTimer == getPlayerFirstCraftTimer(player))
+            craftingCountDown(player, craftTimer);
+    }
+
+    public void craftingCountDown(Player player, CraftTimer craftTimer) {
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
             if (craftTimer.isFailed()) {
                 return TaskResponse.failure("cancelled");
@@ -46,13 +59,21 @@ public class CraftTimerManager {
             craftTimer.setTime(craftTimer.getTime() - 1);
 
             return TaskResponse.continueTask();
-        }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(craft.getTime()))).getFuture();
+        }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(craftTimer.getCraft().getTime()))).getFuture();
 
         future.thenRun(() -> {
-            player.getInventory().addItem(craft.getItemStack());
-            player.sendMessage("crafting finished");
-            removeCraftTimer(craftTimer);
-            Bukkit.getPluginManager().callEvent(new CraftTimerCountDownEvent(player, craftTimer));
+            if (craftTimer.getAmount() > 1) {
+                craftTimer.setAmount(craftTimer.getAmount() - 1);
+                craftTimer.setTime(craftTimer.getCraft().getTime());
+                player.getInventory().addItem(craftTimer.getCraft().getItemStack());
+                craftingCountDown(player, craftTimer);
+            } else {
+                removeCraftTimer(craftTimer);
+                player.getInventory().addItem(craftTimer.getCraft().getItemStack());
+                player.sendMessage("crafting finished");
+                Bukkit.getPluginManager().callEvent(new CraftTimerCountDownEvent(player, craftTimer));
+                craftingCountDown(player, getPlayerFirstCraftTimer(player));
+            }
         });
     }
 
@@ -70,15 +91,20 @@ public class CraftTimerManager {
 
     public void craftingFailed(Player player, CraftTimer craftTimer) {
         craftTimer.setFailed(true);
+        player.sendMessage("stoped the crafting of " + craftTimer.getCraft().getName() + "x" + craftTimer.getAmount());
+        returnItems(player, craftTimer.getCraft(), craftTimer.getAmount());
         removeCraftTimer(craftTimer);
-        player.sendMessage("stoped");
-        returnItems(player, craftTimer.getCraft());
+        if (getPlayerFirstCraftTimer(player) != null)
+            craftingCountDown(player, getPlayerFirstCraftTimer(player));
     }
 
     //return player items back if crafting failed
-    public void returnItems(Player player, Craft craft) {
+    public void returnItems(Player player, Craft craft, Integer craftCount) {
         for (ItemStack item : craft.getRecipe()) {
-            player.getInventory().addItem(item);
+            int totalAmount = item.getAmount() * craftCount;
+            ItemStack returnItem = item.clone();
+            returnItem.setAmount(totalAmount);
+            player.getInventory().addItem(returnItem);
         }
     }
 }

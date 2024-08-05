@@ -4,15 +4,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import java.util.List;
+
 public class PlayerLeftClanEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final Player player;
+    private final List<Player> players;
 
-    public PlayerLeftClanEvent(Player player) {
-        this.player = player;
+    public PlayerLeftClanEvent(List<Player> players) {
+        this.players = getPlayers();
     }
-    public Player getPlayer(){
-        return this.player;
+    public List<Player> getPlayers(){
+        return this.players;
     }
 
     @Override

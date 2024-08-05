@@ -9,13 +9,17 @@ public class CraftTimer {
     private UUID uuid;
     private Craft craft;
     private int time;
+    private int amount;
     private boolean failed;
-    public CraftTimer(Player player, Craft craft, int time) {
-        this.uuid= player.getUniqueId();
+
+    public CraftTimer(Player player, Craft craft, int time, int amount) {
+        this.uuid = player.getUniqueId();
         this.craft = craft;
-        this.time = time+1;
+        this.time = time;
+        this.amount = amount;
         this.failed = false;
     }
+
     public UUID getUuid() {
         return uuid;
     }
@@ -24,7 +28,7 @@ public class CraftTimer {
         this.uuid = uuid;
     }
 
-    public Player getPlayer(){
+    public Player getPlayer() {
         return Bukkit.getPlayer(uuid);
     }
 
@@ -44,6 +48,14 @@ public class CraftTimer {
         this.time = time;
     }
 
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
     public boolean isFailed() {
         return failed;
     }
@@ -52,3 +64,5 @@ public class CraftTimer {
         this.failed = failed;
     }
 }
+
+

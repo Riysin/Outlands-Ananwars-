@@ -15,6 +15,10 @@ import net.kyori.adventure.text.event.HoverEventSource;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 @InjectableComponent
 @Command(value = {"clan", "c"})
 public class ClanCommand extends BaseCommand {
@@ -116,14 +120,14 @@ public class ClanCommand extends BaseCommand {
         }
         if (clanManager.isOwner(player)) {
             clanManager.sendOnlineClanPlayer(player, "§eThe clan is disbanded because the owner left!");
-            clanManager.clanPlayerEvent(player, new PlayerLeftClanEvent(player));
-            clanManager.removePlayerFromClan(player);
+            List<Player> players = clanManager.getPlayerClan(player).getOnlineBukkitPlayers();
             clanManager.removeClan(player);
+            Bukkit.getPluginManager().callEvent(new PlayerLeftClanEvent(players));
         } else {
             clanManager.sendClanOwner(player, "§ePlayer " + player.getName() + " has left the clan.");
-            clanManager.getPlayerClan(player).removePlayer(player);
+            clanManager.removePlayerFromClan(player);
             player.sendMessage("§eYou left the clan.");
-            Bukkit.getPluginManager().callEvent(new PlayerLeftClanEvent(player));
+            Bukkit.getPluginManager().callEvent(new PlayerLeftClanEvent(Arrays.asList(player)));
         }
     }
 
@@ -157,7 +161,7 @@ public class ClanCommand extends BaseCommand {
         }
 
         clanManager.sendOnlineClanPlayer(player, "§eThis clan has been disbanded by the clan owner");
-        clanManager.clanPlayerEvent(player, new PlayerLeftClanEvent(player));
+        Bukkit.getPluginManager().callEvent(new PlayerLeftClanEvent(clanManager.getPlayerClan(player).getOnlineBukkitPlayers()));
         clanManager.removeClan(player);
     }
 

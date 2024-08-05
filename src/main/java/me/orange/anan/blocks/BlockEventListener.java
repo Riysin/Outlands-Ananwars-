@@ -1,8 +1,5 @@
 package me.orange.anan.blocks;
 
-import com.cryptomorin.xseries.XBlock;
-import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.messages.ActionBar;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.bukkit.xseries.XMaterialSerializer;
@@ -12,10 +9,8 @@ import me.orange.anan.craft.config.NatureBlockConfig;
 import me.orange.anan.craft.config.NatureBlockElement;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

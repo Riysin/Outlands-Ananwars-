@@ -9,6 +9,8 @@ import me.orange.anan.clan.Clan;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffect;
@@ -31,7 +33,7 @@ public class PlayerDataManager {
         loadConfig();
     }
 
-    public void loadConfig(){
+    public void loadConfig() {
         playerConfig.getPlayerElementMap().forEach((playerName, playerElement) -> {
             UUID uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId();
             PlayerData playerData = new PlayerData();
@@ -69,6 +71,8 @@ public class PlayerDataManager {
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 999999, 5, true, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999, 250));
         player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999, 0));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 999999, 250));
+        player.getWorld().spigot().playEffect(player.getLocation().clone().add(0, 1, 0), Effect.STEP_SOUND, Material.REDSTONE_BLOCK.getId(), 0, 0.25f, 0.25f, 0.25f, 0, 30, 32);
     }
 
     public void playerSaved(Player player) {
@@ -77,6 +81,7 @@ public class PlayerDataManager {
         player.removePotionEffect(PotionEffectType.SLOW);
         player.removePotionEffect(PotionEffectType.JUMP);
         player.removePotionEffect(PotionEffectType.WITHER);
+        player.removePotionEffect(PotionEffectType.WEAKNESS);
     }
 
     public boolean checkSaving(Player player) {
@@ -88,11 +93,11 @@ public class PlayerDataManager {
         getPlayerData(player2).setSaving(bool);
     }
 
-    public void addCanCraft(Player player, String ID){
+    public void addCanCraft(Player player, String ID) {
         getPlayerData(player).getCanCraftItems().add(ID);
     }
 
-    public void setUpPlayer(PlayerJoinEvent event){
+    public void setUpPlayer(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
         event.setJoinMessage(player.getName() + "§3 hi");

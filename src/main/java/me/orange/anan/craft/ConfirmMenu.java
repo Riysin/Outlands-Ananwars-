@@ -34,7 +34,7 @@ public class ConfirmMenu {
 
     public void open(Player player, Craft craft) {
         Gui gui = guiFactory.create(Component.text("§f§l確認介面"));
-        NormalPane pane = Pane.normal(9, 5);
+        NormalPane pane = Pane.normal(9, 4);
         List<String> loreLines = new ArrayList<>();
         AtomicInteger count = new AtomicInteger(1);
         int maxAmount = craftManager.getCanCraftAmount(player, craft);
@@ -98,7 +98,6 @@ public class ConfirmMenu {
                 loreLines.add("§e" + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() * count.get() + ")");
             }
 
-
             pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
                     .clearLore()
                     .lore(loreLines)
@@ -111,10 +110,14 @@ public class ConfirmMenu {
                 .name("§7確認")
                 .build(), player1 -> {
             player1.closeInventory();
-            craftTimerManager.addCraftTimer(player1, craft);
+            if (craft.getTime() != 0)
+                craftTimerManager.addCraftTimer(player1, craft, count.get());
+            else {
+                player1.getInventory().addItem(ItemBuilder.of(craft.getItemStack()).amount(count.get()).build());
+            }
 
             for (ItemStack item : craft.getRecipe()) {
-                removeItemsFromInventory(player1, item);
+                removeItemsFromInventory(player1, item, count.get());
             }
         }));
         pane.setSlot(5, 3, GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
@@ -130,8 +133,8 @@ public class ConfirmMenu {
         gui.open(player);
     }
 
-    private void removeItemsFromInventory(Player player, ItemStack itemStack) {
-        int amountToRemove = itemStack.getAmount();
+    private void removeItemsFromInventory(Player player, ItemStack itemStack, int count) {
+        int amountToRemove = itemStack.getAmount() * count;
         for (ItemStack item : player.getInventory().getContents()) {
             if (item != null && item.isSimilar(itemStack)) {
                 int itemAmount = item.getAmount();

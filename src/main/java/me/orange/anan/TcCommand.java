@@ -10,6 +10,8 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
+import me.orange.anan.blocks.config.BuildConfig;
+import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.config.CraftConfig;
 import me.orange.anan.craft.config.NatureBlockConfig;
@@ -25,13 +27,13 @@ import java.util.concurrent.CompletableFuture;
 @InjectableComponent
 @Command(value = "tc", permissionNode = "tc.admin")
 public class TcCommand extends BaseCommand {
-    private final PlayerStatsMenu playerStatsMenu;
     private final PlayerConfig playerConfig;
+    private final ClanConfig clanConfig;
     private final NatureBlockConfig natureBlockConfig;
     private final CraftManager craftManager;
 
-    public TcCommand(PlayerStatsMenu playerStatsMenu, PlayerConfig playerConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager) {
-        this.playerStatsMenu = playerStatsMenu;
+    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig) {
+        this.clanConfig = clanConfig;
         this.playerConfig = playerConfig;
         this.natureBlockConfig = natureBlockConfig;
         this.craftManager = craftManager;
@@ -58,6 +60,9 @@ public class TcCommand extends BaseCommand {
 
         craftManager.loadConfigFile();
         natureBlockConfig.loadAndSave();
+        clanConfig.loadAndSave();
+        playerConfig.loadAndSave();
+        buildConfig.loadAndSave();
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Config reloaded");
     }
 
