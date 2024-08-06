@@ -13,13 +13,10 @@ import io.fairyproject.scheduler.response.TaskResponse;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.craft.CraftManager;
-import me.orange.anan.craft.config.CraftConfig;
-import me.orange.anan.craft.config.NatureBlockConfig;
-import me.orange.anan.player.PlayerStatsMenu;
+import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;

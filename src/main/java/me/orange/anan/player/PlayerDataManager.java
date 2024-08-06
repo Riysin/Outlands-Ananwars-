@@ -66,6 +66,7 @@ public class PlayerDataManager {
 
     public void playerKnocked(Player player) {
         getPlayerData(player).setKnocked(true);
+
         player.setHealth(10);
         player.setSneaking(true);
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 999999, 5, true, false));
@@ -91,6 +92,12 @@ public class PlayerDataManager {
     public void setSavingStats(Player player1, Player player2, Boolean bool) {
         getPlayerData(player1).setSaving(bool);
         getPlayerData(player2).setSaving(bool);
+    }
+
+    public void savingFailed(Player player1, Player player2) {
+        player1.sendTitle("", "§esaving failed");
+        player2.sendTitle("", "§esaving failed");
+        setSavingStats(player1, player2, false);
     }
 
     public void addCanCraft(Player player, String ID) {

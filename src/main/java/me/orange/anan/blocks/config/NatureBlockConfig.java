@@ -1,14 +1,10 @@
-package me.orange.anan.craft.config;
+package me.orange.anan.blocks.config;
 
-import com.cryptomorin.xseries.XBlock;
-import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.config.yaml.YamlConfiguration;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
-import org.bukkit.Material;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

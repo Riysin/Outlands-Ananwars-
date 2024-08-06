@@ -1,4 +1,4 @@
-package me.orange.anan.craft;
+package me.orange.anan.craft.crafting;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;
@@ -8,6 +8,8 @@ import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.craft.CraftManager;
+import me.orange.anan.craft.CraftType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -104,14 +106,14 @@ public class CraftMenu {
                 List<String> loreLines = new ArrayList<>();
                 boolean canCraft = craftManager.canCraft(player, craft);
 
-                loreLines.add("§8" + craft.getType().name());
+                loreLines.add("&8" + craft.getType().name());
                 loreLines.add("");
                 loreLines.addAll(craft.getLore());
                 loreLines.add("");
                 loreLines.add("§e所需材料:");
 
                 //setup recipe lore
-                for (ItemStack itemStack : craft.getRecipe()) {
+                for (ItemStack itemStack : craftManager.getRecipesFromIDs(craft.getRecipe(), player)) {
                     String itemName = itemStack.getItemMeta().getDisplayName();
                     int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
                     boolean hasEnough = craftManager.hasEnough(player, itemStack);

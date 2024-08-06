@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.nio.Buffer;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -77,6 +76,20 @@ public class CraftManager {
 
         Log.info(item.toString());
         return item.get();
+    }
+
+    public CraftElement getCraftElementWithID(String ID) {
+        AtomicReference<CraftElement> craftElement = new AtomicReference<>();
+
+        config.getCraftTypes().forEach(element -> {
+            element.getCrafts().forEach(craft -> {
+                if (craft.getId().equals(ID)) {
+                    craftElement.set(craft);
+                }
+            });
+        });
+
+        return craftElement.get();
     }
 
     public boolean canCraft(Player player, Craft craft) {

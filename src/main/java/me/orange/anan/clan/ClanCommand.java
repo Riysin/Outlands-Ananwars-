@@ -91,7 +91,6 @@ public class ClanCommand extends BaseCommand {
         Clan clan = clanManager.getPlayerClan(invitor);
         invitor.sendMessage(player.getName() + "§a accepted the invitation");
         player.sendMessage("§eYou joined " + clan.getDisplayName());
-        clan.addPlayer(player);
         clan.getInvitations().remove(player.getUniqueId());
         clanManager.addPlayerToClan(invitor, player);
 

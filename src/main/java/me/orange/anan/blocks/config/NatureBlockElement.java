@@ -1,10 +1,8 @@
-package me.orange.anan.craft.config;
+package me.orange.anan.blocks.config;
 
 import io.fairyproject.config.annotation.ConfigurationElement;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ConfigurationElement

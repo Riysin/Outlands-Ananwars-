@@ -1,5 +1,6 @@
-package me.orange.anan.craft;
+package me.orange.anan.craft.crafting;
 
+import me.orange.anan.craft.Craft;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

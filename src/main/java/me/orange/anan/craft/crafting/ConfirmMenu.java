@@ -1,4 +1,4 @@
-package me.orange.anan.craft;
+package me.orange.anan.craft.crafting;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.profiles.builder.XSkull;
@@ -11,9 +11,13 @@ import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.craft.Craft;
+import me.orange.anan.craft.CraftManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -81,8 +85,19 @@ public class ConfirmMenu {
             gui.update(clicker);
         }));
 
+        gui.onOpenCallback($ -> {
+            gui.getEventNode().addListener(PlayerDropItemEvent.class, event -> {
+                event.setCancelled(true);
+                gui.update(player);
+            });
+            gui.getEventNode().addListener(PlayerPickupItemEvent.class, event -> {
+                event.setCancelled(true);
+                gui.update(player);
+            });
+        });
+
         //crafted item
-        gui.onDrawCallback(updatePlayer -> {
+        gui.onDrawCallback($ -> {
             loreLines.clear();
             loreLines.add("§8" + craft.getType().name());
             loreLines.add("");
@@ -92,7 +107,7 @@ public class ConfirmMenu {
             loreLines.add("§e所需材料:");
 
             //setup recipe lore
-            for (ItemStack itemStack : craft.getRecipe()) {
+            for (ItemStack itemStack : craftManager.getRecipesFromIDs(craft.getRecipe(), player)) {
                 String itemName = itemStack.getItemMeta().getDisplayName();
                 int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
                 loreLines.add("§e" + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() * count.get() + ")");
@@ -113,10 +128,10 @@ public class ConfirmMenu {
             if (craft.getTime() != 0)
                 craftTimerManager.addCraftTimer(player1, craft, count.get());
             else {
-                player1.getInventory().addItem(ItemBuilder.of(craft.getItemStack()).amount(count.get()).build());
+                player1.getInventory().addItem(ItemBuilder.of(craftManager.getItemStack(craft, player1)).amount(count.get()).build());
             }
 
-            for (ItemStack item : craft.getRecipe()) {
+            for (ItemStack item : craftManager.getRecipesFromIDs(craft.getRecipe(), player1)) {
                 removeItemsFromInventory(player1, item, count.get());
             }
         }));

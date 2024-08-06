@@ -3,16 +3,13 @@ package me.orange.anan;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.sidebar.SidebarAdapter;
-import me.orange.anan.clan.Clan;
 import me.orange.anan.clan.ClanManager;
-import me.orange.anan.craft.CraftTimer;
-import me.orange.anan.craft.CraftTimerManager;
+import me.orange.anan.craft.crafting.CraftTimer;
+import me.orange.anan.craft.crafting.CraftTimerManager;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @InjectableComponent

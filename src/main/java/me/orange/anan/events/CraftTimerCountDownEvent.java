@@ -1,7 +1,6 @@
 package me.orange.anan.events;
 
-import me.orange.anan.craft.Craft;
-import me.orange.anan.craft.CraftTimer;
+import me.orange.anan.craft.crafting.CraftTimer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
