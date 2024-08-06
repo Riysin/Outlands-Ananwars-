@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.inventory.ItemStack;
 
 @InjectableComponent
@@ -64,8 +65,14 @@ public class BlockEventListener implements Listener {
             Integer natureBlockBlockId = natureBlock.getBlockId();
 
             if (id.equals(natureBlockBlockId) && (natureBlockData == -1 || data == natureBlockData)) {
+                if(natureBlock.getDrops().isEmpty()){
+                    drop = true;
+                    break;
+                }
+
                 for (String key : natureBlock.getDrops().keySet()) {
-                    ItemStack itemStack = craftManager.getCrafts().get(key).getItemStack();
+                    Craft craft = craftManager.getCrafts().get(key);
+                    ItemStack itemStack = craftManager.getItemStack(craft, player);
                     itemStack.setAmount(natureBlock.getDrops().get(key));
                     dropItem(player, itemStack);
                     drop = true;
@@ -93,7 +100,7 @@ public class BlockEventListener implements Listener {
         String nbtValue = NBTModifier.get().getString(item, NBTKey.create("craft"));
         Craft craft = craftManager.getCrafts().get(nbtValue);
 
-        if(craft == null || craft.getType() != CraftType.BUILD){
+        if(craft == null || craft.getType() != CraftType.BUILD && craft.getType() != CraftType.USAGE){
             if(player.getGameMode() != GameMode.CREATIVE)
                 event.setCancelled(true);
             return;

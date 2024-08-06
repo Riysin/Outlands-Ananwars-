@@ -2,16 +2,25 @@ package me.orange.anan.craft.config;
 
 import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.config.annotation.ElementType;
+import me.orange.anan.craft.CraftType;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @ConfigurationElement
 public class CraftConfigElement {
-    @ElementType(CraftElement.class)
-    private Map<String, CraftElement> crafts = new HashMap<>();
 
-    public Map<String, CraftElement> getCrafts() {
+    private CraftType craftType = CraftType.ALL;
+
+    @ElementType(CraftElement.class)
+    private List<CraftElement> crafts = new ArrayList<>();
+
+    public CraftType getCraftType(){
+        return this.craftType;
+    }
+    public void setCraftType(CraftType craftType){
+        this.craftType = craftType;
+    }
+    public List<CraftElement> getCrafts() {
         return crafts;
     }
 }

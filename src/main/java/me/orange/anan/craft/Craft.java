@@ -1,18 +1,26 @@
 package me.orange.anan.craft;
 
 import com.cryptomorin.xseries.XMaterial;
+import io.fairyproject.bukkit.nbt.NBTKey;
+import io.fairyproject.bukkit.nbt.NBTModifier;
+import io.fairyproject.bukkit.util.items.behaviour.ItemBehaviour;
+import io.fairyproject.container.InjectableComponent;
 import org.bukkit.inventory.ItemStack;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Craft {
     private ItemStack itemStack;
-    private List<ItemStack> recipe = new ArrayList<>();
+    private Map<String, Integer> recipe = new HashMap<>();
     private int time = 0;
     private CraftTier tier = CraftTier.COMMON;
     private CraftType type = CraftType.ALL;
     private XMaterial menuIcon = XMaterial.STONE;
+    private List<ItemBehaviour> itemBehaviours = new ArrayList<>();
 
     public ItemStack getItemStack() {
         return itemStack;
@@ -26,15 +34,19 @@ public class Craft {
         return getItemStack().getItemMeta().getDisplayName();
     }
 
+    public String getID() {
+        return NBTModifier.get().getString(this.itemStack, NBTKey.create("craft"));
+    }
+
     public List<String> getLore() {
         return getItemStack().getItemMeta().getLore();
     }
 
-    public List<ItemStack> getRecipe() {
+    public Map<String, Integer> getRecipe() {
         return recipe;
     }
 
-    public void setRecipe(List<ItemStack> recipe) {
+    public void setRecipe(Map<String, Integer> recipe) {
         this.recipe = recipe;
     }
 
@@ -68,5 +80,9 @@ public class Craft {
 
     public void setMenuIcon(XMaterial menuIcon) {
         this.menuIcon = menuIcon;
+    }
+
+    public void addBehavior(ItemBehaviour behaviour){
+        this.itemBehaviours.add(behaviour);
     }
 }

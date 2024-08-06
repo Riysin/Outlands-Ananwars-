@@ -11,6 +11,7 @@ import java.util.*;
 
 @ConfigurationElement
 public class CraftElement {
+    private String id = "id";
     private XMaterial material = XMaterial.STONE;
     private XMaterial icon = XMaterial.STONE;
     private String displayName = "顯示名稱";
@@ -18,6 +19,14 @@ public class CraftElement {
     private int time = 0;
     private CraftTier tier = CraftTier.COMMON;
     private Map<String, Integer> recipes = new HashMap<>();
+
+    public String getId(){
+        return this.id;
+    }
+
+    public void setId(String id){
+        this.id = id;
+    }
 
     public XMaterial getMaterial() {
         return material;

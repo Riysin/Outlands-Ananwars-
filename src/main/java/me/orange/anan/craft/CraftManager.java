@@ -1,13 +1,18 @@
 package me.orange.anan.craft;
 
-import com.cryptomorin.xseries.XMaterial;
+import io.fairyproject.bukkit.listener.ListenerRegistry;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
+import io.fairyproject.bukkit.util.items.FairyItem;
+import io.fairyproject.bukkit.util.items.FairyItemRegistry;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
+import io.fairyproject.bukkit.util.items.behaviour.ItemBehaviour;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.log.Log;
+import me.orange.anan.craft.behaviour.BehaviourManager;
+import me.orange.anan.craft.behaviour.CraftBehaviour;
 import me.orange.anan.craft.config.CraftConfig;
-import org.bukkit.Bukkit;
+import me.orange.anan.craft.config.CraftElement;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,22 +23,29 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CraftManager {
     private Map<String, Craft> crafts = new LinkedHashMap<>();
     private final CraftConfig config;
+    private final BehaviourManager behaviourManager;
+    private final FairyItemRegistry fairyItemRegistry;
+    private final ListenerRegistry listenerRegistry;
 
     public Map<String, Craft> getCrafts() {
         return crafts;
     }
 
-    public CraftManager(CraftConfig config) {
+    public CraftManager(CraftConfig config, BehaviourManager behaviourManager, FairyItemRegistry fairyItemRegistry, ListenerRegistry listenerRegistry) {
         this.config = config;
+        this.behaviourManager = behaviourManager;
+        this.fairyItemRegistry = fairyItemRegistry;
+        this.listenerRegistry = listenerRegistry;
         loadConfigFile();
     }
 
     public void loadConfigFile(){
         config.loadAndSave();
-        config.getCraftTypes().forEach((type, element) -> {
-            element.getCrafts().forEach((id, craftElement) -> {
+        config.getCraftTypes().forEach(element -> {
+            element.getCrafts().forEach(craftElement -> {
+
                 Craft craft = new Craft();
-                craft.setType(CraftType.valueOf(type));
+                craft.setType(element.getCraftType());
                 craft.setMenuIcon(craftElement.getIcon());
                 craft.setTier(craftElement.getTier());
                 craft.setTime(craftElement.getTime());
@@ -41,34 +53,33 @@ public class CraftManager {
                         ItemBuilder.of(craftElement.getMaterial())
                                 .name(craftElement.getDisplayName())
                                 .lore(craftElement.getLore())
-                                .tag(NBTKey.create("craft"), id)
+                                .tag(NBTKey.create("craft"), craftElement.getId())
                                 .build()
                 );
 
-                List<ItemStack> recipe = new ArrayList<>();
-                craftElement.getRecipes().forEach((k, v) -> {
-                    recipe.add(
-                            ItemBuilder.of(getConfigItemWithID(k))
-                                    .amount(v)
-                                    .build()
-                    );
-                });
-                craft.setRecipe(recipe);
-                crafts.put(id, craft);
+                Map<String, Integer> recipes = new HashMap<>(craftElement.getRecipes());
+                craft.setRecipe(recipes);
+                crafts.put(craftElement.getId(), craft);
             });
+        });
+
+        crafts.forEach((id, craft) -> {
+            if(fairyItemRegistry.has(id))
+                fairyItemRegistry.unregister(fairyItemRegistry.get(id));
+            createFairyItem(craft);
         });
     }
 
     public ItemStack getConfigItemWithID(String ID) {
         AtomicReference<ItemStack> item = new AtomicReference<>();
 
-        config.getCraftTypes().forEach((type, element) -> {
-            element.getCrafts().forEach((id, craftElement) -> {
-                if (id.equals(ID)) {
+        config.getCraftTypes().forEach(element -> {
+            element.getCrafts().forEach(craftElement -> {
+                if (craftElement.getId().equals(ID)) {
                     item.set(ItemBuilder.of(craftElement.getMaterial())
                             .name(craftElement.getDisplayName())
                             .lore(craftElement.getLore())
-                            .tag(NBTKey.create("craft"), id)
+                            .tag(NBTKey.create("craft"), craftElement.getId())
                             .build());
                 }
             });
@@ -105,7 +116,7 @@ public class CraftManager {
         }
 
         // Check if player has enough materials for the recipe
-        for (ItemStack requiredItem : craft.getRecipe()) {
+        for (ItemStack requiredItem : getRecipesFromIDs(craft.getRecipe(), player)) {
             String NBTValue = NBTModifier.get().getString(requiredItem, NBTKey.create("craft"));
             int requiredAmount = requiredItem.getAmount();
             int playerAmount = playerMaterials.getOrDefault(NBTValue, 0);
@@ -157,7 +168,7 @@ public class CraftManager {
 
         // Check if player has enough materials for the recipe
         int canCraftAmount = Integer.MAX_VALUE;
-        for (ItemStack requiredItem : craft.getRecipe()) {
+        for (ItemStack requiredItem : getRecipesFromIDs(craft.getRecipe(), player)) {
             String NBTValue = NBTModifier.get().getString(requiredItem, NBTKey.create("craft"));
             int requiredAmount = requiredItem.getAmount();
             int playerAmount = playerMaterials.getOrDefault(NBTValue, 0);
@@ -170,5 +181,35 @@ public class CraftManager {
         }
 
         return canCraftAmount;
+    }
+
+    public ItemStack getItemStack(Craft craft, Player player){
+        return fairyItemRegistry.get(craft.getID()).provideItemStack(player);
+    }
+
+    private void createFairyItem(Craft craft){
+        ItemStack itemStack = craft.getItemStack();
+        Map<String, CraftBehaviour> behaviours = behaviourManager.getBehaviours();
+
+        FairyItem.Builder builder = FairyItem.builder(craft.getID())
+                .item(itemStack);
+
+        if(behaviours.containsKey(craft.getID()))
+            for (ItemBehaviour behaviour : behaviours.get(craft.getID()).getBehaviours()) {
+                builder.behaviour(behaviour);
+            }
+
+        builder.create(fairyItemRegistry);
+    }
+
+    public List<ItemStack> getRecipesFromIDs(Map<String, Integer> recipes, Player player){
+        List<ItemStack> items = new ArrayList<>();
+        recipes.forEach((id, amount) -> {
+            ItemStack item = fairyItemRegistry.get(id).provideItemStack(player);
+            item.setAmount(amount);
+            items.add(item);
+        });
+
+        return items;
     }
 }

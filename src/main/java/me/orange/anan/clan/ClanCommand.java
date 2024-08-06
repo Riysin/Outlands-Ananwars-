@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ClanCommand extends BaseCommand {
     private final ClanManager clanManager;
 
-    public ClanCommand(ClanManager clanManager) {
+    public ClanCommand(ClanManager clanManager, ClanConfig clanConfig) {
         this.clanManager = clanManager;
     }
 

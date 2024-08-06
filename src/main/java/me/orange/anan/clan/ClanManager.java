@@ -66,6 +66,7 @@ public class ClanManager {
     public void addPlayerToClan(Player clanPlayer, Player player) {
         getPlayerClanConfigElement(clanPlayer).addPlayer(player);
         updateClan(getPlayerClan(clanPlayer));
+        clanConfig.save();
     }
 
     public void removePlayerFromClan(Player player) {
