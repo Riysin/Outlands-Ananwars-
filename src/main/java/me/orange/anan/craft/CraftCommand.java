@@ -9,7 +9,7 @@ import io.fairyproject.command.annotation.CommandPresence;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.crafting.CraftMenu;
 import me.orange.anan.craft.crafting.ongoinCraftMenu.OngoingCraftMenu;
-import me.orange.anan.craft.behaviour.upgradeHammer.HammerMenu;
+import me.orange.anan.craft.behaviour.hammer.HammerMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -44,17 +44,5 @@ public class CraftCommand extends BaseCommand {
         ItemStack item = craftManager.getItemStack(craft, player);
         item.setAmount(amount);
         player.getInventory().addItem(item);
-    }
-
-    @Command("feature")
-    public void feature(BukkitCommandContext ctx, @Arg("feature") String feature) {
-        switch (feature) {
-            case "hammer":
-                hammerMenu.open(ctx.getPlayer());
-                break;
-            default:
-                ctx.getPlayer().sendMessage("§c找不到此功能");
-        }
-
     }
 }

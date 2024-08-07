@@ -75,7 +75,7 @@ public class DeathEventListener implements Listener {
             playerConfig.addPlayerDeaths(player.getName());
             deathLootManager.addPlayer(player, player.getLocation());
             if (event.getEntity().getKiller() == null) {
-                event.setDeathMessage("§c" + player + "意外死亡了");
+                event.setDeathMessage("§c" + player.getName() + "意外死亡了");
                 return;
             }
             event.setDeathMessage("§c" + player.getName() + "被" + event.getEntity().getKiller().getName() + "擊殺了");

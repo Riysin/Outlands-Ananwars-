@@ -40,10 +40,11 @@ public class BlockStatsManager {
         return blockStats.getHealth() <= 0;
     }
 
-    public void placeBlock(Player player, Block block, Integer health){
+    public BlockStats placeBlock(Player player, Block block, Integer health){
         BlockStats blockStats = getBlockStats(block);
         blockStats.setBreakable(true);
         blockStats.setHealth(health);
         blockStats.setBlockType(BlockType.BUILDING);
+        return blockStats;
     }
 }

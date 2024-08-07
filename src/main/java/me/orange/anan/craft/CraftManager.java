@@ -25,17 +25,15 @@ public class CraftManager {
     private final CraftConfig config;
     private final BehaviourManager behaviourManager;
     private final FairyItemRegistry fairyItemRegistry;
-    private final ListenerRegistry listenerRegistry;
 
     public Map<String, Craft> getCrafts() {
         return crafts;
     }
 
-    public CraftManager(CraftConfig config, BehaviourManager behaviourManager, FairyItemRegistry fairyItemRegistry, ListenerRegistry listenerRegistry) {
+    public CraftManager(CraftConfig config, BehaviourManager behaviourManager, FairyItemRegistry fairyItemRegistry) {
         this.config = config;
         this.behaviourManager = behaviourManager;
         this.fairyItemRegistry = fairyItemRegistry;
-        this.listenerRegistry = listenerRegistry;
         loadConfigFile();
     }
 
@@ -85,7 +83,6 @@ public class CraftManager {
             });
         });
 
-        Log.info(item.toString());
         return item.get();
     }
 
@@ -211,5 +208,24 @@ public class CraftManager {
         });
 
         return items;
+    }
+
+    public void removeItemsFromInventory(Player player, ItemStack itemStack, int count) {
+        int amountToRemove = itemStack.getAmount() * count;
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && item.isSimilar(itemStack)) {
+                int itemAmount = item.getAmount();
+                if (itemAmount > amountToRemove) {
+                    item.setAmount(itemAmount - amountToRemove);
+                    break;
+                } else {
+                    player.getInventory().remove(item);
+                    amountToRemove -= itemAmount;
+                    if (amountToRemove <= 0) {
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

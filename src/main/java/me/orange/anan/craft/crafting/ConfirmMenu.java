@@ -132,7 +132,7 @@ public class ConfirmMenu {
             }
 
             for (ItemStack item : craftManager.getRecipesFromIDs(craft.getRecipe(), player1)) {
-                removeItemsFromInventory(player1, item, count.get());
+                craftManager.removeItemsFromInventory(player1, item, count.get());
             }
         }));
         pane.setSlot(5, 3, GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
@@ -146,25 +146,6 @@ public class ConfirmMenu {
 
         gui.addPane(pane);
         gui.open(player);
-    }
-
-    private void removeItemsFromInventory(Player player, ItemStack itemStack, int count) {
-        int amountToRemove = itemStack.getAmount() * count;
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.isSimilar(itemStack)) {
-                int itemAmount = item.getAmount();
-                if (itemAmount > amountToRemove) {
-                    item.setAmount(itemAmount - amountToRemove);
-                    break;
-                } else {
-                    player.getInventory().remove(item);
-                    amountToRemove -= itemAmount;
-                    if (amountToRemove <= 0) {
-                        break;
-                    }
-                }
-            }
-        }
     }
 
     private AtomicInteger addCount(AtomicInteger count, int i, int max) {
