@@ -1,5 +1,6 @@
 package me.orange.anan.blocks.config;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.config.annotation.ConfigurationElement;
 
 import java.util.HashMap;

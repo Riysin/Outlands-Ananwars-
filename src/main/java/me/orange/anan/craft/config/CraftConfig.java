@@ -24,13 +24,14 @@ public class CraftConfig extends YamlConfiguration {
                 .collect(Collectors.toSet());
 
         for (CraftType value : CraftType.values()) {
+            if(types.contains(value))
+                break;
             types.add(value); // 仅添加到types，不再需要重复遍历
             CraftConfigElement configElement = new CraftConfigElement();
             configElement.setCraftType(value);
             craftTypes.add(configElement);
         }
 
-        craftTypes.get(0).getCrafts().add(new CraftElement());
         this.save();
     }
 
