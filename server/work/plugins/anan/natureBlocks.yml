@@ -1,0 +1,27 @@
+natureBlocks:
+- blockId: 17
+  data: -1
+  drops:
+    stick: 2
+- blockId: 162
+  data: -1
+  drops:
+    stick: 2
+- blockId: 1
+  data: 0
+  drops:
+    stoneButton: 1
+- blockId: 15
+  data: 0
+  drops:
+    ironOre: 1
+- blockId: 14
+  data: 0
+  drops:
+    goldOre: 1
+- blockId: 18
+  data: -1
+  drops: {}
+- blockId: 161
+  data: -1
+  drops: {}

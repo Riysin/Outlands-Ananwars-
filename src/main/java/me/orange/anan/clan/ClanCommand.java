@@ -120,8 +120,8 @@ public class ClanCommand extends BaseCommand {
         if (clanManager.isOwner(player)) {
             clanManager.sendOnlineClanPlayer(player, "§eThe clan is disbanded because the owner left!");
             List<Player> players = clanManager.getPlayerClan(player).getOnlineBukkitPlayers();
-            clanManager.removeClan(player);
             Bukkit.getPluginManager().callEvent(new PlayerLeftClanEvent(players));
+            clanManager.removeClan(player);
         } else {
             clanManager.sendClanOwner(player, "§ePlayer " + player.getName() + " has left the clan.");
             clanManager.removePlayerFromClan(player);
@@ -191,7 +191,7 @@ public class ClanCommand extends BaseCommand {
             ctx.getPlayer().sendMessage("§cYou are not in the same clan with this player!");
             return;
         }
-        if (clanManager.isOwner(ctx.getPlayer())) {
+        if (!clanManager.isOwner(ctx.getPlayer())) {
             ctx.getPlayer().sendMessage("§cYou don't have the permission to do this.");
             return;
         }

@@ -150,8 +150,8 @@ public class HammerManager {
 
     public void fixBlock(Player player, Block block) {
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
-        int currentHealth = blockStats.getHealth();
-        int maxHealth = blockStats.getHealth();
+        int currentHealth = blockStats.getHealth();;
+        int maxHealth = buildConfig.getBuildBlocks().get("buildLv1");
 
         if (currentHealth < maxHealth) {
             blockStats.setHealth(currentHealth + 1);

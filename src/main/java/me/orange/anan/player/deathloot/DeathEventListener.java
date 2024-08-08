@@ -47,38 +47,22 @@ public class DeathEventListener implements Listener {
     }
 
     @EventHandler
-    public void onRightClickArmorStand(PlayerInteractAtEntityEvent event) {
-        Player player = event.getPlayer();
-        Entity entity = event.getRightClicked();
-        if (entity instanceof ArmorStand) {
-            ArmorStand armorStand = (ArmorStand) entity;
-            event.setCancelled(true);
-            Bukkit.getServer().dispatchCommand(player, "death loot " + String.valueOf(armorStand.getUniqueId()));
-        }
-    }
-
-    @EventHandler
-    public void onHitArmorStand(EntityDamageByPlayerEvent event) {
-        if (event.getEntity() instanceof ArmorStand) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
-        Player player = event.getEntity().getPlayer();
-        if (!playerDataManager.checkKnocked(player)) {
+        Player player = event.getEntity();
+        boolean isKnocked = playerDataManager.checkKnocked(player);
+
+        if (!isKnocked) {
             playerDataManager.playerKnocked(player);
             player.sendMessage("§c你被擊倒了");
         } else {
             playerDataManager.playerSaved(player);
             playerConfig.addPlayerDeaths(player.getName());
             deathLootManager.addPlayer(player, player.getLocation());
-            if (event.getEntity().getKiller() == null) {
-                event.setDeathMessage("§c" + player.getName() + "意外死亡了");
-                return;
-            }
-            event.setDeathMessage("§c" + player.getName() + "被" + event.getEntity().getKiller().getName() + "擊殺了");
+
+            Player killer = player.getKiller();
+            event.setDeathMessage(killer == null ?
+                    "§c" + player.getName() + "意外死亡了" :
+                    "§c" + player.getName() + "被" + killer.getName() + "擊殺了");
         }
     }
 
@@ -87,15 +71,13 @@ public class DeathEventListener implements Listener {
         Player player = event.getPlayer();
         Location from = event.getFrom();
         Location to = event.getTo();
-        if (playerDataManager.checkKnocked(player)) {
-            if (event.getFrom().getY() < event.getTo().getY() && !player.isOnGround()) {
-                player.setVelocity(new Vector(0, 0, 0));
-            }
+
+        if (playerDataManager.checkKnocked(player) && !player.isOnGround() && from.getY() < to.getY()) {
+            player.setVelocity(new Vector(0, 0, 0));
         }
-        if (playerDataManager.checkSaving(player)) {
-            if (from != to) {
-                player.teleport(from);
-            }
+
+        if (playerDataManager.checkSaving(player) && !from.equals(to)) {
+            player.teleport(from);
         }
     }
 
@@ -105,12 +87,12 @@ public class DeathEventListener implements Listener {
         if (!(event.getRightClicked() instanceof Player)) {
             return;
         }
-        Player savedPlayer = ((Player) event.getRightClicked()).getPlayer();
+        Player savedPlayer = (Player) ((Player) event.getRightClicked()).getPlayer();
         if (playerDataManager.getPlayerData(eventPlayer).isSaving()) {
             Bukkit.getPluginManager().callEvent(new PlayerSaveCanceledEvent(eventPlayer, savedPlayer));
-            return;
+        } else {
+            Bukkit.getPluginManager().callEvent(new PlayerSaveEvent(eventPlayer, savedPlayer));
         }
-        Bukkit.getPluginManager().callEvent(new PlayerSaveEvent(eventPlayer, savedPlayer));
     }
 
     @EventHandler
@@ -118,41 +100,59 @@ public class DeathEventListener implements Listener {
         Player eventPlayer = event.getEventPlayer();
         Player savedPlayer = event.getSavedPlayer();
 
-        if (clanManager.sameClan(eventPlayer, savedPlayer))
-            if (playerDataManager.checkKnocked(savedPlayer)) {
-                playerDataManager.setSavingStats(eventPlayer, savedPlayer, true);
-                AtomicInteger i = new AtomicInteger(0);
+        if (clanManager.sameClan(eventPlayer, savedPlayer) && playerDataManager.checkKnocked(savedPlayer)) {
+            AtomicInteger progressCounter = new AtomicInteger(0);
+            playerDataManager.setSavingStats(eventPlayer, savedPlayer, true);
 
-                CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
-                    if (!playerDataManager.checkSaving(savedPlayer)) {
-                        return TaskResponse.failure("canceled");
-                    }
+            CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
+                if (!playerDataManager.checkSaving(savedPlayer)) {
+                    return TaskResponse.failure("canceled");
+                }
 
-                    double progress = (double) i.get() / 5;
-                    String progressBar = createProgressBar(progress);
-                    Titles.sendTitle(eventPlayer, 0, 20, 10, "", progressBar);
-                    Titles.sendTitle(savedPlayer, 0, 20, 10, "", progressBar);
-                    i.getAndIncrement();
+                double progress = (double) progressCounter.get() / 100;
+                String progressBar = createProgressBar(progress);
+                Titles.sendTitle(eventPlayer, 0, 20, 10, "", progressBar);
+                Titles.sendTitle(savedPlayer, 0, 20, 10, "", progressBar);
+                progressCounter.getAndIncrement();
 
-                    return TaskResponse.continueTask();
-                }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(5))).getFuture();
-                future.thenRun(() -> {
-                    eventPlayer.sendTitle("", "§afinished");
-                    savedPlayer.sendTitle("", "§afinished");
-                    playerDataManager.setSavingStats(eventPlayer, savedPlayer, false);
-                    playerDataManager.playerSaved(savedPlayer);
-                });
-            }
+                return TaskResponse.continueTask();
+            }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(5))).getFuture();
+
+            future.thenRun(() -> {
+                Titles.sendTitle(eventPlayer, 0, 20, 10, "", "§afinished");
+                Titles.sendTitle(savedPlayer, 0, 20, 10, "", "§afinished");
+                playerDataManager.setSavingStats(eventPlayer, savedPlayer, false);
+                playerDataManager.playerSaved(savedPlayer);
+            });
+        }
     }
-
 
     @EventHandler
     public void saveFailed(PlayerSaveCanceledEvent event) {
         Player eventPlayer = event.getEventPlayer();
         Player savedPlayer = event.getSavedPlayer();
-        eventPlayer.sendTitle("", "§esaving canceled");
-        savedPlayer.sendTitle("", "§esaving canceled");
+
+        Titles.sendTitle(eventPlayer, 0, 20, 10, "", "§esaving canceled");
+        Titles.sendTitle(savedPlayer, 0, 20, 10, "", "§esaving canceled");
         playerDataManager.setSavingStats(eventPlayer, savedPlayer, false);
+    }
+
+    @EventHandler
+    public void onRightClickArmorStand(PlayerInteractAtEntityEvent event) {
+        Player player = event.getPlayer();
+        Entity entity = event.getRightClicked();
+        if (entity instanceof ArmorStand) {
+            ArmorStand armorStand = (ArmorStand) entity;
+            event.setCancelled(true);
+            Bukkit.getServer().dispatchCommand(player, "death loot " + armorStand.getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public void onHitArmorStand(EntityDamageByPlayerEvent event) {
+        if (event.getEntity() instanceof ArmorStand) {
+            event.setCancelled(true);
+        }
     }
 
     private String createProgressBar(double progress) {
