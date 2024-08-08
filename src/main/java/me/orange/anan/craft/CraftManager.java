@@ -34,7 +34,7 @@ public class CraftManager {
     }
 
     public Map<String, Craft> getCrafts() {
-        return Collections.unmodifiableMap(crafts);
+        return this.crafts;
     }
 
     public void loadConfigFile() {
