@@ -10,6 +10,7 @@ import io.fairyproject.command.BaseCommand;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
+import me.orange.anan.blocks.BlockType;
 import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.craft.Craft;
@@ -67,10 +68,12 @@ public class HammerManager {
 
         switch (hammerAction) {
             case BREAK:
-                blockStatsMap.remove(block);
-                block.setType(Material.AIR);
-                player.sendMessage("§c方塊已被破壞!");
-                break;
+                if(blockStats.getBlockType() == BlockType.BUILDING) {
+                    blockStatsMap.remove(block);
+                    block.setType(Material.AIR);
+                    player.sendMessage("§c方塊已被破壞!");
+                    break;
+                }
             default:
                 handleUpgrade(player, block, blockStats, hammerAction);
                 break;
@@ -105,7 +108,7 @@ public class HammerManager {
                     player.sendMessage("§c材料不足!");
             }
         } else
-            player.sendMessage("§c無法升級方塊!");
+            player.sendMessage("§c無法升級!");
     }
 
     private String getConfigItemID(HammerAction hammerAction) {

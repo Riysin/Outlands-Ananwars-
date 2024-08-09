@@ -4,6 +4,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.PlayerLeftClickHammerEvent;
 import me.orange.anan.events.PlayerRightClickHammerEvent;
+import me.orange.anan.events.PlayerShiftRightClickHammerEvent;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,7 +33,7 @@ public class HammerEventListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerShiftRightClickHammer(PlayerLeftClickHammerEvent event) {
+    public void onPlayerShiftRightClickHammer(PlayerShiftRightClickHammerEvent event) {
         Player player = event.getPlayer();
         hammerMenu.open(player);
     }
