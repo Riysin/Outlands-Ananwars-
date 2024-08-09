@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @InjectableComponent
-public class BlockConfig extends YamlConfiguration {
+public class   BlockConfig extends YamlConfiguration {
     public BlockConfig(Anan plugin) {
         super(plugin.getDataFolder().resolve("block.yml"));
     }

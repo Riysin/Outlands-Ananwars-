@@ -1,5 +1,6 @@
 package me.orange.anan.craft.behaviour.hammer;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;
 import io.fairyproject.bukkit.gui.GuiFactory;
 import io.fairyproject.bukkit.gui.pane.NormalPane;
@@ -27,27 +28,27 @@ public class HammerMenu {
         Gui gui = guiFactory.create(Component.text("§f§l升級鎚子"));
         NormalPane pane = Pane.normal(9, 3);;
 
-        pane.setSlot(2,1, GuiSlot.of(ItemBuilder.of(craftManager.getCraftElementWithID("buildLv1").getIcon())
+        pane.setSlot(2,1, GuiSlot.of(ItemBuilder.of(craftManager.getCraftElementWithID("buildLv2").getIcon())
                 .lore("§7點擊選擇要升級的建材").build(),player1 -> {
             hammerManager.setHammerStat(player, HammerAction.UPGRADELv2);
             player1.closeInventory();
         }));
-        pane.setSlot(3,1, GuiSlot.of(ItemBuilder.of(craftManager.getCraftElementWithID("buildLv2").getIcon())
+        pane.setSlot(3,1, GuiSlot.of(ItemBuilder.of(craftManager.getCraftElementWithID("buildLv3").getIcon())
                 .lore("§7點擊選擇要升級的建材").build(),player1 -> {
             hammerManager.setHammerStat(player, HammerAction.UPGRADELv3);
             player1.closeInventory();
         }));
-        pane.setSlot(4,1, GuiSlot.of(ItemBuilder.of(craftManager.getCraftElementWithID("buildLv3").getIcon())
+        pane.setSlot(4,1, GuiSlot.of(ItemBuilder.of(craftManager.getCraftElementWithID("buildLv4").getIcon())
                 .lore("§7點擊選擇要升級的建材").build(),player1 -> {
             hammerManager.setHammerStat(player, HammerAction.UPGRADELv4);
             player1.closeInventory();
         }));
-        pane.setSlot(5,1, GuiSlot.of(ItemBuilder.of(craftManager.getCraftElementWithID("buildLv4").getIcon())
+        pane.setSlot(5,1, GuiSlot.of(ItemBuilder.of(craftManager.getCraftElementWithID("buildLv5").getIcon())
                 .lore("§7點擊選擇要升級的建材").build(),player1 -> {
             hammerManager.setHammerStat(player, HammerAction.UPGRADELv5);
             player1.closeInventory();
         }));
-        pane.setSlot(6,1, GuiSlot.of(ItemBuilder.of(craftManager.getCraftElementWithID("buildLv5").getIcon())
+        pane.setSlot(6,1, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER)
                 .lore("§c拆除方塊").build(),player1 -> {
             hammerManager.setHammerStat(player, HammerAction.BREAK);
             player1.closeInventory();

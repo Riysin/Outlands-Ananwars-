@@ -25,14 +25,16 @@ public class HammerEventListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
-        if(player.isSneaking()){
-            hammerMenu.open(player);
-            return;
-        }
         if(block !=null) {
             HammerAction hammerAction = hammerManager.getHammerStat(player).getHammerAction();
             hammerManager.upgradeBlock(player, hammerAction, block);
         }
+    }
+
+    @EventHandler
+    public void onPlayerShiftRightClickHammer(PlayerLeftClickHammerEvent event) {
+        Player player = event.getPlayer();
+        hammerMenu.open(player);
     }
 
     @EventHandler
