@@ -2,12 +2,14 @@ package me.orange.anan;
 
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
+import io.fairyproject.mc.MCWorld;
 import io.fairyproject.mc.tablist.TabColumn;
 import io.fairyproject.mc.tablist.TablistAdapter;
 import io.fairyproject.mc.tablist.util.Skin;
 import io.fairyproject.mc.tablist.util.TabSlot;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.player.PlayerDataManager;
+import me.orange.anan.world.TimeManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,10 +22,12 @@ import java.util.Set;
 public class Tablist implements TablistAdapter {
     private final ClanManager clanManager;
     private final PlayerDataManager playerDataManager;
+    private final TimeManager timeManager;
 
-    public Tablist(ClanManager clanManager, PlayerDataManager playerDataManager) {
+    public Tablist(ClanManager clanManager, PlayerDataManager playerDataManager, TimeManager timeManager) {
         this.clanManager = clanManager;
         this.playerDataManager = playerDataManager;
+        this.timeManager = timeManager;
     }
 
     @Override
@@ -126,7 +130,8 @@ public class Tablist implements TablistAdapter {
 
     @Override
     public @Nullable Component getHeader(MCPlayer player) {
-        return Component.text("§b§lTesting");
+        Player bukkitPlayer = player.as(Player.class);//頭上
+        return Component.text("§b§lProject Rust\n§6地圖時間: §f" + timeManager.getTimeState(bukkitPlayer.getWorld()));
     }
 
     @Override

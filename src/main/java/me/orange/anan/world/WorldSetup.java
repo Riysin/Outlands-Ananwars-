@@ -14,7 +14,7 @@ public class WorldSetup {
         Bukkit.getWorlds().forEach(world -> {
             world.setGameRuleValue("keepInventory", "true");
             world.setGameRuleValue("doMobSpawning", "false");
-            world.setGameRuleValue("doDaylightCycle", "false");
+            world.setGameRuleValue("doDaylightCycle", "true");
             world.setGameRuleValue("doFireTick", "false");
             world.setGameRuleValue("doTileDrops", "false");
             world.setTime(7000);
