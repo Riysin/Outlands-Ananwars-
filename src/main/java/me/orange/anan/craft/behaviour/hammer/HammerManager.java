@@ -2,6 +2,7 @@ package me.orange.anan.craft.behaviour.hammer;
 
 import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.messages.ActionBar;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
@@ -20,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -73,7 +75,9 @@ public class HammerManager {
                     block.setType(Material.AIR);
                     player.sendMessage("§c方塊已被破壞!");
                     break;
-                }
+                }else
+                    player.sendMessage("§c無法破壞!");
+                    return;
             default:
                 handleUpgrade(player, block, blockStats, hammerAction);
                 break;
@@ -84,6 +88,11 @@ public class HammerManager {
         Map<Block, BlockStats> blockStatsMap = blockStatsManager.getBlockStatsMap();
         String configItemID = getConfigItemID(hammerAction);
         int newLevel = getUpgradeLevel(hammerAction);
+
+        if (blockStats.getBlockType() != BlockType.BUILDING) {
+            player.sendMessage("§c此方塊無法升級!");
+            return;
+        }
 
         if (configItemID != null && newLevel > getCurrentBlockLevel(block)) {
             Map<String, Craft> crafts = craftManager.getCrafts();
@@ -108,7 +117,7 @@ public class HammerManager {
                     player.sendMessage("§c材料不足!");
             }
         } else
-            player.sendMessage("§c無法升級!");
+            player.sendMessage("§c此方塊更為高階，無法升級!");
     }
 
     private String getConfigItemID(HammerAction hammerAction) {
@@ -158,6 +167,7 @@ public class HammerManager {
 
         if (currentHealth < maxHealth) {
             blockStats.setHealth(currentHealth + 1);
+            Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
         } else
             player.sendMessage("§c方塊已達到最大耐久度!");
 

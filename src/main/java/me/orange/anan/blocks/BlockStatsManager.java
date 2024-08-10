@@ -2,25 +2,47 @@ package me.orange.anan.blocks;
 
 import com.cryptomorin.xseries.messages.ActionBar;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.blocks.config.BlockConfig;
+import me.orange.anan.blocks.config.BlockConfigElement;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @InjectableComponent
 public class BlockStatsManager {
+    private BlockConfig blockConfig;
     private Map<Block, BlockStats> blockStatsMap = new HashMap<>();
 
-    public BlockStats getBlockStats(Block block) {
-        if (!getBlockStatsMap().containsKey(block)) {
-            BlockStats bs = new BlockStats();
-            getBlockStatsMap().put(block, bs);
+    public BlockStatsManager(BlockConfig blockConfig) {
+        this.blockConfig = blockConfig;
+
+        loadBlockStats();
+    }
+    public void loadBlockStats() {
+        for (BlockConfigElement element : blockConfig.getBlockData()) {
+            Block block = element.getLocation().getBlock();
+            BlockStats blockStats = getBlockStats(block);
+            blockStats.setBlockType(element.getBlockType());
+            blockStats.setHealth(element.getHealth());
         }
-        return blockStatsMap.get(block);
     }
 
+    public BlockStats getBlockStats(Block block) {
+        return blockStatsMap.computeIfAbsent(block, k -> new BlockStats());
+    }
+
+    public void updateBlockStats(Block block) {
+        BlockStats blockStats = getBlockStats(block);
+        BlockConfigElement element = blockConfig.getBlockConfigElement(block);
+
+        blockStats.setBlockType(element.getBlockType());
+        blockStats.setHealth(element.getHealth());
+    }
     public Map<Block, BlockStats> getBlockStatsMap() {
         return blockStatsMap;
     }
@@ -29,22 +51,24 @@ public class BlockStatsManager {
         this.blockStatsMap = blockStatsMap;
     }
 
-    public void breakBlock (Player player, Block block){
-        BlockStats blockStats = getBlockStats(block);
-        blockStats.setHealth(blockStats.getHealth()-1);
-        ActionBar.sendActionBar(player  , "block health: " + blockStats.getHealth());
+    public void breakBlock(Player player, Block block) {
+        BlockConfigElement element = blockConfig.getBlockConfigElement(block);
+        element.setHealth(element.getHealth()-1);
+        updateBlockStats(block);
+
+        Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
     }
 
-    public boolean checkBlockBreak(Block block){
+    public boolean checkBlockBreak(Block block) {
         BlockStats blockStats = getBlockStats(block);
         return blockStats.getHealth() <= 0;
     }
 
-    public BlockStats placeBlock(Player player, Block block, Integer health){
-        BlockStats blockStats = getBlockStats(block);
-        blockStats.setBreakable(true);
-        blockStats.setHealth(health);
-        blockStats.setBlockType(BlockType.BUILDING);
-        return blockStats;
+    public BlockStats placeBlock(Player player, Block block, Integer health) {
+        blockConfig.addBlock(block, health);
+        updateBlockStats(block);
+        return getBlockStats(block);
     }
+
+
 }

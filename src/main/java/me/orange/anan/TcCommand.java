@@ -10,6 +10,7 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
+import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.craft.CraftManager;
@@ -29,13 +30,15 @@ public class TcCommand extends BaseCommand {
     private final NatureBlockConfig natureBlockConfig;
     private final CraftManager craftManager;
     private final BuildConfig buildConfig;
+    private final BlockConfig blockConfig;
 
-    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig) {
+    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig) {
         this.clanConfig = clanConfig;
         this.playerConfig = playerConfig;
         this.natureBlockConfig = natureBlockConfig;
         this.craftManager = craftManager;
         this.buildConfig = buildConfig;
+        this.blockConfig = blockConfig;
     }
 
     @Command("test")
@@ -62,7 +65,16 @@ public class TcCommand extends BaseCommand {
         clanConfig.loadAndSave();
         playerConfig.loadAndSave();
         buildConfig.loadAndSave();
+        blockConfig.loadAndSave();
+
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Config reloaded");
+    }
+
+    @Command("deleteBlockData")
+    public void deleteBlockData(BukkitCommandContext ctx) {
+        blockConfig.getBlockData().clear();
+        blockConfig.save();
+        ctx.getPlayer().sendMessage(ChatColor.GREEN + "Block data deleted");
     }
 
     @Command("head")

@@ -1,5 +1,7 @@
 package me.orange.anan.player;
 
+import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.messages.ActionBar;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
@@ -7,12 +9,17 @@ import io.fairyproject.mc.nametag.NameTagService;
 import me.orange.anan.craft.crafting.CraftTimerManager;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @InjectableComponent
 @RegisterAsListener

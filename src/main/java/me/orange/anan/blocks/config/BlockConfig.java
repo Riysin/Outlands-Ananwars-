@@ -4,6 +4,7 @@ import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.config.yaml.YamlConfiguration;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
+import me.orange.anan.blocks.BlockType;
 import org.bukkit.block.Block;
 
 import java.nio.file.Path;
@@ -11,10 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @InjectableComponent
-public class   BlockConfig extends YamlConfiguration {
+public class BlockConfig extends YamlConfiguration {
     public BlockConfig(Anan plugin) {
         super(plugin.getDataFolder().resolve("block.yml"));
+        this.loadAndSave();
     }
+
     @ElementType(BlockConfigElement.class)
     List<BlockConfigElement> blockData = new ArrayList<>();
 
@@ -24,5 +27,23 @@ public class   BlockConfig extends YamlConfiguration {
 
     public void setBlockData(List<BlockConfigElement> blockData) {
         this.blockData = blockData;
+    }
+
+    public BlockConfigElement getBlockConfigElement(Block block) {
+        for (BlockConfigElement blockConfigElement : blockData) {
+            if (blockConfigElement.getLocation().equals(block.getLocation())) {
+                return blockConfigElement;
+            }
+        }
+        return null;
+    }
+
+    public void addBlock(Block block, int health) {
+        BlockConfigElement element = new BlockConfigElement();
+        element.setLocation(block.getLocation());
+        element.setHealth(health);
+        element.setBlockType(BlockType.BUILDING);
+        blockData.add(element);
+        this.save();
     }
 }

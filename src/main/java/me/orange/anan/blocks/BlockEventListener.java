@@ -1,5 +1,7 @@
 package me.orange.anan.blocks;
 
+import com.cryptomorin.xseries.XMaterial;
+import com.cryptomorin.xseries.messages.ActionBar;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
@@ -10,7 +12,9 @@ import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
 import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.blocks.config.NatureBlockElement;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -19,7 +23,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @InjectableComponent
 @RegisterAsListener
@@ -65,7 +73,7 @@ public class BlockEventListener implements Listener {
             Integer natureBlockBlockId = natureBlock.getBlockId();
 
             if (id.equals(natureBlockBlockId) && (natureBlockData == -1 || data == natureBlockData)) {
-                if(natureBlock.getDrops().isEmpty()){
+                if (natureBlock.getDrops().isEmpty()) {
                     drop = true;
                     break;
                 }
@@ -81,7 +89,7 @@ public class BlockEventListener implements Listener {
             }
         }
 
-        if(!drop && player.getGameMode() != GameMode.CREATIVE)
+        if (!drop && player.getGameMode() != GameMode.CREATIVE)
             event.setCancelled(true);
     }
 
@@ -100,12 +108,11 @@ public class BlockEventListener implements Listener {
         String nbtValue = NBTModifier.get().getString(item, NBTKey.create("craft"));
         Craft craft = craftManager.getCrafts().get(nbtValue);
 
-        if(craft == null || craft.getType() != CraftType.BUILD && craft.getType() != CraftType.USAGE){
-            if(player.getGameMode() != GameMode.CREATIVE)
+        if (craft == null || craft.getType() != CraftType.BUILD && craft.getType() != CraftType.USAGE) {
+            if (player.getGameMode() != GameMode.CREATIVE)
                 event.setCancelled(true);
             return;
-        }
-        else if(isBesideNatureBlock(block)){
+        } else if (isBesideNatureBlock(block)) {
             event.setCancelled(true);
             player.sendMessage("§c你不能在可挖掘的資源旁建造方塊!");
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);
@@ -116,7 +123,7 @@ public class BlockEventListener implements Listener {
         blockStatsManager.placeBlock(event.getPlayer(), event.getBlockPlaced(), health);
     }
 
-    private boolean isBesideNatureBlock(Block block){
+    private boolean isBesideNatureBlock(Block block) {
         return isNatureBlock(block.getLocation().clone().add(0, 1, 0).getBlock())
                 || isNatureBlock(block.getLocation().clone().add(0, -1, 0).getBlock())
                 || isNatureBlock(block.getLocation().clone().add(1, 0, 0).getBlock())
@@ -125,14 +132,31 @@ public class BlockEventListener implements Listener {
                 || isNatureBlock(block.getLocation().clone().add(0, 0, -1).getBlock());
     }
 
-    private boolean isNatureBlock(Block block){
+    private boolean isNatureBlock(Block block) {
         Integer id = block.getTypeId();
 
         for (NatureBlockElement natureBlock : natureBlockConfig.getNatureBlocks()) {
             Integer data = natureBlock.getData();
-            if(id.equals(natureBlock.getBlockId()) && (data == -1 || block.getData() == data))
+            if (id.equals(natureBlock.getBlockId()) && (data == -1 || block.getData() == data))
                 return true;
         }
         return false;
+    }
+
+    @EventHandler
+    public void onTargetBlock(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        // set the ignored materials
+        Set<Material> materials = new HashSet<>();
+        materials.add(XMaterial.AIR.parseMaterial());
+        materials.add(XMaterial.WATER.parseMaterial());
+        materials.add(XMaterial.LAVA.parseMaterial());
+        Block targetBlock = player.getTargetBlock(materials, 10);
+        BlockStats blockStats = blockStatsManager.getBlockStats(targetBlock);
+
+        if (targetBlock != null && blockStats.getBlockType() == BlockType.BUILDING) {
+            String blockName = targetBlock.getType().name();
+            ActionBar.sendActionBar(player, " health:§a " + blockStats.getHealth());
+        }
     }
 }
