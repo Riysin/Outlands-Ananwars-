@@ -15,7 +15,7 @@ import java.util.Map;
 public class ClanConfig extends YamlConfiguration {
 
     @ElementType(ClanConfigElement.class)
-    Map<String, ClanConfigElement> clanElementMap = new HashMap<>();
+    private Map<String, ClanConfigElement> clanElementMap = new HashMap<>();
 
     public ClanConfig(Anan plugin) {
         super(plugin.getDataFolder().resolve("clan.yml"));

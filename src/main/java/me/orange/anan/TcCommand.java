@@ -15,6 +15,7 @@ import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.blocks.config.NatureBlockConfig;
+import me.orange.anan.player.bed.BedConfig;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

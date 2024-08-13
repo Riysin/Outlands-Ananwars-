@@ -24,15 +24,15 @@ public class BlockConfigElement {
         return position;
     }
 
-    public Location getLocation() {
-        return BukkitPos.toBukkitLocation(position);
-    }
-
     public void setPosition(Position position) {
         this.position = position;
     }
 
-    public void setLocation(Location location) {
+    public Location getLocation() {
+        return BukkitPos.toBukkitLocation(position);
+    }
+
+    public void setPosition(Location location) {
         this.position = BukkitPos.toMCPos(location);
     }
 

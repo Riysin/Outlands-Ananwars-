@@ -6,7 +6,6 @@ import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.bukkit.util.items.behaviour.ItemBehaviour;
 import io.fairyproject.container.InjectableComponent;
 import org.bukkit.inventory.ItemStack;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.util.ArrayList;
 import java.util.HashMap;

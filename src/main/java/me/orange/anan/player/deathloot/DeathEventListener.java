@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bukkit.events.player.EntityDamageByPlayerEvent;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
@@ -11,10 +12,10 @@ import me.orange.anan.clan.ClanManager;
 import me.orange.anan.events.PlayerSaveCanceledEvent;
 import me.orange.anan.events.PlayerSaveEvent;
 import me.orange.anan.player.PlayerDataManager;
+import me.orange.anan.player.bed.RespawnMenu;
 import me.orange.anan.player.config.PlayerConfig;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -25,6 +26,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.util.Vector;
 
 import java.time.Duration;
@@ -38,12 +40,16 @@ public class DeathEventListener implements Listener {
     private final PlayerConfig playerConfig;
     private final DeathLootManager deathLootManager;
     private final ClanManager clanManager;
+    private final RespawnMenu respawnMenu;
+    private final DeathBossBar deathBossBar;
 
-    public DeathEventListener(PlayerDataManager playerDataManager, PlayerConfig playerConfig, DeathLootManager deathLootManager, ClanManager clanManager) {
+    public DeathEventListener(PlayerDataManager playerDataManager, PlayerConfig playerConfig, DeathLootManager deathLootManager, ClanManager clanManager, RespawnMenu respawnMenu, DeathBossBar deathBossBar) {
         this.playerDataManager = playerDataManager;
         this.playerConfig = playerConfig;
         this.deathLootManager = deathLootManager;
         this.clanManager = clanManager;
+        this.respawnMenu = respawnMenu;
+        this.deathBossBar = deathBossBar;
     }
 
     @EventHandler
@@ -63,6 +69,10 @@ public class DeathEventListener implements Listener {
             event.setDeathMessage(killer == null ?
                     "§c" + player.getName() + "意外死亡了" :
                     "§c" + player.getName() + "被" + killer.getName() + "擊殺了");
+            player.setHealth(20);
+            player.setGameMode(GameMode.SPECTATOR);
+            respawnMenu.open(player);
+            deathBossBar.showMyBossBar(MCPlayer.from(player));
         }
     }
 

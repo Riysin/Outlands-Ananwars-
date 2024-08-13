@@ -40,7 +40,7 @@ public class BlockConfig extends YamlConfiguration {
 
     public void addBlock(Block block, int health) {
         BlockConfigElement element = new BlockConfigElement();
-        element.setLocation(block.getLocation());
+        element.setPosition(block.getLocation());
         element.setHealth(health);
         element.setBlockType(BlockType.BUILDING);
         blockData.add(element);

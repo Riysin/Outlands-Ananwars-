@@ -19,13 +19,11 @@ import org.bukkit.inventory.ItemStack;
 public class CraftCommand extends BaseCommand {
     private final CraftMenu craftMenu;
     private final OngoingCraftMenu ongoingCraftMenu;
-    private final HammerMenu hammerMenu;
     private final CraftManager craftManager;
 
-    public CraftCommand(CraftMenu craftMenu, OngoingCraftMenu ongoingCraftMenu, HammerMenu hammerMenu, CraftManager craftManager) {
+    public CraftCommand(CraftMenu craftMenu, OngoingCraftMenu ongoingCraftMenu, CraftManager craftManager) {
         this.craftMenu = craftMenu;
         this.ongoingCraftMenu = ongoingCraftMenu;
-        this.hammerMenu = hammerMenu;
         this.craftManager = craftManager;
     }
 
