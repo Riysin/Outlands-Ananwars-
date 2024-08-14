@@ -4,6 +4,7 @@ import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.config.yaml.YamlConfiguration;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,9 +19,10 @@ public class PlayerConfig extends YamlConfiguration {
         this.loadAndSave();
     }
 
-    public void addPlayer(String name) {
-        if(!playerElementMap.containsKey(name)) {
-            playerElementMap.put(name, new PlayerConfigElement());
+    public void addPlayer(Player player) {
+        String uuid = player.getUniqueId().toString();
+        if(!playerElementMap.containsKey(uuid)) {
+            playerElementMap.put(uuid, new PlayerConfigElement());
             this.save();
             this.load();
         }

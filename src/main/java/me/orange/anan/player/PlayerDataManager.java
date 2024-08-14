@@ -39,6 +39,8 @@ public class PlayerDataManager {
             PlayerData playerData = new PlayerData();
             playerData.setKills(playerElement.getKills());
             playerData.setDeaths(playerElement.getDeaths());
+            playerData.setLastDeathLocation(playerElement.getLastDeathLocation());
+            playerData.setBossBarActive(playerElement.isBossBarActive());
 
             playerDataMap.put(uuid, playerData);
         });
@@ -111,7 +113,7 @@ public class PlayerDataManager {
 
         if (!playerDataMap.containsKey(uuid)) {
             playerDataMap.put(uuid, new PlayerData());
-            playerConfig.addPlayer(player.getName());
+            playerConfig.addPlayer(player);
         }
         PlayerData playerData = playerDataMap.get(uuid);
         playerData.setSkin(Skin.load(uuid));

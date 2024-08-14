@@ -26,9 +26,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DeathLootManager {
     Map<UUID, DeathLoot> deathLootMap = new HashMap<>();
     private final PlayerDataManager playerDataManager;
+    private final DeathBossBar deathBossBar;
 
-    public DeathLootManager(PlayerDataManager playerDataManager) {
+    public DeathLootManager(PlayerDataManager playerDataManager, DeathBossBar deathBossBar) {
         this.playerDataManager = playerDataManager;
+        this.deathBossBar = deathBossBar;
     }
 
     public Map<UUID, DeathLoot> getDeathLootMap() {
@@ -80,6 +82,7 @@ public class DeathLootManager {
         MCSchedulers.getGlobalScheduler().schedule(()->{
            deathLootMap.remove(armorStand.getUniqueId());
            armorStand.remove();
+           deathBossBar.hideBossBar(player);
         },20*60);
     }
 

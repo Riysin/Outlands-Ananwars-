@@ -1,13 +1,20 @@
 package me.orange.anan.player;
 
 import io.fairyproject.mc.tablist.util.Skin;
+import net.kyori.adventure.bossbar.BossBar;
+import org.bukkit.Location;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class PlayerData {
+    //config
     private int kills = 0;
     private int deaths = 0;
+    private Location lastDeathLocation;
+    private boolean bossBarActive = false;
+    //stats
+    private BossBar BossBar;
     private boolean knocked = false;
     private boolean saving = false;
     private Skin skin = Skin.GRAY;
@@ -27,6 +34,30 @@ public class PlayerData {
 
     public void setDeaths(int deaths) {
         this.deaths = deaths;
+    }
+
+    public Location getLastDeathLocation() {
+        return lastDeathLocation;
+    }
+
+    public void setLastDeathLocation(Location lastDeathLocation) {
+        this.lastDeathLocation = lastDeathLocation;
+    }
+
+    public BossBar getBossBar() {
+        return BossBar;
+    }
+
+    public void setBossBar(BossBar bossBar) {
+        this.BossBar = bossBar;
+    }
+
+    public boolean isBossBarActive() {
+        return bossBarActive;
+    }
+
+    public void setBossBarActive(boolean bossBarActive) {
+        this.bossBarActive = bossBarActive;
     }
 
     public Set<String> getCanCraftItems() {
@@ -52,7 +83,6 @@ public class PlayerData {
     public void setKnocked(boolean knocked) {
         this.knocked = knocked;
     }
-
 
     public Skin getSkin() {
         return skin;

@@ -72,7 +72,7 @@ public class DeathEventListener implements Listener {
             player.setHealth(20);
             player.setGameMode(GameMode.SPECTATOR);
             respawnMenu.open(player);
-            deathBossBar.showMyBossBar(MCPlayer.from(player));
+            deathBossBar.showBossBar(player);
         }
     }
 
@@ -89,6 +89,8 @@ public class DeathEventListener implements Listener {
         if (playerDataManager.checkSaving(player) && !from.equals(to)) {
             player.teleport(from);
         }
+
+        deathBossBar.updateBossBar(player);
     }
 
     @EventHandler
