@@ -19,15 +19,6 @@ public class PlayerConfig extends YamlConfiguration {
         this.loadAndSave();
     }
 
-    public void addPlayer(Player player) {
-        String uuid = player.getUniqueId().toString();
-        if(!playerElementMap.containsKey(uuid)) {
-            playerElementMap.put(uuid, new PlayerConfigElement());
-            this.save();
-            this.load();
-        }
-    }
-
     public Map<String, PlayerConfigElement> getPlayerElementMap() {
         return playerElementMap;
     }
@@ -36,17 +27,12 @@ public class PlayerConfig extends YamlConfiguration {
         this.playerElementMap = playerElementMap;
     }
 
-    public PlayerConfigElement getPlayerElement(String name) {
-        return getPlayerElementMap().get(name);
-    }
-
-    public void addPlayerKills(String name) {
-        getPlayerElement(name).setKills(getPlayerElement(name).getKills() + 1);
-        this.save();
-    }
-
-    public void addPlayerDeaths(String name) {
-        getPlayerElement(name).setDeaths(getPlayerElement(name).getDeaths() + 1);
-        this.save();
+    public void addPlayer(Player player) {
+        String uuid = player.getUniqueId().toString();
+        if(!playerElementMap.containsKey(uuid)) {
+            playerElementMap.put(uuid, new PlayerConfigElement());
+            this.save();
+            this.load();
+        }
     }
 }

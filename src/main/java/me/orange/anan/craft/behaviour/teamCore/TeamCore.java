@@ -8,22 +8,22 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class TeamCore {
-    private Creeper teamCore;
-    private Block coreBlock;
     private UUID placePlayer;
+    private Creeper coreCreeper;
+    private Block coreBlock;
 
-    public TeamCore(UUID uuid, Creeper teamCore, Block coreBlock){
-        this.coreBlock = coreBlock;
-        this.teamCore = teamCore;
+    public TeamCore(UUID uuid, Creeper coreCreeper, Block coreBlock){
         this.placePlayer = uuid;
+        this.coreCreeper = coreCreeper;
+        this.coreBlock = coreBlock;
     }
 
-    public Creeper getTeamCore() {
-        return teamCore;
+    public Creeper getCoreCreeper() {
+        return coreCreeper;
     }
 
-    public void setTeamCore(Creeper teamCore) {
-        this.teamCore = teamCore;
+    public void setCoreCreeper(Creeper teamCore) {
+        this.coreCreeper = teamCore;
     }
 
     public Block getCoreBlock() {

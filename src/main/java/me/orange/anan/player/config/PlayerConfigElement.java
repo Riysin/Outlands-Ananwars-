@@ -9,7 +9,7 @@ import org.bukkit.Location;
 public class PlayerConfigElement {
     private int kills;
     private int deaths;
-    private Position lastDeathPosition;
+    private Position lastDeathPosition = new Position();
     private boolean bossBarActive = false;
 
     public int getKills() {

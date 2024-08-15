@@ -28,7 +28,7 @@ public class TeamCoreRunTime {
         MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
             Set<UUID> uuids = new HashSet<>();
             teamCoreManager.getTeamCores().forEach(teamCore -> {
-                uuids.add(teamCore.getTeamCore().getUniqueId());
+                uuids.add(teamCore.getCoreCreeper().getUniqueId());
             });
 
             // 获取所有世界中的所有生物

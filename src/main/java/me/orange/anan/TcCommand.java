@@ -15,6 +15,7 @@ import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.blocks.config.NatureBlockConfig;
+import me.orange.anan.player.PlayerDataManager;
 import me.orange.anan.player.bed.BedConfig;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.ChatColor;
@@ -32,14 +33,16 @@ public class TcCommand extends BaseCommand {
     private final CraftManager craftManager;
     private final BuildConfig buildConfig;
     private final BlockConfig blockConfig;
+    private final PlayerDataManager playerDataManager;
 
-    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig) {
+    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig, PlayerDataManager playerDataManager) {
         this.clanConfig = clanConfig;
         this.playerConfig = playerConfig;
         this.natureBlockConfig = natureBlockConfig;
         this.craftManager = craftManager;
         this.buildConfig = buildConfig;
         this.blockConfig = blockConfig;
+        this.playerDataManager = playerDataManager;
     }
 
     @Command("test")
@@ -70,6 +73,12 @@ public class TcCommand extends BaseCommand {
 
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Config reloaded");
     }
+
+    @Command("saveConfig")
+    public void saveConfig(BukkitCommandContext ctx){
+        playerDataManager.saveToConfig(ctx.getPlayer());
+    }
+
 
     @Command("deleteBlockData")
     public void deleteBlockData(BukkitCommandContext ctx) {

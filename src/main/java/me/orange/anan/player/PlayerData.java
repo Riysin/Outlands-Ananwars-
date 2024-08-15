@@ -36,6 +36,14 @@ public class PlayerData {
         this.deaths = deaths;
     }
 
+    public void addDeath() {
+        deaths++;
+    }
+
+    public void addKill() {
+        kills++;
+    }
+
     public Location getLastDeathLocation() {
         return lastDeathLocation;
     }

@@ -27,13 +27,11 @@ public class PlayerEventListener implements Listener {
     private final PlayerDataManager playerDataManager;
     private final CraftTimerManager craftTimerManager;
     private final NameTagService nameTagService;
-    private final PlayerConfig playerConfig;
 
-    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService, PlayerConfig playerConfig) {
+    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService) {
         this.playerDataManager = playerDataManager;
         this.craftTimerManager = craftTimerManager;
         this.nameTagService = nameTagService;
-        this.playerConfig = playerConfig;
     }
 
     @EventHandler
@@ -52,12 +50,14 @@ public class PlayerEventListener implements Listener {
         if (killer == null)
             return;
         if (killer.getType() == EntityType.PLAYER) {
-            playerConfig.addPlayerKills(killer.getName());
+            playerDataManager.getPlayerData(killer).addKill();
         }
     }
 
     @EventHandler
     public void onPlayerLeft(PlayerQuitEvent event) {
+        playerDataManager.saveToConfig(event.getPlayer());
+
         event.setQuitMessage("§e" + event.getPlayer().getName() + " has left!");
         craftTimerManager.getPlayerCraftTimerList(event.getPlayer()).forEach(craftTimer -> {
             craftTimerManager.craftingFailed(event.getPlayer(), craftTimer);

@@ -22,4 +22,31 @@ public class TeamCoreManager {
     public void removeTeamCore(TeamCore teamCore){
         teamCores.remove(teamCore.getPlacePlayer());
     }
+
+    public TeamCore getTeamCore(Block block){
+        for(TeamCore teamCore : teamCores){
+            if(teamCore.getCoreBlock().equals(block)){
+                return teamCore;
+            }
+        }
+        return null;
+    }
+
+    public TeamCore getTeamCore(UUID uuid){
+        for(TeamCore teamCore : teamCores){
+            if(teamCore.getPlacePlayer().equals(uuid)){
+                return teamCore;
+            }
+        }
+        return null;
+    }
+
+    public TeamCore getTeamCore(Creeper creeper){
+        for(TeamCore teamCore : teamCores){
+            if(teamCore.getCoreCreeper().equals(creeper)){
+                return teamCore;
+            }
+        }
+        return null;
+    }
 }

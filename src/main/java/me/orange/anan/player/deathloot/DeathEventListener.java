@@ -37,15 +37,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RegisterAsListener
 public class DeathEventListener implements Listener {
     private final PlayerDataManager playerDataManager;
-    private final PlayerConfig playerConfig;
     private final DeathLootManager deathLootManager;
     private final ClanManager clanManager;
     private final RespawnMenu respawnMenu;
     private final DeathBossBar deathBossBar;
 
-    public DeathEventListener(PlayerDataManager playerDataManager, PlayerConfig playerConfig, DeathLootManager deathLootManager, ClanManager clanManager, RespawnMenu respawnMenu, DeathBossBar deathBossBar) {
+    public DeathEventListener(PlayerDataManager playerDataManager, DeathLootManager deathLootManager, ClanManager clanManager, RespawnMenu respawnMenu, DeathBossBar deathBossBar) {
         this.playerDataManager = playerDataManager;
-        this.playerConfig = playerConfig;
         this.deathLootManager = deathLootManager;
         this.clanManager = clanManager;
         this.respawnMenu = respawnMenu;
@@ -62,7 +60,8 @@ public class DeathEventListener implements Listener {
             player.sendMessage("§c你被擊倒了");
         } else {
             playerDataManager.playerSaved(player);
-            playerConfig.addPlayerDeaths(player.getName());
+            playerDataManager.getPlayerData(player).addDeath();
+            playerDataManager.getPlayerData(player).setLastDeathLocation(player.getLocation());
             deathLootManager.addPlayer(player, player.getLocation());
 
             Player killer = player.getKiller();

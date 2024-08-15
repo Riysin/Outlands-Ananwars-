@@ -33,7 +33,7 @@ public class TeamCoreBehaviour implements CraftBehaviour {
                     PlayerPlaceTeamCoreEvent placeEvent = new PlayerPlaceTeamCoreEvent(player, block);
                     Bukkit.getPluginManager().callEvent(placeEvent);
 
-                    if(placeEvent.isCancelled())
+                    if (placeEvent.isCancelled())
                         event.setCancelled(true);
                 })
         );

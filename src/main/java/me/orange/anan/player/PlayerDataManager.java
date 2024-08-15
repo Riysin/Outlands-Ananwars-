@@ -8,6 +8,7 @@ import io.fairyproject.mc.tablist.util.Skin;
 import me.orange.anan.clan.Clan;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.player.config.PlayerConfig;
+import me.orange.anan.player.config.PlayerConfigElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -24,7 +25,6 @@ import java.util.UUID;
 @InjectableComponent
 public class PlayerDataManager {
     private final PlayerConfig playerConfig;
-    private NameTagService nameTagService;
     private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
 
     public PlayerDataManager(PlayerConfig playerConfig) {
@@ -117,5 +117,21 @@ public class PlayerDataManager {
         }
         PlayerData playerData = playerDataMap.get(uuid);
         playerData.setSkin(Skin.load(uuid));
+    }
+
+    public PlayerConfigElement getPlayerConfigElement(Player player) {
+        return playerConfig.getPlayerElementMap().get(player.getUniqueId().toString());
+    }
+
+    public void saveToConfig(Player player) {
+        PlayerConfigElement playerConfigElement = getPlayerConfigElement(player);
+        PlayerData playerData = getPlayerData(player);
+
+        playerConfigElement.setKills(playerData.getKills());
+        playerConfigElement.setDeaths(playerData.getDeaths());
+        playerConfigElement.setLastDeathLocation(playerData.getLastDeathLocation());
+        playerConfigElement.setBossBarActive(playerData.isBossBarActive());
+
+        playerConfig.save();
     }
 }
