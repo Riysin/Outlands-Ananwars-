@@ -1,21 +1,24 @@
 package me.orange.anan.craft.behaviour.teamCore;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class TeamCore {
     private UUID placePlayer;
     private Creeper coreCreeper;
     private Block coreBlock;
+    private final Set<Block> connectedBlocks;
 
-    public TeamCore(UUID uuid, Creeper coreCreeper, Block coreBlock){
+    public TeamCore(UUID uuid, double health, Block coreBlock) {
         this.placePlayer = uuid;
-        this.coreCreeper = coreCreeper;
+        this.coreCreeper = null;
         this.coreBlock = coreBlock;
+        this.connectedBlocks = new HashSet<>();
     }
 
     public Creeper getCoreCreeper() {
@@ -34,11 +37,35 @@ public class TeamCore {
         this.coreBlock = coreBlock;
     }
 
-    public UUID getPlacePlayer(){
+    public UUID getPlacePlayer() {
         return this.placePlayer;
     }
 
-    public void setPlacePlayer(Player player){
+    public void setPlacePlayer(Player player) {
         this.placePlayer = player.getUniqueId();
+    }
+
+    public Set<Block> getConnectedBlocks() {
+        return connectedBlocks;
+    }
+
+    public void addConnectedBlock(Block block) {
+        connectedBlocks.add(block);
+        System.out.println("Added block to connectedBlocks: " + block);
+    }
+
+    public void setConnectedBlocks(Set<Block> connectedBlocks) {
+        this.connectedBlocks.addAll(connectedBlocks);
+    }
+
+    public Set<Block> getTerritoryBlocks() {
+        Set<Block> territoryBlocks = new HashSet<>();
+        for (Block connectedBlock : this.connectedBlocks) {
+            for (int i = 1; i <= 3; i++) {
+                Block aboveBlock = connectedBlock.getRelative(0, i, 0);
+                territoryBlocks.add(aboveBlock);
+            }
+        }
+        return territoryBlocks;
     }
 }

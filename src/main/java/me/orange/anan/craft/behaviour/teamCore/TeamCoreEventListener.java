@@ -7,7 +7,6 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
-import me.orange.anan.events.PlayerLeftClickHammerEvent;
 import me.orange.anan.events.PlayerPlaceTeamCoreEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,8 +18,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @InjectableComponent
 @RegisterAsListener
@@ -55,8 +58,11 @@ public class TeamCoreEventListener implements Listener {
             return;
         }
 
-        Creeper teamCore = spawnTeamCore(location, world);
-        teamCoreManager.addTeamCore(player, block, teamCore);
+        Creeper coreCreeper = spawnTeamCore(location, world);
+        teamCoreManager.addTeamCore(player, block, coreCreeper);
+
+        TeamCore teamCore = teamCoreManager.getTeamCore(coreCreeper);
+        addConnectedTeamBlocks(teamCore, block);
     }
 
     private void sendErrorMessage(Player player) {
@@ -64,7 +70,7 @@ public class TeamCoreEventListener implements Listener {
         player.playSound(player.getLocation(), ERROR_SOUND, SOUND_VOLUME, SOUND_PITCH);
     }
 
-    private Creeper spawnTeamCore(Location location, World world) {
+    public Creeper spawnTeamCore(Location location, World world) {
         Location spawnLocation = location.clone().add(CREEPER_SPAWN_XZ_OFFSET, CREEPER_SPAWN_Y_OFFSET, CREEPER_SPAWN_XZ_OFFSET);
         Creeper teamCore = world.spawn(spawnLocation, Creeper.class);
 
@@ -81,39 +87,87 @@ public class TeamCoreEventListener implements Listener {
     public void onTeamCoreDeath(EntityDeathEvent event) {
         Entity entity = event.getEntity();
         if (entity instanceof Creeper) {
-            Creeper creeper = (Creeper) entity;
+            TeamCore teamCore = teamCoreManager.getTeamCore((Creeper) entity);
+            if (teamCore != null) {
+                Block placedBlock = teamCore.getCoreBlock();
+                if (placedBlock != null) {
+                    placedBlock.setType(XMaterial.AIR.parseMaterial());
+                }
 
-            TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
-            Creeper coreCreeper = teamCore.getCoreCreeper();
-            if (coreCreeper == null) return;
-
-            Block placedBlock = teamCore.getCoreBlock();
-            if (placedBlock != null) {
-                placedBlock.setType(XMaterial.AIR.parseMaterial());
+                removeConnectedBlocks(teamCore);
+                teamCoreManager.removeTeamCore(teamCore);
             }
-
-            // Remove the team core from the map and the manager
-            teamCoreManager.removeTeamCore(teamCore);
-            teamCoreManager.getTeamCores().remove(teamCore);
         }
     }
 
     @EventHandler
-    public void onLookAtTeamCore(PlayerMoveEvent event) {
+    public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         Creeper sightCreeper = getSightCreeper(player);
         if (sightCreeper != null) {
             ActionBar.sendActionBar(player, "health: §a" + sightCreeper.getHealth());
         }
 
+        Location location = player.getLocation();
+        TeamCore teamCore = teamCoreManager.getTeamCoreByLocation(location);
+
+        if (teamCore != null) {
+            ActionBar.sendActionBar(player, "health: §a" + teamCore.getCoreCreeper().getHealth());
+        }
     }
 
     private Creeper getSightCreeper(Player player) {
-        for (TeamCore teamCore : teamCoreManager.getTeamCores()) {
-            if (player.hasLineOfSight(teamCore.getCoreCreeper())) {
-                return teamCore.getCoreCreeper();
+        return teamCoreManager.getTeamCores().stream()
+                .map(TeamCore::getCoreCreeper)
+                .filter(player::hasLineOfSight)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void addConnectedTeamBlocks(TeamCore teamCore, Block block) {
+        Set<Block> visitedBlocks = new HashSet<>();
+        exploreConnectedBlocks(teamCore, block, visitedBlocks);
+
+        for (Block connectedBlock : teamCore.getConnectedBlocks()) {
+            for (int i = 1; i <= 3; i++) {
+                Block aboveBlock = connectedBlock.getRelative(0, i, 0);
+                teamCore.addConnectedBlock(aboveBlock);
             }
         }
-        return null;
+    }
+
+    private void exploreConnectedBlocks(TeamCore teamCore, Block block, Set<Block> visitedBlocks) {
+        if (visitedBlocks.contains(block)) return;
+
+        visitedBlocks.add(block);
+        teamCore.addConnectedBlock(block);
+
+        BlockStats blockStats = blockStatsManager.getBlockStats(block);
+        if (blockStats == null || blockStats.getBlockType() != BlockType.BUILDING) {
+            return;
+        }
+
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
+                        exploreConnectedBlocks(teamCore, block.getRelative(dx, dy, dz), visitedBlocks);
+                    }
+                }
+            }
+        }
+    }
+
+    private void removeConnectedBlocks(TeamCore teamCore) {
+        for (Block block : new HashSet<>(teamCore.getConnectedBlocks())) {
+            if (!isBlockConnected(teamCore, block)) {
+                teamCore.getConnectedBlocks().remove(block);
+                block.setType(XMaterial.AIR.parseMaterial());
+            }
+        }
+    }
+
+    private boolean isBlockConnected(TeamCore teamCore, Block block) {
+        return teamCore.getConnectedBlocks().contains(block);
     }
 }

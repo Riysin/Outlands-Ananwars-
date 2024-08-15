@@ -6,12 +6,16 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
 import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.blocks.config.NatureBlockElement;
+import me.orange.anan.craft.behaviour.teamCore.TeamCore;
+import me.orange.anan.craft.behaviour.teamCore.TeamCoreEventListener;
+import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -37,12 +41,18 @@ public class BlockEventListener implements Listener {
     private final CraftManager craftManager;
     private final NatureBlockConfig natureBlockConfig;
     private final BuildConfig buildConfig;
+    private final BlockConfig blockConfig;
+    private final TeamCoreManager teamCoreManager;
+    private final TeamCoreEventListener teamCoreEventListener;
 
-    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig) {
+    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, BlockConfig blockConfig, TeamCoreManager teamCoreManager, TeamCoreEventListener teamCoreEventListener) {
         this.blockStatsManager = blockStatsManager;
         this.craftManager = craftManager;
         this.natureBlockConfig = natureBlockConfig;
         this.buildConfig = buildConfig;
+        this.blockConfig = blockConfig;
+        this.teamCoreManager = teamCoreManager;
+        this.teamCoreEventListener = teamCoreEventListener;
     }
 
     @EventHandler
@@ -57,9 +67,10 @@ public class BlockEventListener implements Listener {
             if (player.getGameMode() == GameMode.CREATIVE)
                 blockStats.setHealth(0);
 
-            if (blockStatsManager.checkBlockBreak(block))
+            if (blockStatsManager.checkBlockBreak(block)) {
                 blockStatsManager.getBlockStatsMap().remove(event.getBlock());
-            else {
+                blockConfig.getBlockData().remove(blockConfig.getBlockConfigElement(block));
+            } else {
                 event.setCancelled(true);
             }
             return;
@@ -103,7 +114,7 @@ public class BlockEventListener implements Listener {
 
     @EventHandler
     public void onBlockPlaced(BlockPlaceEvent event) {
-        if(event instanceof BlockMultiPlaceEvent) {
+        if (event instanceof BlockMultiPlaceEvent) {
             Bukkit.broadcastMessage("BlockMultiPlaceEvent");
             return;
         }
@@ -126,6 +137,16 @@ public class BlockEventListener implements Listener {
 
         int health = buildConfig.getBuildBlocks().get(nbtValue);
         blockStatsManager.placeBlock(event.getPlayer(), event.getBlockPlaced(), health);
+
+        BlockStats blockStats = blockStatsManager.getBlockStats(block);
+        if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
+            Bukkit.broadcastMessage("Block is a building block: " + block);
+            TeamCore teamCore = teamCoreManager.getTeamCoreByLocation(block.getLocation());
+            if (teamCore != null) {
+                Bukkit.broadcastMessage("Block is in team territory: " + block);
+                teamCoreEventListener.addConnectedTeamBlocks(teamCore, block);
+            }
+        }
     }
 
     private boolean isBesideNatureBlock(Block block) {

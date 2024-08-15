@@ -46,6 +46,29 @@ public class PlayerDataManager {
         });
     }
 
+    public void saveToConfig(Player player) {
+        PlayerConfigElement playerConfigElement = getPlayerConfigElement(player);
+        PlayerData playerData = getPlayerData(player);
+
+        playerConfigElement.setKills(playerData.getKills());
+        playerConfigElement.setDeaths(playerData.getDeaths());
+        playerConfigElement.setLastDeathLocation(playerData.getLastDeathLocation());
+        playerConfigElement.setBossBarActive(playerData.isBossBarActive());
+
+        playerConfig.save();
+    }
+
+    public void saveConfig(){
+        playerConfig.getPlayerElementMap().forEach((playerName, playerElement) -> {
+            UUID uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId();
+            PlayerData playerData = playerDataMap.get(uuid);
+            playerElement.setKills(playerData.getKills());
+            playerElement.setDeaths(playerData.getDeaths());
+            playerElement.setLastDeathLocation(playerData.getLastDeathLocation());
+            playerElement.setBossBarActive(playerData.isBossBarActive());
+        });
+    }
+
     public Map<UUID, PlayerData> getPlayerDataMap() {
         return playerDataMap;
     }
@@ -121,17 +144,5 @@ public class PlayerDataManager {
 
     public PlayerConfigElement getPlayerConfigElement(Player player) {
         return playerConfig.getPlayerElementMap().get(player.getUniqueId().toString());
-    }
-
-    public void saveToConfig(Player player) {
-        PlayerConfigElement playerConfigElement = getPlayerConfigElement(player);
-        PlayerData playerData = getPlayerData(player);
-
-        playerConfigElement.setKills(playerData.getKills());
-        playerConfigElement.setDeaths(playerData.getDeaths());
-        playerConfigElement.setLastDeathLocation(playerData.getLastDeathLocation());
-        playerConfigElement.setBossBarActive(playerData.isBossBarActive());
-
-        playerConfig.save();
     }
 }

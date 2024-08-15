@@ -70,5 +70,8 @@ public class BlockStatsManager {
         return getBlockStats(block);
     }
 
+    public BlockConfigElement getBlockConfigElement(Block block) {
+        return blockConfig.getBlockConfigElement(block);
+    }
 
 }
