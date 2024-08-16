@@ -14,9 +14,9 @@ public class TeamCore {
     private Block coreBlock;
     private final Set<Block> connectedBlocks;
 
-    public TeamCore(UUID uuid, double health, Block coreBlock) {
+    public TeamCore(UUID uuid, Creeper creeper, Block coreBlock) {
         this.placePlayer = uuid;
-        this.coreCreeper = null;
+        this.coreCreeper = creeper;
         this.coreBlock = coreBlock;
         this.connectedBlocks = new HashSet<>();
     }
@@ -51,7 +51,7 @@ public class TeamCore {
 
     public void addConnectedBlock(Block block) {
         connectedBlocks.add(block);
-        System.out.println("Added block to connectedBlocks: " + block);
+        System.out.println("Added block to connectedBlocks: " + block.getType());
     }
 
     public void setConnectedBlocks(Set<Block> connectedBlocks) {

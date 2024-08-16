@@ -5,25 +5,23 @@ import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.mc.util.Position;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Creeper;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @ConfigurationElement
 public class TeamCoreConfigElement {
-    private String placePlayerUUID;
-    private double coreCreeperHealth;
+    private String placePlayerUUID = "";
+    private double coreCreeperHealth = 0.0;
+    private Position coreCreeperPosition = new Position();
     private Position coreBlockPosition = new Position();
-    private Set<Position> connectedBlocks;
+    private List<Position> connectedBlocks = new ArrayList<>();
 
     public UUID getPlacePlayerUUID() {
-        return UUID.fromString(placePlayerUUID);
+        return placePlayerUUID != null ? UUID.fromString(placePlayerUUID) : null;
     }
 
     public void setPlacePlayerUUID(UUID placePlayerUUID) {
-        this.placePlayerUUID = placePlayerUUID.toString();
+        this.placePlayerUUID = placePlayerUUID != null ? placePlayerUUID.toString() : null;
     }
 
     public double getCoreCreeperHealth() {
@@ -32,6 +30,14 @@ public class TeamCoreConfigElement {
 
     public void setCoreCreeperHealth(double coreCreeperHealth) {
         this.coreCreeperHealth = coreCreeperHealth;
+    }
+
+    public Location getCoreCreeperLocation() {
+        return BukkitPos.toBukkitLocation(coreCreeperPosition);
+    }
+
+    public void setCoreCreeperPosition(Location location) {
+        this.coreCreeperPosition = BukkitPos.toMCPos(location);
     }
 
     public Location getCoreBlockLocation() {
@@ -51,9 +57,9 @@ public class TeamCoreConfigElement {
     }
 
     public void setConnectedBlocks(Set<Block> connectedBlocks) {
-        Set<Position> positions = new HashSet<>();
+        this.connectedBlocks.clear();
         for (Block block : connectedBlocks) {
-            positions.add(BukkitPos.toMCPos(block.getLocation()));
+            this.connectedBlocks.add(BukkitPos.toMCPos(block.getLocation()));
         }
     }
 }

@@ -22,6 +22,10 @@ public class TeamCoreConfig extends YamlConfiguration {
         return teamCores;
     }
 
+    public void setTeamCores(List<TeamCoreConfigElement> teamCores) {
+        this.teamCores = teamCores;
+    }
+
     public void addTeamCore(TeamCoreConfigElement teamCore) {
         teamCores.add(teamCore);
         this.save();

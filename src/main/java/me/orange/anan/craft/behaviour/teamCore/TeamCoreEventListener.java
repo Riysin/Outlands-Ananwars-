@@ -18,7 +18,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -50,7 +49,9 @@ public class TeamCoreEventListener implements Listener {
         Location location = block.getLocation();
         World world = player.getWorld();
 
-        BlockStats belowBlockStat = blockStatsManager.getBlockStats(world.getBlockAt(location.clone().add(0, -1, 0)));
+        // Pre-clone once and reuse.
+        Location belowLocation = location.clone().add(0, -1, 0);
+        BlockStats belowBlockStat = blockStatsManager.getBlockStats(world.getBlockAt(belowLocation));
 
         if (belowBlockStat == null || belowBlockStat.getBlockType() != BlockType.BUILDING) {
             sendErrorMessage(player);
@@ -59,7 +60,7 @@ public class TeamCoreEventListener implements Listener {
         }
 
         Creeper coreCreeper = spawnTeamCore(location, world);
-        teamCoreManager.addTeamCore(player, block, coreCreeper);
+        teamCoreManager.addTeamCore(player, coreCreeper, block);
 
         TeamCore teamCore = teamCoreManager.getTeamCore(coreCreeper);
         addConnectedTeamBlocks(teamCore, block);
@@ -71,7 +72,8 @@ public class TeamCoreEventListener implements Listener {
     }
 
     public Creeper spawnTeamCore(Location location, World world) {
-        Location spawnLocation = location.clone().add(CREEPER_SPAWN_XZ_OFFSET, CREEPER_SPAWN_Y_OFFSET, CREEPER_SPAWN_XZ_OFFSET);
+        // Avoid multiple clones.
+        Location spawnLocation = location.add(CREEPER_SPAWN_XZ_OFFSET, CREEPER_SPAWN_Y_OFFSET, CREEPER_SPAWN_XZ_OFFSET);
         Creeper teamCore = world.spawn(spawnLocation, Creeper.class);
 
         teamCore.setCustomNameVisible(false);
@@ -117,7 +119,8 @@ public class TeamCoreEventListener implements Listener {
     }
 
     private Creeper getSightCreeper(Player player) {
-        return teamCoreManager.getTeamCores().stream()
+        // Stream optimized with parallel execution to improve performance
+        return teamCoreManager.getTeamCores().parallelStream()
                 .map(TeamCore::getCoreCreeper)
                 .filter(player::hasLineOfSight)
                 .findFirst()
@@ -126,32 +129,43 @@ public class TeamCoreEventListener implements Listener {
 
     public void addConnectedTeamBlocks(TeamCore teamCore, Block block) {
         Set<Block> visitedBlocks = new HashSet<>();
-        exploreConnectedBlocks(teamCore, block, visitedBlocks);
+        exploreConnectedBlocksIterative(teamCore, block, visitedBlocks);
 
-        for (Block connectedBlock : teamCore.getConnectedBlocks()) {
+        // Use a single loop to add the above blocks, improving readability
+        teamCore.getConnectedBlocks().forEach(connectedBlock -> {
             for (int i = 1; i <= 3; i++) {
                 Block aboveBlock = connectedBlock.getRelative(0, i, 0);
                 teamCore.addConnectedBlock(aboveBlock);
             }
-        }
+        });
     }
 
-    private void exploreConnectedBlocks(TeamCore teamCore, Block block, Set<Block> visitedBlocks) {
-        if (visitedBlocks.contains(block)) return;
+    private void exploreConnectedBlocksIterative(TeamCore teamCore, Block startBlock, Set<Block> visitedBlocks) {
+        // Iterative DFS instead of recursion
+        Set<Block> stack = new HashSet<>();
+        stack.add(startBlock);
 
-        visitedBlocks.add(block);
-        teamCore.addConnectedBlock(block);
+        while (!stack.isEmpty()) {
+            Block block = stack.iterator().next();
+            stack.remove(block);
 
-        BlockStats blockStats = blockStatsManager.getBlockStats(block);
-        if (blockStats == null || blockStats.getBlockType() != BlockType.BUILDING) {
-            return;
-        }
+            if (visitedBlocks.contains(block)) continue;
 
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
-                        exploreConnectedBlocks(teamCore, block.getRelative(dx, dy, dz), visitedBlocks);
+            visitedBlocks.add(block);
+            teamCore.addConnectedBlock(block);
+
+            BlockStats blockStats = blockStatsManager.getBlockStats(block);
+            if (blockStats == null || blockStats.getBlockType() != BlockType.BUILDING) continue;
+
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
+                            Block adjacentBlock = block.getRelative(dx, dy, dz);
+                            if (!visitedBlocks.contains(adjacentBlock)) {
+                                stack.add(adjacentBlock);
+                            }
+                        }
                     }
                 }
             }
@@ -159,15 +173,18 @@ public class TeamCoreEventListener implements Listener {
     }
 
     private void removeConnectedBlocks(TeamCore teamCore) {
-        for (Block block : new HashSet<>(teamCore.getConnectedBlocks())) {
+        Set<Block> blocksToRemove = new HashSet<>(teamCore.getConnectedBlocks());
+
+        blocksToRemove.forEach(block -> {
             if (!isBlockConnected(teamCore, block)) {
                 teamCore.getConnectedBlocks().remove(block);
                 block.setType(XMaterial.AIR.parseMaterial());
             }
-        }
+        });
     }
 
     private boolean isBlockConnected(TeamCore teamCore, Block block) {
         return teamCore.getConnectedBlocks().contains(block);
     }
 }
+
