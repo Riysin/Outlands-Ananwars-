@@ -12,7 +12,7 @@ public class TeamCore {
     private UUID placePlayer;
     private Creeper coreCreeper;
     private Block coreBlock;
-    private final Set<Block> connectedBlocks;
+    private Set<Block> connectedBlocks;
 
     public TeamCore(UUID uuid, Creeper creeper, Block coreBlock) {
         this.placePlayer = uuid;

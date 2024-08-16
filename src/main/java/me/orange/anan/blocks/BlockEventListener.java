@@ -14,7 +14,6 @@ import me.orange.anan.craft.CraftType;
 import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.blocks.config.NatureBlockElement;
 import me.orange.anan.craft.behaviour.teamCore.TeamCore;
-import me.orange.anan.craft.behaviour.teamCore.TeamCoreEventListener;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -27,7 +26,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -43,16 +41,14 @@ public class BlockEventListener implements Listener {
     private final BuildConfig buildConfig;
     private final BlockConfig blockConfig;
     private final TeamCoreManager teamCoreManager;
-    private final TeamCoreEventListener teamCoreEventListener;
 
-    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, BlockConfig blockConfig, TeamCoreManager teamCoreManager, TeamCoreEventListener teamCoreEventListener) {
+    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, BlockConfig blockConfig, TeamCoreManager teamCoreManager) {
         this.blockStatsManager = blockStatsManager;
         this.craftManager = craftManager;
         this.natureBlockConfig = natureBlockConfig;
         this.buildConfig = buildConfig;
         this.blockConfig = blockConfig;
         this.teamCoreManager = teamCoreManager;
-        this.teamCoreEventListener = teamCoreEventListener;
     }
 
     @EventHandler
@@ -140,11 +136,11 @@ public class BlockEventListener implements Listener {
 
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
         if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
-            Bukkit.broadcastMessage("Block is a building block: " + block);
+            Bukkit.broadcastMessage("Block is a building block: " + block.getType());
             TeamCore teamCore = teamCoreManager.getTeamCoreByLocation(block.getLocation());
             if (teamCore != null) {
-                Bukkit.broadcastMessage("Block is in team territory: " + block);
-                teamCoreEventListener.addConnectedTeamBlocks(teamCore, block);
+                Bukkit.broadcastMessage("Block is in team territory: " + block.getType());
+                teamCoreManager.addConnectedTeamBlocks(teamCore, block);
             }
         }
     }
@@ -172,17 +168,22 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onTargetBlock(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        // set the ignored materials
+
+        //ignored materials
         Set<Material> materials = new HashSet<>();
         materials.add(XMaterial.AIR.parseMaterial());
         materials.add(XMaterial.WATER.parseMaterial());
         materials.add(XMaterial.LAVA.parseMaterial());
-        Block targetBlock = player.getTargetBlock(materials, 10);
-        BlockStats blockStats = blockStatsManager.getBlockStats(targetBlock);
 
-        if (targetBlock != null && blockStats.getBlockType() == BlockType.BUILDING) {
-            String blockName = targetBlock.getType().name();
-            ActionBar.sendActionBar(player, " health:§a " + blockStats.getHealth());
+        Block targetBlock = player.getTargetBlock(materials, 10);
+
+        if (targetBlock != null) {
+            BlockStats blockStats = blockStatsManager.getBlockStats(targetBlock);
+            if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
+                String blockName = targetBlock.getType().name();
+                ActionBar.sendActionBar(player, " health:§a " + blockStats.getHealth());
+            }
         }
     }
+
 }

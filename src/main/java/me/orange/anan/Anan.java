@@ -8,14 +8,6 @@ import me.orange.anan.player.PlayerDataManager;
 
 @FairyLaunch
 public class Anan extends Plugin {
-    private final PlayerDataManager playerDataManager;
-    private final TeamCoreManager teamCoreManager;
-
-    public Anan(PlayerDataManager playerDataManager, TeamCoreManager teamCoreManager) {
-        this.playerDataManager = playerDataManager;
-        this.teamCoreManager = teamCoreManager;
-    }
-
     @Override
     public void onPluginEnable() {
         Log.info("Toe Click Enabled.");
@@ -23,8 +15,6 @@ public class Anan extends Plugin {
 
     @Override
     public void onPluginDisable() {
-        playerDataManager.saveConfig();
-        teamCoreManager.saveConfig();
         Log.info("Toe Click Disabled.");
     }
 

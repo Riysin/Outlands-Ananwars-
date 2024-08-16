@@ -56,6 +56,7 @@ public class DeathEventListener implements Listener {
         boolean isKnocked = playerDataManager.checkKnocked(player);
 
         if (!isKnocked) {
+            event.setDeathMessage(null);
             playerDataManager.playerKnocked(player);
             player.sendMessage("§c你被擊倒了");
         } else {

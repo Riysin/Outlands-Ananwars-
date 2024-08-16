@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -59,30 +60,29 @@ public class TeamCoreEventListener implements Listener {
             return;
         }
 
-        Creeper coreCreeper = spawnTeamCore(location, world);
+        Creeper coreCreeper = spawnCoreCreeper(location, world);
         teamCoreManager.addTeamCore(player, coreCreeper, block);
 
         TeamCore teamCore = teamCoreManager.getTeamCore(coreCreeper);
-        addConnectedTeamBlocks(teamCore, block);
+        teamCoreManager.addConnectedTeamBlocks(teamCore, block);
+    }
+
+    private Creeper spawnCoreCreeper(Location location, World world) {
+        Location spawnLocation = location.add(CREEPER_SPAWN_XZ_OFFSET, CREEPER_SPAWN_Y_OFFSET, CREEPER_SPAWN_XZ_OFFSET);
+        Creeper creeper = world.spawn(spawnLocation, Creeper.class);
+
+        creeper.setCustomNameVisible(false);
+        creeper.setRemoveWhenFarAway(false);
+        creeper.setMaxHealth(CORE_HEALTH);
+        creeper.setHealth(CORE_HEALTH);
+
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "entitydata " + creeper.getUniqueId() + " {NoAI:1b}");
+        return creeper;
     }
 
     private void sendErrorMessage(Player player) {
         player.sendMessage("§c隊伍核心只能放置在建築方塊上方!");
         player.playSound(player.getLocation(), ERROR_SOUND, SOUND_VOLUME, SOUND_PITCH);
-    }
-
-    public Creeper spawnTeamCore(Location location, World world) {
-        // Avoid multiple clones.
-        Location spawnLocation = location.add(CREEPER_SPAWN_XZ_OFFSET, CREEPER_SPAWN_Y_OFFSET, CREEPER_SPAWN_XZ_OFFSET);
-        Creeper teamCore = world.spawn(spawnLocation, Creeper.class);
-
-        teamCore.setCustomNameVisible(false);
-        teamCore.setRemoveWhenFarAway(false);
-        teamCore.setMaxHealth(CORE_HEALTH);
-        teamCore.setHealth(CORE_HEALTH);
-
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "entitydata " + teamCore.getUniqueId() + " {NoAI:1b}");
-        return teamCore;
     }
 
     @EventHandler
@@ -107,70 +107,39 @@ public class TeamCoreEventListener implements Listener {
         Player player = event.getPlayer();
         Creeper sightCreeper = getSightCreeper(player);
         if (sightCreeper != null) {
-            ActionBar.sendActionBar(player, "health: §a" + sightCreeper.getHealth());
+            ActionBar.sendActionBar(player, "§6Core HP: §a" + sightCreeper.getHealth());
         }
 
         Location location = player.getLocation();
         TeamCore teamCore = teamCoreManager.getTeamCoreByLocation(location);
 
         if (teamCore != null) {
-            ActionBar.sendActionBar(player, "health: §a" + teamCore.getCoreCreeper().getHealth());
+            ActionBar.sendActionBar(player, " §3You are in a territory");
         }
     }
 
     private Creeper getSightCreeper(Player player) {
-        // Stream optimized with parallel execution to improve performance
         return teamCoreManager.getTeamCores().parallelStream()
                 .map(TeamCore::getCoreCreeper)
-                .filter(player::hasLineOfSight)
+                .filter(creeper -> player.hasLineOfSight(creeper) && isLookingAt(player, creeper))
                 .findFirst()
                 .orElse(null);
     }
 
-    public void addConnectedTeamBlocks(TeamCore teamCore, Block block) {
-        Set<Block> visitedBlocks = new HashSet<>();
-        exploreConnectedBlocksIterative(teamCore, block, visitedBlocks);
+    private boolean isLookingAt(Player player, Entity entity) {
+        // Get the direction the player is facing
+        Vector playerDirection = player.getLocation().getDirection();
 
-        // Use a single loop to add the above blocks, improving readability
-        teamCore.getConnectedBlocks().forEach(connectedBlock -> {
-            for (int i = 1; i <= 3; i++) {
-                Block aboveBlock = connectedBlock.getRelative(0, i, 0);
-                teamCore.addConnectedBlock(aboveBlock);
-            }
-        });
+        // Get the vector from the player to the entity
+        Vector toEntity = entity.getLocation().toVector().subtract(player.getLocation().toVector()).normalize();
+
+        // Calculate the angle between the player's direction and the entity
+        double angle = playerDirection.angle(toEntity);
+
+        // Return true if the angle is within 30 degrees (0.5236 radians)
+        return angle < 0.5236; // approximately 30 degrees
     }
 
-    private void exploreConnectedBlocksIterative(TeamCore teamCore, Block startBlock, Set<Block> visitedBlocks) {
-        // Iterative DFS instead of recursion
-        Set<Block> stack = new HashSet<>();
-        stack.add(startBlock);
-
-        while (!stack.isEmpty()) {
-            Block block = stack.iterator().next();
-            stack.remove(block);
-
-            if (visitedBlocks.contains(block)) continue;
-
-            visitedBlocks.add(block);
-            teamCore.addConnectedBlock(block);
-
-            BlockStats blockStats = blockStatsManager.getBlockStats(block);
-            if (blockStats == null || blockStats.getBlockType() != BlockType.BUILDING) continue;
-
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                    for (int dz = -1; dz <= 1; dz++) {
-                        if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
-                            Block adjacentBlock = block.getRelative(dx, dy, dz);
-                            if (!visitedBlocks.contains(adjacentBlock)) {
-                                stack.add(adjacentBlock);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private void removeConnectedBlocks(TeamCore teamCore) {
         Set<Block> blocksToRemove = new HashSet<>(teamCore.getConnectedBlocks());

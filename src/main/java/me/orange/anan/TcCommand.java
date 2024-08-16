@@ -15,6 +15,8 @@ import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.blocks.config.NatureBlockConfig;
+import me.orange.anan.craft.behaviour.teamCore.TeamCoreConfig;
+import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import me.orange.anan.player.PlayerDataManager;
 import me.orange.anan.player.bed.BedConfig;
 import me.orange.anan.player.config.PlayerConfig;
@@ -34,8 +36,10 @@ public class TcCommand extends BaseCommand {
     private final BuildConfig buildConfig;
     private final BlockConfig blockConfig;
     private final PlayerDataManager playerDataManager;
+    private final TeamCoreConfig teamCoreConfig;
+    private final TeamCoreManager teamCoreManager;
 
-    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig, PlayerDataManager playerDataManager) {
+    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig, PlayerDataManager playerDataManager, TeamCoreConfig teamCoreConfig, TeamCoreManager teamCoreManager) {
         this.clanConfig = clanConfig;
         this.playerConfig = playerConfig;
         this.natureBlockConfig = natureBlockConfig;
@@ -43,6 +47,8 @@ public class TcCommand extends BaseCommand {
         this.buildConfig = buildConfig;
         this.blockConfig = blockConfig;
         this.playerDataManager = playerDataManager;
+        this.teamCoreConfig = teamCoreConfig;
+        this.teamCoreManager = teamCoreManager;
     }
 
     @Command("test")
@@ -70,6 +76,7 @@ public class TcCommand extends BaseCommand {
         playerConfig.loadAndSave();
         buildConfig.loadAndSave();
         blockConfig.loadAndSave();
+        teamCoreConfig.loadAndSave();
 
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Config reloaded");
     }
@@ -77,6 +84,7 @@ public class TcCommand extends BaseCommand {
     @Command("saveConfig")
     public void saveConfig(BukkitCommandContext ctx){
         playerDataManager.saveToConfig(ctx.getPlayer());
+        teamCoreManager.saveConfig();
     }
 
 

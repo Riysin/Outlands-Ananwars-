@@ -2,7 +2,9 @@ package me.orange.anan.craft.behaviour.teamCore;
 
 import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.config.annotation.ConfigurationElement;
+import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.mc.util.Position;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -14,14 +16,16 @@ public class TeamCoreConfigElement {
     private double coreCreeperHealth = 0.0;
     private Position coreCreeperPosition = new Position();
     private Position coreBlockPosition = new Position();
-    private List<Position> connectedBlocks = new ArrayList<>();
+
+    @ElementType(CoreConnectedBlockElement.class)
+    private List<CoreConnectedBlockElement> connectedBlocks = new ArrayList<>();
 
     public UUID getPlacePlayerUUID() {
-        return placePlayerUUID != null ? UUID.fromString(placePlayerUUID) : null;
+        return UUID.fromString(placePlayerUUID);
     }
 
     public void setPlacePlayerUUID(UUID placePlayerUUID) {
-        this.placePlayerUUID = placePlayerUUID != null ? placePlayerUUID.toString() : null;
+        this.placePlayerUUID = placePlayerUUID.toString();
     }
 
     public double getCoreCreeperHealth() {
@@ -50,16 +54,23 @@ public class TeamCoreConfigElement {
 
     public Set<Block> getConnectedBlocks() {
         Set<Block> blocks = new HashSet<>();
-        for (Position position : connectedBlocks) {
-            blocks.add(BukkitPos.toBukkitLocation(position).getBlock());
+        for (CoreConnectedBlockElement element : connectedBlocks) {
+            Location location = BukkitPos.toBukkitLocation(element.getPosition());
+            blocks.add(location.getBlock());
         }
-        return blocks;
+        return Collections.unmodifiableSet(blocks);  // Return immutable set
     }
 
-    public void setConnectedBlocks(Set<Block> connectedBlocks) {
-        this.connectedBlocks.clear();
-        for (Block block : connectedBlocks) {
-            this.connectedBlocks.add(BukkitPos.toMCPos(block.getLocation()));
+    public void setConnectedBlocks(Set<Block> blocks) {
+        if (blocks == null) {
+            connectedBlocks.clear();
+            return;
+        }
+        connectedBlocks.clear();
+        for (Block block : blocks) {
+            CoreConnectedBlockElement element = new CoreConnectedBlockElement();
+            element.setPosition(BukkitPos.toMCPos(block.getLocation()));
+            connectedBlocks.add(element);
         }
     }
 }

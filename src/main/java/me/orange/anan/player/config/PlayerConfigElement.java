@@ -41,6 +41,7 @@ public class PlayerConfigElement {
     }
 
     public void setLastDeathLocation(Location location) {
+        if(location == null) {return;}
         this.lastDeathPosition = BukkitPos.toMCPos(location);
     }
 
