@@ -28,8 +28,8 @@ public class ClanConfigElement {
         return uuids;
     }
 
-    public void setPlayers(List<String> players) {
-        this.players = players;
+    public void setPlayers(List<UUID> players) {
+        players.forEach(player -> this.players.add(player.toString()));
     }
 
     public void addPlayer(Player player) {

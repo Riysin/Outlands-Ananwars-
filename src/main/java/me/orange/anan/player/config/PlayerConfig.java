@@ -4,9 +4,11 @@ import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.config.yaml.YamlConfiguration;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @InjectableComponent
@@ -34,5 +36,24 @@ public class PlayerConfig extends YamlConfiguration {
             this.save();
             this.load();
         }
+    }
+
+    public List<BedElement> getBedElements(Player player) {
+        return playerElementMap.get(player.getUniqueId().toString()).getBedList();
+    }
+
+    public void addBed(Player player, Location location) {
+        String uuid = player.getUniqueId().toString();
+
+        if (!playerElementMap.containsKey(uuid)) {
+            playerElementMap.put(uuid, new PlayerConfigElement());
+        }
+        BedElement element = new BedElement();
+        element.setBedName("Bed " + (playerElementMap.get(uuid).getBedList().size() + 1));
+        element.setPosition(location);
+
+        playerElementMap.get(uuid).getBedList().add(element);
+
+        this.save();
     }
 }

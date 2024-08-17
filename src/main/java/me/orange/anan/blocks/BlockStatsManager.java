@@ -32,6 +32,18 @@ public class BlockStatsManager {
         }
     }
 
+    public void saveConfig() {
+        blockConfig.getBlockData().clear();
+        blockStatsMap.forEach((block, blockStats) -> {
+            BlockConfigElement element = new BlockConfigElement();
+            element.setPosition(block.getLocation());
+            element.setBlockType(blockStats.getBlockType());
+            element.setHealth(blockStats.getHealth());
+            blockConfig.getBlockData().add(element);
+        });
+        blockConfig.save();
+    }
+
     public BlockStats getBlockStats(Block block) {
         return blockStatsMap.computeIfAbsent(block, k -> new BlockStats());
     }
@@ -59,11 +71,6 @@ public class BlockStatsManager {
         Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
     }
 
-    public boolean checkBlockBreak(Block block) {
-        BlockStats blockStats = getBlockStats(block);
-        return blockStats.getHealth() <= 0;
-    }
-
     public BlockStats placeBlock(Player player, Block block, Integer health) {
         blockConfig.addBlock(block, health);
         updateBlockStats(block);
@@ -73,5 +80,4 @@ public class BlockStatsManager {
     public BlockConfigElement getBlockConfigElement(Block block) {
         return blockConfig.getBlockConfigElement(block);
     }
-
 }

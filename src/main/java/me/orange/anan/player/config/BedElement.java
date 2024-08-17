@@ -1,4 +1,4 @@
-package me.orange.anan.player.bed;
+package me.orange.anan.player.config;
 
 import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.config.annotation.ConfigurationElement;

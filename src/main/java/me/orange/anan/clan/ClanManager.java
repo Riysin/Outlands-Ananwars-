@@ -18,67 +18,59 @@ public class ClanManager {
 
     public ClanManager(ClanConfig clanConfig) {
         this.clanConfig = clanConfig;
-        loadClan();
+
+        loadConfig();
     }
 
-    public void loadClan() {
+    public void loadConfig() {
         clanConfig.getClanElementMap().forEach((clanName, element) -> {
             Clan clan = new Clan(clanName);
-            updateClanFromElement(clan, element);
+            clan.setOwner(element.getOwner());
+            clan.setDisplayName(clanName);
+            clan.setPlayers(element.getPlayers());
             clanMap.put(clanName, clan);
         });
+    }
+
+    public void saveConfig() {
+        clanMap.forEach((clanName, clan) -> {
+            ClanConfigElement element = clanConfig.getClanElementMap().get(clanName);
+            element.setPlayers(clan.getPlayers());
+            element.setOwner(clan.getOwnerUUID());
+        });
+        clanConfig.save();
     }
 
     public void createClan(String name, Player player) {
         clanConfig.addClan(name, player);
         Clan clan = new Clan(name);
-        updateClan(clan);
+        clan.setOwner(player.getUniqueId());
         clanMap.put(name, clan);
     }
 
     public void removeClan(Player player) {
         String clanName = getClanName(player);
         if (clanName != null) {
-            clanConfig.removeClan(clanName);
             clanMap.remove(clanName);
         }
     }
 
-    public void updateClan(Clan clan) {
-        String clanName = clan.getDisplayName();
-        ClanConfigElement element = clanConfig.getClanElementMap().get(clanName);
-        updateClanFromElement(clan, element);
-    }
-
-    private void updateClanFromElement(Clan clan, ClanConfigElement element) {
-        clan.setPlayers(element.getPlayers());
-        clan.setOwner(element.getOwner());
-        clan.setPrefix("§2[" + clan.getDisplayName() + "]§r ");
-        clan.setSuffix("");
-    }
-
     public void addPlayerToClan(Player clanPlayer, Player player) {
-        ClanConfigElement element = getPlayerClanConfigElement(clanPlayer);
-        element.addPlayer(player);
-        updateClan(getPlayerClan(clanPlayer));
-        clanConfig.save();
+        Clan clan = getPlayerClan(clanPlayer);
+        if (clan != null) {
+            clan.getPlayers().add(player.getUniqueId());
+        }
     }
 
     public void removePlayerFromClan(Player player) {
         Clan clan = getPlayerClan(player);
         if (clan != null) {
             clan.getPlayers().remove(player.getUniqueId());
-            getPlayerClanConfigElement(player).removePlayer(player);
-            clanConfig.save();
         }
     }
 
     public Map<String, Clan> getClanMap() {
         return clanMap;
-    }
-
-    public boolean hasClan(String teamName) {
-        return clanMap.containsKey(teamName);
     }
 
     public Clan getPlayerClan(Player player) {
@@ -89,14 +81,6 @@ public class ClanManager {
         return clanMap.values().stream()
                 .filter(clan -> clan.getPlayers().contains(uuid))
                 .findFirst().orElse(null);
-    }
-
-    public ClanConfigElement getPlayerClanConfigElement(Player player) {
-        Clan clan = getPlayerClan(player);
-        if (clan != null) {
-            return clanConfig.getClanElementMap().get(clan.getDisplayName());
-        }
-        return null;
     }
 
     public boolean inClan(Player player) {
@@ -129,12 +113,14 @@ public class ClanManager {
         return "§cYou do not have a clan yet!";
     }
 
-    public void transferOwner(Player player) {
-        ClanConfigElement element = getPlayerClanConfigElement(player);
-        if (element != null) {
-            element.setOwner(player.getUniqueId());
-            updateClan(getPlayerClan(player));
-        }
+    public boolean hasInvitation(Player ctx, Player player) {
+        Clan clan = getPlayerClan(ctx);
+        return clan != null && clan.getInvitations().contains(player.getUniqueId());
+    }
+
+    public String getClanName(Player player) {
+        Clan clan = getPlayerClan(player);
+        return clan != null ? clan.getDisplayName() : null;
     }
 
     public void sendClanOwner(Player player, String message) {
@@ -152,22 +138,5 @@ public class ClanManager {
         if (clan != null) {
             clan.getOnlineBukkitPlayers().forEach(p -> p.sendMessage(message));
         }
-    }
-
-    public boolean hasInvitation(Player ctx, Player player) {
-        Clan clan = getPlayerClan(ctx);
-        return clan != null && clan.getInvitations().contains(player.getUniqueId());
-    }
-
-    public void addInvitation(Player ctx, Player player) {
-        Clan clan = getPlayerClan(ctx);
-        if (clan != null) {
-            clan.getInvitations().add(player.getUniqueId());
-        }
-    }
-
-    public String getClanName(Player player) {
-        Clan clan = getPlayerClan(player);
-        return clan != null ? clan.getDisplayName() : null;
     }
 }

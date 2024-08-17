@@ -30,14 +30,12 @@ public class ClanConfig extends YamlConfiguration {
             element.addPlayer(player);
             clanElementMap.put(name, element);
             this.save();
-            this.load();
         }
     }
 
     public void removeClan(String name) {
         clanElementMap.remove(name);
         this.save();
-        this.load();
     }
 
     public Map<String, ClanConfigElement> getClanElementMap() {

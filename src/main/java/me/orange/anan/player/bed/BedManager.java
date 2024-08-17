@@ -1,6 +1,7 @@
 package me.orange.anan.player.bed;
 
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -8,11 +9,11 @@ import java.util.*;
 
 @InjectableComponent
 public class BedManager {
-    private final BedConfig bedConfig;
+    private final PlayerConfig playerConfig;
     private final List<Bed> bedList = new ArrayList<>();
 
-    public BedManager(BedConfig bedConfig) {
-        this.bedConfig = bedConfig;
+    public BedManager(PlayerConfig playerConfig) {
+        this.playerConfig = playerConfig;
 
         loadBedConfig();
     }
@@ -34,7 +35,7 @@ public class BedManager {
     }
 
     public void loadBedConfig() {
-        bedConfig.getPlayerBedMap().forEach((uuid, bedConfigElements) -> {
+        playerConfig.getPlayerElementMap().forEach((uuid, bedConfigElements) -> {
             bedConfigElements.getBedList().forEach(bedElement -> {
                 Bed bed = new Bed();
                 bed.setOwner(UUID.fromString(uuid));
@@ -48,7 +49,7 @@ public class BedManager {
 
     public void updateBed(Player player) {
         bedList.clear();
-        bedConfig.getBedElements(player).forEach(bedElement -> {
+        playerConfig.getBedElements(player).forEach(bedElement -> {
             Bed bed = new Bed();
             bed.setOwner(player.getUniqueId());
             bed.setBedName(bedElement.getBedName());
@@ -59,12 +60,12 @@ public class BedManager {
     }
 
     public void addBed(Player player, Location location) {
-        bedConfig.addBed(player, location);
+        playerConfig.addBed(player, location);
         updateBed(player);
     }
 
     public void removeBed(Player player, Location location) {
-        bedConfig.getBedElements(player).removeIf(bedElement -> bedElement.getLocation().equals(location));
+        playerConfig.getBedElements(player).removeIf(bedElement -> bedElement.getLocation().equals(location));
         updateBed(player);
     }
 

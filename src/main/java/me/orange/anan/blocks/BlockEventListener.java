@@ -57,13 +57,13 @@ public class BlockEventListener implements Listener {
         Block block = event.getBlock();
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
+        //Managing the health of the block
         if (blockStats.getBlockType() == BlockType.BUILDING) {
-
             blockStatsManager.breakBlock(player, block);
             if (player.getGameMode() == GameMode.CREATIVE)
                 blockStats.setHealth(0);
 
-            if (blockStatsManager.checkBlockBreak(block)) {
+            if (blockStats.getHealth() <= 0) {
                 blockStatsManager.getBlockStatsMap().remove(event.getBlock());
                 blockConfig.getBlockData().remove(blockConfig.getBlockConfigElement(block));
             } else {
@@ -72,6 +72,7 @@ public class BlockEventListener implements Listener {
             return;
         }
 
+        //Dropping items
         Integer id = block.getTypeId();
         byte data = block.getData();
         boolean drop = false;
@@ -110,10 +111,6 @@ public class BlockEventListener implements Listener {
 
     @EventHandler
     public void onBlockPlaced(BlockPlaceEvent event) {
-        if (event instanceof BlockMultiPlaceEvent) {
-            Bukkit.broadcastMessage("BlockMultiPlaceEvent");
-            return;
-        }
         Player player = event.getPlayer();
         ItemStack item = event.getItemInHand();
         Block block = event.getBlock();

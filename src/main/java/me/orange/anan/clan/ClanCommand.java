@@ -35,7 +35,7 @@ public class ClanCommand extends BaseCommand {
             player.sendMessage("§cYou are already in a clan.");
             return;
         }
-        if (clanManager.hasClan(clanName)) {
+        if (clanManager.getClanMap().containsKey(clanName)) {
             player.sendMessage("§cThis clan already exists.");
             return;
         }
@@ -65,7 +65,7 @@ public class ClanCommand extends BaseCommand {
             return;
         }
 
-        clanManager.addInvitation(sender, player);
+        clanManager.getPlayerClan(sender).getInvitations().add(player.getUniqueId());
         sender.sendMessage("§eInvitation sent to " + player.getName());
         player.sendMessage("§ePlayer " + sender.getName() + " has sent you an invitation to their clan");
 
@@ -187,27 +187,27 @@ public class ClanCommand extends BaseCommand {
 
     @Command("transfer")
     public void transferOwner(BukkitCommandContext ctx, @Arg("New Owner") Player player) {
-        if (!clanManager.sameClan(ctx.getPlayer(), player)) {
-            ctx.getPlayer().sendMessage("§cYou are not in the same clan with this player!");
+        Player owner = ctx.getPlayer();
+        if (!clanManager.sameClan(owner, player)) {
+            owner.sendMessage("§cYou are not in the same clan with this player!");
             return;
         }
-        if (!clanManager.isOwner(ctx.getPlayer())) {
-            ctx.getPlayer().sendMessage("§cYou don't have the permission to do this.");
+        if (!clanManager.isOwner(owner)) {
+            owner.sendMessage("§cYou don't have the permission to do this.");
+            return;
+        }
+        if (clanManager.isOwner(player)) {
+            owner.sendMessage("§cThis player is already the owner!");
             return;
         }
 
-        clanManager.transferOwner(player);
-        ctx.getPlayer().sendMessage(player.getName() + "§e has become the owner.");
+        clanManager.getPlayerClan(owner).setOwner(player.getUniqueId());
+        owner.sendMessage(player.getName() + "§e has become the owner.");
     }
 
     @Command("owner")
     public void showOwner(BukkitCommandContext ctx){
         ctx.getPlayer().sendMessage(clanManager.getOwnerName(ctx.getPlayer()));
-    }
-
-    @Command(value = "config", permissionNode = "clan.admin")
-    public void reloadConfig(BukkitCommandContext ctx){
-        clanManager.loadClan();
     }
 }
 

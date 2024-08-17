@@ -32,7 +32,7 @@ public class Sidebar implements SidebarAdapter {
         String clanName = "無";
         Player player = mcPlayer.as(Player.class);
 
-        if (clanManager.inClan(player.getUniqueId())) {
+        if (clanManager.inClan(player)) {
             clanName = clanManager.getPlayerClan(player.getUniqueId()).getDisplayName();
         }
         List<Component> sidebar = new ArrayList<>();

@@ -117,7 +117,7 @@ public class HammerManager {
                     player.sendMessage("§c材料不足!");
             }
         } else
-            player.sendMessage("§c此方塊更為高階，無法升級!");
+            player.sendMessage("§c目標方塊比選擇的方塊高階，無法升級!");
     }
 
     private String getConfigItemID(HammerAction hammerAction) {
@@ -167,6 +167,7 @@ public class HammerManager {
 
         if (currentHealth < maxHealth) {
             blockStats.setHealth(currentHealth + 1);
+            blockStatsManager.updateBlockStats(block);
             Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
         } else
             player.sendMessage("§c方塊已達到最大耐久度!");

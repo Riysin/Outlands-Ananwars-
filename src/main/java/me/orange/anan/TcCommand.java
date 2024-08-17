@@ -18,7 +18,6 @@ import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreConfig;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import me.orange.anan.player.PlayerDataManager;
-import me.orange.anan.player.bed.BedConfig;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -81,18 +80,18 @@ public class TcCommand extends BaseCommand {
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Config reloaded");
     }
 
-    @Command("saveConfig")
-    public void saveConfig(BukkitCommandContext ctx){
-        playerDataManager.saveToConfig(ctx.getPlayer());
-        teamCoreManager.saveConfig();
-    }
-
-
     @Command("deleteBlockData")
     public void deleteBlockData(BukkitCommandContext ctx) {
         blockConfig.getBlockData().clear();
         blockConfig.save();
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Block data deleted");
+    }
+
+    @Command("deleteTcData")
+    public void deleteTcData(BukkitCommandContext ctx){
+        teamCoreConfig.getTeamCores().clear();
+        teamCoreConfig.save();
+        ctx.getPlayer().sendMessage(ChatColor.GREEN + "Team cores deleted");
     }
 
     @Command("head")

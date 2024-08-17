@@ -1,0 +1,32 @@
+package me.orange.anan;
+
+import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.container.PostDestroy;
+import me.orange.anan.blocks.BlockStatsManager;
+import me.orange.anan.clan.ClanManager;
+import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
+import me.orange.anan.player.PlayerDataManager;
+
+@InjectableComponent
+public class ConfigSaver {
+    private final BlockStatsManager blockStatsManager;
+    private final ClanManager clanManager;
+    private final PlayerDataManager playerDataManager;
+    private final TeamCoreManager teamCoreManager;
+
+    public ConfigSaver(BlockStatsManager blockStatsManager, ClanManager clanManager, PlayerDataManager playerDataManager, TeamCoreManager teamCoreManager) {
+        this.blockStatsManager = blockStatsManager;
+        this.clanManager = clanManager;
+        this.playerDataManager = playerDataManager;
+        this.teamCoreManager = teamCoreManager;
+    }
+
+    @PostDestroy
+    public void onPreDestroy() {
+        blockStatsManager.saveConfig();
+        clanManager.saveConfig();
+        playerDataManager.saveConfig();
+        teamCoreManager.saveConfig();
+        System.out.println("ConfigSaver is being destroyed.");
+    }
+}
