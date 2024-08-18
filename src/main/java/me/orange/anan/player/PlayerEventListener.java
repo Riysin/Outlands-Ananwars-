@@ -56,8 +56,6 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onPlayerLeft(PlayerQuitEvent event) {
-        playerDataManager.saveToConfig(event.getPlayer());
-
         event.setQuitMessage("§e" + event.getPlayer().getName() + " has left!");
         craftTimerManager.getPlayerCraftTimerList(event.getPlayer()).forEach(craftTimer -> {
             craftTimerManager.craftingFailed(event.getPlayer(), craftTimer);

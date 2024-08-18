@@ -167,12 +167,11 @@ public class BlockEventListener implements Listener {
         materials.add(XMaterial.WATER.parseMaterial());
         materials.add(XMaterial.LAVA.parseMaterial());
 
-        Block targetBlock = player.getTargetBlock(materials, 10);
+        Block targetBlock = player.getTargetBlock(materials, 3);
 
         if (targetBlock != null) {
             BlockStats blockStats = blockStatsManager.getBlockStats(targetBlock);
             if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
-                String blockName = targetBlock.getType().name();
                 ActionBar.sendActionBar(player, " health:§a " + blockStats.getHealth());
             }
         }

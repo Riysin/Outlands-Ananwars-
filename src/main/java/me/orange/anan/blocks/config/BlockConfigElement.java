@@ -32,7 +32,7 @@ public class BlockConfigElement {
         return BukkitPos.toBukkitLocation(position);
     }
 
-    public void setPosition(Location location) {
+    public void setLocation(Location location) {
         this.position = BukkitPos.toMCPos(location);
     }
 

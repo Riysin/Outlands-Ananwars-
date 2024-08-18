@@ -43,6 +43,7 @@ public class HammerBehaviour implements CraftBehaviour {
 
                 }, Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK),
                 ItemBehaviour.interact(listenerRegistry, (player1, item, action, event) -> {
+                    event.setCancelled(true);
                     if (event.getClickedBlock() != null) {
                         Bukkit.getPluginManager().callEvent(new PlayerLeftClickHammerEvent(player1, event.getClickedBlock()));
                     } else {

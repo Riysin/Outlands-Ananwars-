@@ -13,14 +13,12 @@ import me.orange.anan.player.bed.BedManager;
 public class ConfigSaver {
     private final BlockStatsManager blockStatsManager;
     private final ClanManager clanManager;
-    private final BedManager bedManager;
     private final PlayerDataManager playerDataManager;
     private final TeamCoreManager teamCoreManager;
 
-    public ConfigSaver(BlockStatsManager blockStatsManager, ClanManager clanManager, BedManager bedManager, PlayerDataManager playerDataManager, TeamCoreManager teamCoreManager) {
+    public ConfigSaver(BlockStatsManager blockStatsManager, ClanManager clanManager, PlayerDataManager playerDataManager, TeamCoreManager teamCoreManager) {
         this.blockStatsManager = blockStatsManager;
         this.clanManager = clanManager;
-        this.bedManager = bedManager;
         this.playerDataManager = playerDataManager;
         this.teamCoreManager = teamCoreManager;
     }
@@ -29,7 +27,6 @@ public class ConfigSaver {
     public void onPreDestroy() {
         blockStatsManager.saveConfig();
         clanManager.saveConfig();
-        bedManager.saveConfig();
         playerDataManager.saveConfig();
         teamCoreManager.saveConfig();
         Log.info("Configs saved");

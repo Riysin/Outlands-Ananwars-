@@ -32,12 +32,6 @@ public class BedManager {
         });
     }
 
-    public void saveConfig() {
-        bedList.forEach(bed -> {
-            playerConfig.addBed(Bukkit.getPlayer(bed.getOwner()), bed.getLocation());
-        });
-    }
-
     public List<Bed> getBedList() {
         return bedList;
     }

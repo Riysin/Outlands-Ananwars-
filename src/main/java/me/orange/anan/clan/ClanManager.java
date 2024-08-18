@@ -23,8 +23,9 @@ public class ClanManager {
         clanConfig.getClanElementMap().forEach((clanName, element) -> {
             Clan clan = new Clan(clanName);
             clan.setOwner(element.getOwner());
-            clan.setDisplayName(clanName);
             clan.setPlayers(element.getPlayers());
+            clan.setDisplayName(clanName);
+            clan.setPrefix(clanName);
             clanMap.put(clanName, clan);
         });
     }
@@ -32,9 +33,11 @@ public class ClanManager {
     public void saveConfig() {
         clanConfig.getClanElementMap().clear();
         clanMap.forEach((clanName, clan) -> {
-            ClanConfigElement element = clanConfig.getClanElementMap().get(clanName);
+            ClanConfigElement element = new ClanConfigElement();
             element.setPlayers(clan.getPlayers());
             element.setOwner(clan.getOwnerUUID());
+            element.setClanName(clanName);
+            clanConfig.getClanElementMap().put(clanName, element);
         });
         clanConfig.save();
     }

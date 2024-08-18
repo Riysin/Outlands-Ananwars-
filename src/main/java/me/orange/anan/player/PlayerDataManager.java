@@ -7,6 +7,7 @@ import io.fairyproject.mc.nametag.NameTagService;
 import io.fairyproject.mc.tablist.util.Skin;
 import me.orange.anan.clan.Clan;
 import me.orange.anan.clan.ClanManager;
+import me.orange.anan.player.bed.BedManager;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.config.PlayerConfigElement;
 import org.bukkit.Bukkit;
@@ -25,48 +26,39 @@ import java.util.UUID;
 @InjectableComponent
 public class PlayerDataManager {
     private final PlayerConfig playerConfig;
+    private final BedManager bedManager;
     private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
 
-    public PlayerDataManager(PlayerConfig playerConfig) {
+    public PlayerDataManager(PlayerConfig playerConfig, BedManager bedManager) {
         this.playerConfig = playerConfig;
+        this.bedManager = bedManager;
 
         loadConfig();
     }
 
     public void loadConfig() {
-        playerConfig.getPlayerElementMap().forEach((playerName, playerElement) -> {
-            UUID uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId();
+        playerConfig.getPlayerElementMap().forEach((uuid, playerConfigElement) -> {
             PlayerData playerData = new PlayerData();
-            playerData.setKills(playerElement.getKills());
-            playerData.setDeaths(playerElement.getDeaths());
-            playerData.setLastDeathLocation(playerElement.getLastDeathLocation());
-            playerData.setBossBarActive(playerElement.isBossBarActive());
+            playerData.setKills(playerConfigElement.getKills());
+            playerData.setDeaths(playerConfigElement.getDeaths());
+            playerData.setLastDeathLocation(playerConfigElement.getLastDeathLocation());
+            playerData.setBossBarActive(playerConfigElement.isBossBarActive());
 
-            playerDataMap.put(uuid, playerData);
+            playerDataMap.put(UUID.fromString(uuid), playerData);
         });
     }
 
-    public void saveToConfig(Player player) {
-        PlayerConfigElement playerConfigElement = getPlayerConfigElement(player);
-        PlayerData playerData = getPlayerData(player);
+    public void saveConfig() {
+        playerDataMap.forEach((uuid, playerData) -> {
+            PlayerConfigElement playerConfigElement = new PlayerConfigElement();
+            playerConfigElement.setKills(playerData.getKills());
+            playerConfigElement.setDeaths(playerData.getDeaths());
+            playerConfigElement.setLastDeathLocation(playerData.getLastDeathLocation());
+            playerConfigElement.setBossBarActive(playerData.isBossBarActive());
 
-        playerConfigElement.setKills(playerData.getKills());
-        playerConfigElement.setDeaths(playerData.getDeaths());
-        playerConfigElement.setLastDeathLocation(playerData.getLastDeathLocation());
-        playerConfigElement.setBossBarActive(playerData.isBossBarActive());
-
+            playerConfig.getPlayerElementMap().put(uuid.toString(), playerConfigElement);
+        });
         playerConfig.save();
-    }
-
-    public void saveConfig(){
-        playerConfig.getPlayerElementMap().forEach((playerName, playerElement) -> {
-            UUID uuid = Bukkit.getOfflinePlayer(playerName).getUniqueId();
-            PlayerData playerData = playerDataMap.get(uuid);
-            playerElement.setKills(playerData.getKills());
-            playerElement.setDeaths(playerData.getDeaths());
-            playerElement.setLastDeathLocation(playerData.getLastDeathLocation());
-            playerElement.setBossBarActive(playerData.isBossBarActive());
-        });
     }
 
     public Map<UUID, PlayerData> getPlayerDataMap() {
@@ -136,13 +128,8 @@ public class PlayerDataManager {
 
         if (!playerDataMap.containsKey(uuid)) {
             playerDataMap.put(uuid, new PlayerData());
-            playerConfig.addPlayer(player);
         }
         PlayerData playerData = playerDataMap.get(uuid);
         playerData.setSkin(Skin.load(uuid));
-    }
-
-    public PlayerConfigElement getPlayerConfigElement(Player player) {
-        return playerConfig.getPlayerElementMap().get(player.getUniqueId().toString());
     }
 }

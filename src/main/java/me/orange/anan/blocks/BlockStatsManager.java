@@ -22,13 +22,13 @@ public class BlockStatsManager {
     }
 
     public void loadConfig() {
-        blockStatsMap.clear();
         for (BlockConfigElement element : blockConfig.getBlockData()) {
             Block block = element.getLocation().getBlock();
             BlockStats blockStats = getBlockStats(block);
             blockStats.setBlockType(element.getBlockType());
             blockStats.setHealth(element.getHealth());
             blockStats.setLocation(element.getLocation());
+            blockStatsMap.put(block, blockStats);
         }
     }
 
@@ -38,7 +38,7 @@ public class BlockStatsManager {
             BlockConfigElement element = new BlockConfigElement();
             element.setBlockType(blockStats.getBlockType());
             element.setHealth(blockStats.getHealth());
-            element.setPosition(block.getLocation());
+            element.setLocation(block.getLocation());
             blockConfig.getBlockData().add(element);
         });
         blockConfig.save();
@@ -53,7 +53,9 @@ public class BlockStatsManager {
     }
 
     public BlockStats getBlockStats(Block block) {
-        return blockStatsMap.computeIfAbsent(block, k -> new BlockStats());
+        if (blockStatsMap.containsKey(block))
+            return blockStatsMap.get(block);
+        return new BlockStats();
     }
 
     public void breakBlock(Player player, Block block) {
@@ -67,6 +69,8 @@ public class BlockStatsManager {
         BlockStats blockStats = getBlockStats(block);
         blockStats.setHealth(health);
         blockStats.setBlockType(BlockType.BUILDING);
-        return getBlockStats(block);
+        blockStats.setLocation(block.getLocation());
+        blockStatsMap.put(block, blockStats);
+        return blockStats;
     }
 }

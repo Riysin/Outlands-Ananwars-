@@ -34,12 +34,7 @@ public class PlayerConfig extends YamlConfiguration {
         if(!playerElementMap.containsKey(uuid)) {
             playerElementMap.put(uuid, new PlayerConfigElement());
             this.save();
-            this.load();
         }
-    }
-
-    public List<BedElement> getBedElements(Player player) {
-        return playerElementMap.get(player.getUniqueId().toString()).getBedList();
     }
 
     public void addBed(Player player, Location location) {
@@ -55,5 +50,9 @@ public class PlayerConfig extends YamlConfiguration {
         playerElementMap.get(uuid).getBedList().add(element);
 
         this.save();
+    }
+
+    public List<BedElement> getBedElements(Player player) {
+        return playerElementMap.get(player.getUniqueId().toString()).getBedList();
     }
 }
