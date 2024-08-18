@@ -3,7 +3,6 @@ package me.orange.anan.player.bed;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.event.Subscribe;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,8 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 @InjectableComponent
@@ -42,6 +39,7 @@ public class BedEventListener implements Listener {
     public void onBedBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         if(event.getBlock().getType() == XMaterial.RED_BED.parseMaterial()) {
+            Bukkit.broadcastMessage("§c你破壞了床");
             Block bed = event.getBlock();
             bedManager.removeBed(player, bed.getLocation());
         }

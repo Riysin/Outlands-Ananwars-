@@ -92,7 +92,7 @@ public class ClanCommand extends BaseCommand {
         invitor.sendMessage(player.getName() + "§a accepted the invitation");
         player.sendMessage("§eYou joined " + clan.getDisplayName());
         clan.getInvitations().remove(player.getUniqueId());
-        clanManager.addPlayerToClan(invitor, player);
+        clanManager.getPlayerClan(invitor).getPlayers().add(player.getUniqueId());
 
         Bukkit.getPluginManager().callEvent(new PlayerJoinClanEvent(player));
     }
@@ -201,7 +201,7 @@ public class ClanCommand extends BaseCommand {
             return;
         }
 
-        clanManager.getPlayerClan(owner).setOwner(player.getUniqueId());
+        clanManager.getPlayerClan(owner).setOwner(player);
         owner.sendMessage(player.getName() + "§e has become the owner.");
     }
 

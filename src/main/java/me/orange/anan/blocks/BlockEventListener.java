@@ -6,7 +6,6 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.container.InjectableComponent;
-import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
@@ -24,7 +23,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -39,15 +37,13 @@ public class BlockEventListener implements Listener {
     private final CraftManager craftManager;
     private final NatureBlockConfig natureBlockConfig;
     private final BuildConfig buildConfig;
-    private final BlockConfig blockConfig;
     private final TeamCoreManager teamCoreManager;
 
-    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, BlockConfig blockConfig, TeamCoreManager teamCoreManager) {
+    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, TeamCoreManager teamCoreManager) {
         this.blockStatsManager = blockStatsManager;
         this.craftManager = craftManager;
         this.natureBlockConfig = natureBlockConfig;
         this.buildConfig = buildConfig;
-        this.blockConfig = blockConfig;
         this.teamCoreManager = teamCoreManager;
     }
 
@@ -64,8 +60,7 @@ public class BlockEventListener implements Listener {
                 blockStats.setHealth(0);
 
             if (blockStats.getHealth() <= 0) {
-                blockStatsManager.getBlockStatsMap().remove(event.getBlock());
-                blockConfig.getBlockData().remove(blockConfig.getBlockConfigElement(block));
+                blockStatsManager.getBlockStatsMap().remove(block);
             } else {
                 event.setCancelled(true);
             }

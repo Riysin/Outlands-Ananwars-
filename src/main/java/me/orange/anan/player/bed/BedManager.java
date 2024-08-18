@@ -2,6 +2,7 @@ package me.orange.anan.player.bed;
 
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.player.config.PlayerConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -15,7 +16,26 @@ public class BedManager {
     public BedManager(PlayerConfig playerConfig) {
         this.playerConfig = playerConfig;
 
-        loadBedConfig();
+        loadConfig();
+    }
+
+    public void loadConfig() {
+        playerConfig.getPlayerElementMap().forEach((uuid, bedConfigElements) -> {
+            bedConfigElements.getBedList().forEach(bedElement -> {
+                Bed bed = new Bed();
+                bed.setOwner(UUID.fromString(uuid));
+                bed.setBedName(bedElement.getBedName());
+                bed.setLocation(bedElement.getLocation());
+
+                bedList.add(bed);
+            });
+        });
+    }
+
+    public void saveConfig() {
+        bedList.forEach(bed -> {
+            playerConfig.addBed(Bukkit.getPlayer(bed.getOwner()), bed.getLocation());
+        });
     }
 
     public List<Bed> getBedList() {
@@ -34,39 +54,17 @@ public class BedManager {
         return beds;
     }
 
-    public void loadBedConfig() {
-        playerConfig.getPlayerElementMap().forEach((uuid, bedConfigElements) -> {
-            bedConfigElements.getBedList().forEach(bedElement -> {
-                Bed bed = new Bed();
-                bed.setOwner(UUID.fromString(uuid));
-                bed.setBedName(bedElement.getBedName());
-                bed.setPosition(bedElement.getPosition());
-
-                bedList.add(bed);
-            });
-        });
-    }
-
-    public void updateBed(Player player) {
-        bedList.clear();
-        playerConfig.getBedElements(player).forEach(bedElement -> {
-            Bed bed = new Bed();
-            bed.setOwner(player.getUniqueId());
-            bed.setBedName(bedElement.getBedName());
-            bed.setPosition(bedElement.getPosition());
-
-            bedList.add(bed);
-        });
-    }
-
     public void addBed(Player player, Location location) {
-        playerConfig.addBed(player, location);
-        updateBed(player);
+        Bed bed = new Bed();
+        bed.setOwner(player.getUniqueId());
+        bed.setBedName("Bed " + (getBeds(player).size() + 1));
+        bed.setLocation(location);
+
+        bedList.add(bed);
     }
 
     public void removeBed(Player player, Location location) {
-        playerConfig.getBedElements(player).removeIf(bedElement -> bedElement.getLocation().equals(location));
-        updateBed(player);
+        bedList.removeIf(bed -> bed.getOwner().equals(player.getUniqueId()) && bed.getLocation().equals(location));
     }
 
 

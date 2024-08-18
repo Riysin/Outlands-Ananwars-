@@ -1,15 +1,12 @@
 package me.orange.anan.clan;
 
-import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.clan.config.ClanConfigElement;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 @InjectableComponent
 public class ClanManager {
@@ -33,6 +30,7 @@ public class ClanManager {
     }
 
     public void saveConfig() {
+        clanConfig.getClanElementMap().clear();
         clanMap.forEach((clanName, clan) -> {
             ClanConfigElement element = clanConfig.getClanElementMap().get(clanName);
             element.setPlayers(clan.getPlayers());
@@ -41,10 +39,14 @@ public class ClanManager {
         clanConfig.save();
     }
 
+    public Map<String, Clan> getClanMap() {
+        return clanMap;
+    }
+
     public void createClan(String name, Player player) {
-        clanConfig.addClan(name, player);
         Clan clan = new Clan(name);
-        clan.setOwner(player.getUniqueId());
+        clan.setOwner(player);
+        clan.addPlayer(player);
         clanMap.put(name, clan);
     }
 
@@ -55,13 +57,6 @@ public class ClanManager {
         }
     }
 
-    public void addPlayerToClan(Player clanPlayer, Player player) {
-        Clan clan = getPlayerClan(clanPlayer);
-        if (clan != null) {
-            clan.getPlayers().add(player.getUniqueId());
-        }
-    }
-
     public void removePlayerFromClan(Player player) {
         Clan clan = getPlayerClan(player);
         if (clan != null) {
@@ -69,9 +64,6 @@ public class ClanManager {
         }
     }
 
-    public Map<String, Clan> getClanMap() {
-        return clanMap;
-    }
 
     public Clan getPlayerClan(Player player) {
         return getPlayerClan(player.getUniqueId());

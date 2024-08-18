@@ -1,13 +1,11 @@
 package me.orange.anan.blocks;
 
+import org.bukkit.Location;
+
 public class BlockStats {
     private BlockType blockType = BlockType.NATURE;
     private int health;
-    private boolean breakable;
-
-    public BlockStats() {
-        this.breakable =false;
-    }
+    private Location location;
 
     public BlockType getBlockType() {
         return blockType;
@@ -15,14 +13,6 @@ public class BlockStats {
 
     public void setBlockType(BlockType blockType) {
         this.blockType = blockType;
-    }
-
-    public boolean isBreakable() {
-        return breakable;
-    }
-
-    public void setBreakable(boolean breakable) {
-        this.breakable = breakable;
     }
 
     public int getHealth() {
@@ -33,4 +23,11 @@ public class BlockStats {
         this.health = health;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 }

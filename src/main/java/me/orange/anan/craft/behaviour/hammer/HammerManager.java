@@ -1,25 +1,15 @@
 package me.orange.anan.craft.behaviour.hammer;
 
-import com.cryptomorin.xseries.XBlock;
-import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.messages.ActionBar;
-import io.fairyproject.bukkit.nbt.NBTKey;
-import io.fairyproject.bukkit.nbt.NBTModifier;
-import io.fairyproject.bukkit.util.items.ItemBuilder;
-import io.fairyproject.bukkit.xseries.XMaterialSerializer;
-import io.fairyproject.command.BaseCommand;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
-import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -68,19 +58,15 @@ public class HammerManager {
         Map<Block, BlockStats> blockStatsMap = blockStatsManager.getBlockStatsMap();
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
-        switch (hammerAction) {
-            case BREAK:
-                if(blockStats.getBlockType() == BlockType.BUILDING) {
-                    blockStatsMap.remove(block);
-                    block.setType(Material.AIR);
-                    player.sendMessage("§c方塊已被破壞!");
-                    break;
-                }else
-                    player.sendMessage("§c無法破壞!");
-                    return;
-            default:
-                handleUpgrade(player, block, blockStats, hammerAction);
-                break;
+        if (Objects.requireNonNull(hammerAction) == HammerAction.BREAK) {
+            if (blockStats.getBlockType() == BlockType.BUILDING) {
+                blockStatsMap.remove(block);
+                block.setType(Material.AIR);
+                player.sendMessage("§c方塊已被破壞!");
+            } else
+                player.sendMessage("§c無法破壞!");
+        } else {
+            handleUpgrade(player, block, blockStats, hammerAction);
         }
     }
 
@@ -167,7 +153,7 @@ public class HammerManager {
 
         if (currentHealth < maxHealth) {
             blockStats.setHealth(currentHealth + 1);
-            blockStatsManager.updateBlockStats(block);
+
             Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
         } else
             player.sendMessage("§c方塊已達到最大耐久度!");

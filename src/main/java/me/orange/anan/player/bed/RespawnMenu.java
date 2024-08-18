@@ -6,11 +6,9 @@ import io.fairyproject.bukkit.gui.GuiFactory;
 import io.fairyproject.bukkit.gui.pane.NormalPane;
 import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
-import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -40,7 +38,7 @@ public class RespawnMenu {
                         .name("§7" + bed.getBedName())
                         .lore("§7Click to respawn")
                         .build(), clicker -> {
-                    player.teleport(BukkitPos.toBukkitLocation(bed.getPosition()));
+                    player.teleport(bed.getLocation());
                     isManualClose.set(false);
                     clicker.closeInventory();
                     clicker.setGameMode(GameMode.SURVIVAL);

@@ -57,6 +57,10 @@ public class Clan {
         return owner;
     }
 
+    public void setOwner(Player owner) {
+        this.owner = owner.getUniqueId();
+    }
+
     public void setOwner(UUID owner) {
         this.owner = owner;
     }
@@ -124,10 +128,6 @@ public class Clan {
 
     public void addPlayer(Player player) {
         players.add(player.getUniqueId());
-    }
-
-    public void addPlayer(UUID uuid) {
-        players.add(uuid);
     }
 
     public void removePlayer(Player player) {

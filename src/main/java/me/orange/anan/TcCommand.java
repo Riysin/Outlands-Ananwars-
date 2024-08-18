@@ -10,14 +10,13 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
+import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreConfig;
-import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
-import me.orange.anan.player.PlayerDataManager;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -34,33 +33,31 @@ public class TcCommand extends BaseCommand {
     private final CraftManager craftManager;
     private final BuildConfig buildConfig;
     private final BlockConfig blockConfig;
-    private final PlayerDataManager playerDataManager;
     private final TeamCoreConfig teamCoreConfig;
-    private final TeamCoreManager teamCoreManager;
+    private final BlockStatsManager blockStatsManager;
 
-    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig, PlayerDataManager playerDataManager, TeamCoreConfig teamCoreConfig, TeamCoreManager teamCoreManager) {
+    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig, TeamCoreConfig teamCoreConfig, BlockStatsManager blockStatsManager) {
         this.clanConfig = clanConfig;
         this.playerConfig = playerConfig;
         this.natureBlockConfig = natureBlockConfig;
         this.craftManager = craftManager;
         this.buildConfig = buildConfig;
         this.blockConfig = blockConfig;
-        this.playerDataManager = playerDataManager;
         this.teamCoreConfig = teamCoreConfig;
-        this.teamCoreManager = teamCoreManager;
+        this.blockStatsManager = blockStatsManager;
     }
 
     @Command("test")
     public void test(BukkitCommandContext ctx) {
         CompletableFuture<?> future = MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
-            if(ctx.getPlayer().getItemInHand()!=null){
+            if (ctx.getPlayer().getItemInHand() != null) {
                 return TaskResponse.success("");
             }
             ctx.getPlayer().sendMessage("test");
             return TaskResponse.continueTask();
         }, 0, 20, RepeatPredicate.length(Duration.ofSeconds(5))).getFuture();
 
-        future.thenRun(()->{
+        future.thenRun(() -> {
             ctx.getPlayer().sendMessage("finished");
         });
     }
@@ -82,20 +79,20 @@ public class TcCommand extends BaseCommand {
 
     @Command("deleteBlockData")
     public void deleteBlockData(BukkitCommandContext ctx) {
-        blockConfig.getBlockData().clear();
-        blockConfig.save();
+        blockStatsManager.getBlockStatsMap().clear();
+        blockStatsManager.saveConfig();
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Block data deleted");
     }
 
     @Command("deleteTcData")
-    public void deleteTcData(BukkitCommandContext ctx){
+    public void deleteTcData(BukkitCommandContext ctx) {
         teamCoreConfig.getTeamCores().clear();
         teamCoreConfig.save();
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Team cores deleted");
     }
 
     @Command("head")
-    public void givePlayerHead(BukkitCommandContext ctx, @Arg("name") Player player){
+    public void givePlayerHead(BukkitCommandContext ctx, @Arg("name") Player player) {
         ctx.getPlayer().getInventory().addItem(ItemBuilder.of(XMaterial.PLAYER_HEAD).skull(player.getName()).build());
     }
 }

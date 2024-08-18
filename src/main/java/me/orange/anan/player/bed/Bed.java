@@ -1,13 +1,14 @@
 package me.orange.anan.player.bed;
 
-import io.fairyproject.mc.util.Position;
+
+import org.bukkit.Location;
 
 import java.util.UUID;
 
 public class Bed {
     private UUID owner;
     private String bedName;
-    private Position position;
+    private Location location;
 
     public UUID getOwner() {
         return owner;
@@ -25,11 +26,11 @@ public class Bed {
         this.bedName = bedName;
     }
 
-    public Position getPosition() {
-        return position;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

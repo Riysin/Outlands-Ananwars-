@@ -4,10 +4,8 @@ import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.config.yaml.YamlConfiguration;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
-import me.orange.anan.blocks.BlockType;
 import org.bukkit.block.Block;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,14 +34,5 @@ public class BlockConfig extends YamlConfiguration {
             }
         }
         return null;
-    }
-
-    public void addBlock(Block block, int health) {
-        BlockConfigElement element = new BlockConfigElement();
-        element.setPosition(block.getLocation());
-        element.setHealth(health);
-        element.setBlockType(BlockType.BUILDING);
-        blockData.add(element);
-        this.save();
     }
 }
