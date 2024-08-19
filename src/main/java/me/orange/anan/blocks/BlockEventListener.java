@@ -112,11 +112,13 @@ public class BlockEventListener implements Listener {
         String nbtValue = NBTModifier.get().getString(item, NBTKey.create("craft"));
         Craft craft = craftManager.getCrafts().get(nbtValue);
 
-        if (craft == null || craft.getType() != CraftType.BUILD && craft.getType() != CraftType.USAGE) {
+        if (craft == null || (craft.getType() != CraftType.BUILD && craft.getType() != CraftType.USAGE)) {
             if (player.getGameMode() != GameMode.CREATIVE)
                 event.setCancelled(true);
             return;
-        } else if (isBesideNatureBlock(block)) {
+        }
+
+        if (isBesideNatureBlock(block)) {
             event.setCancelled(true);
             player.sendMessage("§c你不能在可挖掘的資源旁建造方塊!");
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);
@@ -128,8 +130,8 @@ public class BlockEventListener implements Listener {
 
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
         if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
-            Bukkit.broadcastMessage("Block is a building block: " + block.getType());
-            TeamCore teamCore = teamCoreManager.getTeamCoreByLocation(block.getLocation());
+
+            TeamCore teamCore = teamCoreManager.findAdjacentBlockTeamCore(block);
             if (teamCore != null) {
                 Bukkit.broadcastMessage("Block is in team territory: " + block.getType());
                 teamCoreManager.addConnectedTeamBlocks(teamCore, block);
@@ -167,7 +169,7 @@ public class BlockEventListener implements Listener {
         materials.add(XMaterial.WATER.parseMaterial());
         materials.add(XMaterial.LAVA.parseMaterial());
 
-        Block targetBlock = player.getTargetBlock(materials, 3);
+        Block targetBlock = player.getTargetBlock(materials, 4);
 
         if (targetBlock != null) {
             BlockStats blockStats = blockStatsManager.getBlockStats(targetBlock);

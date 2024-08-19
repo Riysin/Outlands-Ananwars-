@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
 
 import java.util.*;
 
@@ -119,13 +120,6 @@ public class TeamCoreManager {
         return null;
     }
 
-    public TeamCoreConfigElement getTeamCoreConfigElement(TeamCore teamCore) {
-        return teamCoreConfig.getTeamCores().stream()
-                .filter(element -> element.getPlacePlayerUUID().equals(teamCore.getPlacePlayer()))
-                .findFirst()
-                .orElse(null);
-    }
-
     public void addConnectedTeamBlocks(TeamCore teamCore, Block block) {
         Set<Block> visitedBlocks = new HashSet<>();
         exploreConnectedBlocksIterative(teamCore, block, visitedBlocks);
@@ -152,7 +146,7 @@ public class TeamCoreManager {
                     for (int dz = -1; dz <= 1; dz++) {
                         if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
                             Block adjacentBlock = block.getRelative(dx, dy, dz);
-                            if (!visitedBlocks.contains(adjacentBlock)) {
+                            if (!visitedBlocks.contains(adjacentBlock) && blockStatsManager.getBlockStats(adjacentBlock).getBlockType() == BlockType.BUILDING) {
                                 stack.add(adjacentBlock);
                             }
                         }
@@ -160,5 +154,24 @@ public class TeamCoreManager {
                 }
             }
         }
+    }
+
+    public TeamCore findAdjacentBlockTeamCore(Block block) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
+                        Block adjacentBlock = block.getRelative(dx, dy, dz);
+                        BlockStats adjacentBlockStats = blockStatsManager.getBlockStats(adjacentBlock);
+                        if (adjacentBlockStats != null && adjacentBlockStats.getBlockType() == BlockType.BUILDING) {
+                            TeamCore teamCore = getTeamCoreByLocation(adjacentBlock.getLocation());
+                            if (teamCore != null)
+                                return teamCore;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

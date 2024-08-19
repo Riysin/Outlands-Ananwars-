@@ -18,11 +18,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 @InjectableComponent
@@ -65,6 +68,7 @@ public class TeamCoreEventListener implements Listener {
 
         TeamCore teamCore = teamCoreManager.getTeamCore(coreCreeper);
         teamCoreManager.addConnectedTeamBlocks(teamCore, block);
+        teamCoreManager.addConnectedTeamBlocks(teamCore, world.getBlockAt(belowLocation));
     }
 
     private Creeper spawnCoreCreeper(Location location, World world) {
@@ -96,7 +100,6 @@ public class TeamCoreEventListener implements Listener {
                     placedBlock.setType(XMaterial.AIR.parseMaterial());
                 }
 
-                removeConnectedBlocks(teamCore);
                 teamCoreManager.removeTeamCore(teamCore);
             }
         }
@@ -127,33 +130,80 @@ public class TeamCoreEventListener implements Listener {
     }
 
     private boolean isLookingAt(Player player, Entity entity) {
-        // Get the direction the player is facing
         Vector playerDirection = player.getLocation().getDirection();
-
-        // Get the vector from the player to the entity
         Vector toEntity = entity.getLocation().toVector().subtract(player.getLocation().toVector()).normalize();
 
-        // Calculate the angle between the player's direction and the entity
         double angle = playerDirection.angle(toEntity);
-
-        // Return true if the angle is within 30 degrees (0.5236 radians)
         return angle < 0.5236; // approximately 30 degrees
     }
 
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        TeamCore teamCore = teamCoreManager.getTeamCoreByLocation(block.getLocation());
 
-    private void removeConnectedBlocks(TeamCore teamCore) {
-        Set<Block> blocksToRemove = new HashSet<>(teamCore.getConnectedBlocks());
+        if (teamCore != null) {
+            teamCore.getConnectedBlocks().remove(block);
 
-        blocksToRemove.forEach(block -> {
-            if (!isBlockConnected(teamCore, block)) {
-                teamCore.getConnectedBlocks().remove(block);
-                block.setType(XMaterial.AIR.parseMaterial());
-            }
-        });
+            // Check adjacent blocks for connectivity
+            checkAdjacentBlocks(teamCore, block);
+        }
     }
 
-    private boolean isBlockConnected(TeamCore teamCore, Block block) {
-        return teamCore.getConnectedBlocks().contains(block);
+    private void checkAdjacentBlocks(TeamCore teamCore, Block block) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
+                        Block adjacentBlock = block.getRelative(dx, dy, dz);
+                        BlockStats adjacentBlockStats = blockStatsManager.getBlockStats(adjacentBlock);
+
+                        if (adjacentBlockStats != null && adjacentBlockStats.getBlockType() == BlockType.BUILDING) {
+                            if (!isConnectedToCore(teamCore, adjacentBlock)) {
+                                teamCore.getConnectedBlocks().remove(adjacentBlock);
+                                adjacentBlock.setType(XMaterial.AIR.parseMaterial());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isConnectedToCore(TeamCore teamCore, Block startBlock) {
+        Set<Block> visitedBlocks = new HashSet<>();
+        return exploreConnectedBlocksDFS(teamCore, startBlock, visitedBlocks);
+    }
+
+    private boolean exploreConnectedBlocksDFS(TeamCore teamCore, Block block, Set<Block> visitedBlocks) {
+        if (visitedBlocks.contains(block)) {
+            return false;
+        }
+
+        visitedBlocks.add(block);
+
+        BlockStats blockStats = blockStatsManager.getBlockStats(block);
+        if (blockStats == null || blockStats.getBlockType() != BlockType.BUILDING) {
+            return false;
+        }
+
+        if (teamCore.getConnectedBlocks().contains(block)) {
+            return true;
+        }
+
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
+                        Block adjacentBlock = block.getRelative(dx, dy, dz);
+                        if (exploreConnectedBlocksDFS(teamCore, adjacentBlock, visitedBlocks)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
-
