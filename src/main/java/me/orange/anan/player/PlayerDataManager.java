@@ -126,8 +126,8 @@ public class PlayerDataManager {
 
         if (!playerDataMap.containsKey(uuid)) {
             playerDataMap.put(uuid, new PlayerData());
-            playerConfig.addPlayer(player);
         }
+        playerConfig.addPlayer(player);
         PlayerData playerData = playerDataMap.get(uuid);
         playerData.setSkin(Skin.load(uuid));
     }

@@ -11,12 +11,21 @@ import java.util.List;
 
 @ConfigurationElement
 public class PlayerConfigElement {
-    private int kills;
-    private int deaths;
+    private String name = "";
+    private int kills = 0;
+    private int deaths = 0;
     private Position lastDeathPosition = new Position();
     private boolean bossBarActive = false;
     @ElementType(BedElement.class)
     private List<BedElement> bedList = new ArrayList<>();
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getKills() {
         return kills;
