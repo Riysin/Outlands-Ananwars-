@@ -50,13 +50,11 @@ public class PlayerDataManager {
 
     public void saveConfig() {
         playerDataMap.forEach((uuid, playerData) -> {
-            PlayerConfigElement playerConfigElement = new PlayerConfigElement();
-            playerConfigElement.setKills(playerData.getKills());
-            playerConfigElement.setDeaths(playerData.getDeaths());
-            playerConfigElement.setLastDeathLocation(playerData.getLastDeathLocation());
-            playerConfigElement.setBossBarActive(playerData.isBossBarActive());
-
-            playerConfig.getPlayerElementMap().put(uuid.toString(), playerConfigElement);
+            PlayerConfigElement element = playerConfig.getPlayerElementMap().get(uuid.toString());
+            element.setKills(playerData.getKills());
+            element.setDeaths(playerData.getDeaths());
+            element.setLastDeathLocation(playerData.getLastDeathLocation());
+            element.setBossBarActive(playerData.isBossBarActive());
         });
         playerConfig.save();
     }
@@ -128,6 +126,7 @@ public class PlayerDataManager {
 
         if (!playerDataMap.containsKey(uuid)) {
             playerDataMap.put(uuid, new PlayerData());
+            playerConfig.addPlayer(player);
         }
         PlayerData playerData = playerDataMap.get(uuid);
         playerData.setSkin(Skin.load(uuid));

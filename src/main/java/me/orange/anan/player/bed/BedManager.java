@@ -1,7 +1,9 @@
 package me.orange.anan.player.bed;
 
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.player.config.BedElement;
 import me.orange.anan.player.config.PlayerConfig;
+import me.orange.anan.player.config.PlayerConfigElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,6 +32,15 @@ public class BedManager {
                 bedList.add(bed);
             });
         });
+    }
+
+    public void saveConfig() {
+        bedList.forEach(bed -> {
+            String uuid = bed.getOwner().toString();
+            playerConfig.addBed(Bukkit.getPlayer(bed.getOwner()), bed.getLocation());
+        });
+
+        playerConfig.save();
     }
 
     public List<Bed> getBedList() {

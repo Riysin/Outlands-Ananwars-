@@ -14,17 +14,20 @@ public class ConfigSaver {
     private final BlockStatsManager blockStatsManager;
     private final ClanManager clanManager;
     private final PlayerDataManager playerDataManager;
+    private final BedManager bedManager;
     private final TeamCoreManager teamCoreManager;
 
-    public ConfigSaver(BlockStatsManager blockStatsManager, ClanManager clanManager, PlayerDataManager playerDataManager, TeamCoreManager teamCoreManager) {
+    public ConfigSaver(BlockStatsManager blockStatsManager, ClanManager clanManager, PlayerDataManager playerDataManager, BedManager bedManager, TeamCoreManager teamCoreManager) {
         this.blockStatsManager = blockStatsManager;
         this.clanManager = clanManager;
         this.playerDataManager = playerDataManager;
+        this.bedManager = bedManager;
         this.teamCoreManager = teamCoreManager;
     }
 
     @PostDestroy
     public void onPreDestroy() {
+        bedManager.saveConfig();
         blockStatsManager.saveConfig();
         clanManager.saveConfig();
         playerDataManager.saveConfig();

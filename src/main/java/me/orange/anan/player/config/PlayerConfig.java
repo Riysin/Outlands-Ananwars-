@@ -51,8 +51,4 @@ public class PlayerConfig extends YamlConfiguration {
 
         this.save();
     }
-
-    public List<BedElement> getBedElements(Player player) {
-        return playerElementMap.get(player.getUniqueId().toString()).getBedList();
-    }
 }
