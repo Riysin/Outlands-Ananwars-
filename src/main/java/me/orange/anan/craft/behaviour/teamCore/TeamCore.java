@@ -55,6 +55,7 @@ public class TeamCore {
     }
 
     public void setConnectedBlocks(Set<Block> connectedBlocks) {
+        this.connectedBlocks.clear();
         this.connectedBlocks.addAll(connectedBlocks);
     }
 

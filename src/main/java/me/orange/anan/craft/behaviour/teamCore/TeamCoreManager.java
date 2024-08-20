@@ -4,14 +4,12 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Team;
 
 import java.util.*;
 
@@ -37,26 +35,6 @@ public class TeamCoreManager {
         }
     }
 
-    public static Creeper getClosestCreeper(Location location, double radius) {
-        // Get nearby entities within a certain radius
-        World world = location.getWorld();
-        Creeper closestCreeper = null;
-        double closestDistance = radius * radius; // Use squared distance for efficiency
-
-        for (Entity entity : world.getNearbyEntities(location, radius, radius, radius)) {
-            // Check if the entity is a Creeper
-            if (entity instanceof Creeper) {
-                double distanceSquared = entity.getLocation().distanceSquared(location);
-                if (distanceSquared < closestDistance) {
-                    closestDistance = distanceSquared;
-                    closestCreeper = (Creeper) entity;
-                }
-            }
-        }
-
-        return closestCreeper;
-    }
-
     public void saveConfig() {
         teamCoreConfig.getTeamCores().clear();
         for (TeamCore teamCore : teamCores) {
@@ -70,12 +48,31 @@ public class TeamCoreManager {
         }
     }
 
+    private Creeper getClosestCreeper(Location location, double radius) {
+        World world = location.getWorld();
+        Creeper closestCreeper = null;
+        double closestDistance = radius * radius;
+
+        for (Entity entity : world.getNearbyEntities(location, radius, radius, radius)) {
+            if (entity instanceof Creeper) {
+                double distanceSquared = entity.getLocation().distanceSquared(location);
+                if (distanceSquared < closestDistance) {
+                    closestDistance = distanceSquared;
+                    closestCreeper = (Creeper) entity;
+                }
+            }
+        }
+        return closestCreeper;
+    }
+
     public List<TeamCore> getTeamCores() {
         return this.teamCores;
     }
 
     public void addTeamCore(Player player, Creeper creeper, Block block) {
-        teamCores.add(new TeamCore(player.getUniqueId(), creeper, block));
+        TeamCore teamCore = new TeamCore(player.getUniqueId(), creeper, block);
+        teamCore.setConnectedBlocks(exploreConnectedBlocks(block));
+        teamCores.add(teamCore);
     }
 
     public void removeTeamCore(TeamCore teamCore) {
@@ -112,7 +109,6 @@ public class TeamCoreManager {
     public TeamCore getTeamCoreByLocation(Location location) {
         Block block = location.getBlock();
         for (TeamCore teamCore : teamCores) {
-            // Ensure the connectedBlocks and territoryBlocks are initialized
             if (teamCore.getConnectedBlocks().contains(block) || teamCore.getTerritoryBlocks().contains(block)) {
                 return teamCore;
             }
@@ -122,38 +118,7 @@ public class TeamCoreManager {
 
     public void addConnectedTeamBlocks(TeamCore teamCore, Block block) {
         Set<Block> visitedBlocks = new HashSet<>();
-        exploreConnectedBlocksIterative(teamCore, block, visitedBlocks);
-    }
-
-    private void exploreConnectedBlocksIterative(TeamCore teamCore, Block startBlock, Set<Block> visitedBlocks) {
-        Set<Block> stack = new HashSet<>();
-        stack.add(startBlock);
-
-        while (!stack.isEmpty()) {
-            Block block = stack.iterator().next();
-            stack.remove(block);
-
-            if (visitedBlocks.contains(block)) continue;
-
-            visitedBlocks.add(block);
-            teamCore.addConnectedBlock(block);
-
-            BlockStats blockStats = blockStatsManager.getBlockStats(block);
-            if (blockStats == null || blockStats.getBlockType() != BlockType.BUILDING) continue;
-
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                    for (int dz = -1; dz <= 1; dz++) {
-                        if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
-                            Block adjacentBlock = block.getRelative(dx, dy, dz);
-                            if (!visitedBlocks.contains(adjacentBlock) && blockStatsManager.getBlockStats(adjacentBlock).getBlockType() == BlockType.BUILDING) {
-                                stack.add(adjacentBlock);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        teamCore.setConnectedBlocks(exploreConnectedBlocks(block));
     }
 
     public TeamCore findAdjacentBlockTeamCore(Block block) {
@@ -170,6 +135,74 @@ public class TeamCoreManager {
                         }
                     }
                 }
+            }
+        }
+        return null;
+    }
+
+    public void onBlockBreak(Block brokenBlock) {
+        TeamCore teamCore = getTeamCoreForBlock(brokenBlock);
+
+        if (teamCore == null) return;
+
+        teamCore.getConnectedBlocks().remove(brokenBlock);
+
+        // Re-explore
+        Set<Block> remainingConnectedBlocks = exploreConnectedBlocks(teamCore.getCoreBlock());
+
+        // Find and remove blocks that are no longer connected to the core
+        Set<Block> toRemove = new HashSet<>(teamCore.getConnectedBlocks());
+        toRemove.removeAll(remainingConnectedBlocks);
+
+        teamCore.getConnectedBlocks().removeAll(toRemove);
+
+        // Update the connectedBlocks set with the remaining ones
+        teamCore.setConnectedBlocks(remainingConnectedBlocks);
+    }
+
+    private Set<Block> exploreConnectedBlocks(Block startBlock) {
+        Set<Block> visitedBlocks = new HashSet<>();
+        exploreConnectedBlocksIterative(startBlock, visitedBlocks);
+        return visitedBlocks;
+    }
+
+    private void exploreConnectedBlocksIterative(Block startBlock, Set<Block> visitedBlocks) {
+        Set<Block> stack = new HashSet<>();
+        stack.add(startBlock);
+
+        while (!stack.isEmpty()) {
+            Block block = stack.iterator().next();
+            stack.remove(block);
+
+            if (visitedBlocks.contains(block)) continue;
+
+            visitedBlocks.add(block);
+
+            BlockStats blockStats = blockStatsManager.getBlockStats(block);
+            if (blockStats == null || blockStats.getBlockType() != BlockType.BUILDING) continue;
+
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
+                            Block adjacentBlock = block.getRelative(dx, dy, dz);
+                            if (!visitedBlocks.contains(adjacentBlock)) {
+                                BlockStats adjacentBlockStats = blockStatsManager.getBlockStats(adjacentBlock);
+                                if (adjacentBlockStats != null && adjacentBlockStats.getBlockType() == BlockType.BUILDING) {
+                                    stack.add(adjacentBlock);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private TeamCore getTeamCoreForBlock(Block block) {
+        for (TeamCore teamCore : getTeamCores()) {
+            if (teamCore.getConnectedBlocks().contains(block)) {
+                return teamCore;
             }
         }
         return null;

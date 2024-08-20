@@ -23,11 +23,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-
 @InjectableComponent
 @RegisterAsListener
 public class TeamCoreEventListener implements Listener {
@@ -71,6 +66,11 @@ public class TeamCoreEventListener implements Listener {
         teamCoreManager.addConnectedTeamBlocks(teamCore, world.getBlockAt(belowLocation));
     }
 
+    private void sendErrorMessage(Player player) {
+        player.sendMessage("§c隊伍核心只能放置在建築方塊上方!");
+        player.playSound(player.getLocation(), ERROR_SOUND, SOUND_VOLUME, SOUND_PITCH);
+    }
+
     private Creeper spawnCoreCreeper(Location location, World world) {
         Location spawnLocation = location.add(CREEPER_SPAWN_XZ_OFFSET, CREEPER_SPAWN_Y_OFFSET, CREEPER_SPAWN_XZ_OFFSET);
         Creeper creeper = world.spawn(spawnLocation, Creeper.class);
@@ -84,22 +84,28 @@ public class TeamCoreEventListener implements Listener {
         return creeper;
     }
 
-    private void sendErrorMessage(Player player) {
-        player.sendMessage("§c隊伍核心只能放置在建築方塊上方!");
-        player.playSound(player.getLocation(), ERROR_SOUND, SOUND_VOLUME, SOUND_PITCH);
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
+        TeamCore teamCore = teamCoreManager.getTeamCore(block);
+        if (teamCore != null) {
+            teamCoreManager.removeTeamCore(teamCore);
+            event.setCancelled(true);
+            block.setType(XMaterial.AIR.parseMaterial());
+            ActionBar.sendActionBar(player, "Team Core has been removed!");
+        }
+
+        teamCoreManager.onBlockBreak(block);
     }
 
     @EventHandler
-    public void onTeamCoreDeath(EntityDeathEvent event) {
-        Entity entity = event.getEntity();
-        if (entity instanceof Creeper) {
-            TeamCore teamCore = teamCoreManager.getTeamCore((Creeper) entity);
+    public void onEntityDeath(EntityDeathEvent event) {
+        if (event.getEntity() instanceof Creeper) {
+            Creeper creeper = (Creeper) event.getEntity();
+            TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
             if (teamCore != null) {
-                Block placedBlock = teamCore.getCoreBlock();
-                if (placedBlock != null) {
-                    placedBlock.setType(XMaterial.AIR.parseMaterial());
-                }
-
                 teamCoreManager.removeTeamCore(teamCore);
             }
         }
@@ -108,16 +114,16 @@ public class TeamCoreEventListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+        Location location = player.getLocation();
+
         Creeper sightCreeper = getSightCreeper(player);
-        if (sightCreeper != null) {
+        if (sightCreeper != null && location.distance(sightCreeper.getLocation()) < 4) {
             ActionBar.sendActionBar(player, "§6Core HP: §a" + sightCreeper.getHealth());
         }
 
-        Location location = player.getLocation();
         TeamCore teamCore = teamCoreManager.getTeamCoreByLocation(location);
-
         if (teamCore != null) {
-            ActionBar.sendActionBar(player, " §3You are in a territory");
+            ActionBar.sendActionBar(player, "§3You are in a territory!");
         }
     }
 
@@ -135,75 +141,5 @@ public class TeamCoreEventListener implements Listener {
 
         double angle = playerDirection.angle(toEntity);
         return angle < 0.5236; // approximately 30 degrees
-    }
-
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) {
-        Block block = event.getBlock();
-        TeamCore teamCore = teamCoreManager.getTeamCoreByLocation(block.getLocation());
-
-        if (teamCore != null) {
-            teamCore.getConnectedBlocks().remove(block);
-
-            // Check adjacent blocks for connectivity
-            checkAdjacentBlocks(teamCore, block);
-        }
-    }
-
-    private void checkAdjacentBlocks(TeamCore teamCore, Block block) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
-                        Block adjacentBlock = block.getRelative(dx, dy, dz);
-                        BlockStats adjacentBlockStats = blockStatsManager.getBlockStats(adjacentBlock);
-
-                        if (adjacentBlockStats != null && adjacentBlockStats.getBlockType() == BlockType.BUILDING) {
-                            if (!isConnectedToCore(teamCore, adjacentBlock)) {
-                                teamCore.getConnectedBlocks().remove(adjacentBlock);
-                                adjacentBlock.setType(XMaterial.AIR.parseMaterial());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean isConnectedToCore(TeamCore teamCore, Block startBlock) {
-        Set<Block> visitedBlocks = new HashSet<>();
-        return exploreConnectedBlocksDFS(teamCore, startBlock, visitedBlocks);
-    }
-
-    private boolean exploreConnectedBlocksDFS(TeamCore teamCore, Block block, Set<Block> visitedBlocks) {
-        if (visitedBlocks.contains(block)) {
-            return false;
-        }
-
-        visitedBlocks.add(block);
-
-        BlockStats blockStats = blockStatsManager.getBlockStats(block);
-        if (blockStats == null || blockStats.getBlockType() != BlockType.BUILDING) {
-            return false;
-        }
-
-        if (teamCore.getConnectedBlocks().contains(block)) {
-            return true;
-        }
-
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) == 1) {
-                        Block adjacentBlock = block.getRelative(dx, dy, dz);
-                        if (exploreConnectedBlocksDFS(teamCore, adjacentBlock, visitedBlocks)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 }
