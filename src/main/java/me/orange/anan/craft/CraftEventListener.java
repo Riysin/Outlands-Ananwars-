@@ -33,10 +33,7 @@ public class CraftEventListener implements Listener {
     public void onOpenCraftMenu(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
             Player player = (Player) event.getWhoClicked();
-            if (event.getSlotType() == InventoryType.SlotType.RESULT) {
-                player.performCommand("craft menu");
-                event.setCancelled(true);
-            } else if (event.getSlot() == 1 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+            if (event.getSlot() == 1 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
                 player.performCommand("craft menu");
                 event.setCancelled(true);
             } else if (event.getSlot() == 2 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {

@@ -6,6 +6,8 @@ public class BlockStats {
     private BlockType blockType = BlockType.NATURE;
     private int health;
     private Location location;
+    private boolean justPlaced = true;
+    private boolean isGettingDestroyed = false;
 
     public BlockType getBlockType() {
         return blockType;
@@ -29,5 +31,21 @@ public class BlockStats {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public boolean isJustPlaced() {
+        return justPlaced;
+    }
+
+    public void setJustPlaced(boolean justPlaced) {
+        this.justPlaced = justPlaced;
+    }
+
+    public boolean isGettingDestroyed() {
+        return isGettingDestroyed;
+    }
+
+    public void setGettingDestroyed(boolean gettingDestroyed) {
+        isGettingDestroyed = gettingDestroyed;
     }
 }

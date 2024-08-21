@@ -38,7 +38,7 @@ public class HammerBehaviour implements CraftBehaviour {
                     if (event.getClickedBlock() != null) {
                         Bukkit.getPluginManager().callEvent(new PlayerRightClickHammerEvent(player1, event.getClickedBlock()));
                     } else {
-                        player1.sendMessage("§e請選擇要升級的方塊");
+                        player1.sendMessage("§e請點擊要升級的方塊");
                     }
 
                 }, Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK),

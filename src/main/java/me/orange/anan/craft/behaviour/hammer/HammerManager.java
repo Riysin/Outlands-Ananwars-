@@ -1,5 +1,6 @@
 package me.orange.anan.craft.behaviour.hammer;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
@@ -59,12 +60,17 @@ public class HammerManager {
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
         if (Objects.requireNonNull(hammerAction) == HammerAction.BREAK) {
+            if(!blockStats.isJustPlaced())
+                player.sendMessage("§c方塊放置1分鐘後即無法破壞!");
             if (blockStats.getBlockType() == BlockType.BUILDING) {
-                blockStatsMap.remove(block);
-                block.setType(Material.AIR);
-                player.sendMessage("§c方塊已被破壞!");
+                if (block.getType() == XMaterial.END_PORTAL_FRAME.parseMaterial()) {
+                    blockStatsMap.remove(block);
+                    block.setType(Material.AIR);
+                    player.sendMessage("§c方塊已被破壞!");
+                } else
+                    player.sendMessage("§c無法破壞!");
             } else
-                player.sendMessage("§c無法破壞!");
+                player.sendMessage("§c非建築方塊無法破壞!");
         } else {
             handleUpgrade(player, block, blockStats, hammerAction);
         }
@@ -76,7 +82,7 @@ public class HammerManager {
         int newLevel = getUpgradeLevel(hammerAction);
 
         if (blockStats.getBlockType() != BlockType.BUILDING) {
-            player.sendMessage("§c此方塊無法升級!");
+            player.sendMessage("§c此方塊非建築方塊!");
             return;
         }
 
@@ -148,7 +154,13 @@ public class HammerManager {
 
     public void fixBlock(Player player, Block block) {
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
-        int currentHealth = blockStats.getHealth();;
+
+        if (blockStats.isGettingDestroyed()) {
+            player.sendMessage("§c方塊遭破壞的30秒內無法修復!");
+            return;
+        }
+
+        int currentHealth = blockStats.getHealth();
         int maxHealth = buildConfig.getBuildBlocks().get("buildLv1");
 
         if (currentHealth < maxHealth) {

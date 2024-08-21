@@ -1,6 +1,7 @@
 package me.orange.anan.blocks;
 
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BlockConfigElement;
 import org.bukkit.Bukkit;
@@ -8,7 +9,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @InjectableComponent
 public class BlockStatsManager {
@@ -62,6 +65,7 @@ public class BlockStatsManager {
         BlockStats blockStats = getBlockStats(block);
         blockStats.setHealth(blockStats.getHealth() - 1);
 
+        blockBreakScheduler(block);
         Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
     }
 
@@ -71,6 +75,24 @@ public class BlockStatsManager {
         blockStats.setBlockType(BlockType.BUILDING);
         blockStats.setLocation(block.getLocation());
         blockStatsMap.put(block, blockStats);
+
+        blockPlaceScheduler(block);
         return blockStats;
+    }
+
+    private void blockBreakScheduler(Block block) {
+        BlockStats blockStats = getBlockStats(block);
+        blockStats.setGettingDestroyed(true);
+
+        MCSchedulers.getGlobalScheduler().schedule(() -> {
+            blockStats.setGettingDestroyed(false);
+        }, Duration.ofSeconds(30));
+    }
+
+    private void blockPlaceScheduler(Block block) {
+        MCSchedulers.getGlobalScheduler().schedule(() -> {
+            BlockStats blockStats = getBlockStats(block);
+            blockStats.setGettingDestroyed(false);
+        }, Duration.ofSeconds(60));
     }
 }
