@@ -183,6 +183,8 @@ public class ClanCommand extends BaseCommand {
         clanManager.removePlayerFromClan(player);
         player.sendMessage("§eYou have been removed from the clan by the owner.");
         sender.sendMessage(player.getName() + "§e has been removed from the clan.");
+
+        Bukkit.getPluginManager().callEvent(new PlayerLeftClanEvent(Arrays.asList(player)));
     }
 
     @Command("transfer")

@@ -7,6 +7,8 @@ import io.fairyproject.command.BaseCommand;
 import io.fairyproject.command.annotation.Arg;
 import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.MCPlayer;
+import io.fairyproject.mc.nametag.NameTagService;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
@@ -35,8 +37,9 @@ public class TcCommand extends BaseCommand {
     private final BlockConfig blockConfig;
     private final TeamCoreConfig teamCoreConfig;
     private final BlockStatsManager blockStatsManager;
+    private final NameTagService nameTagService;
 
-    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig, TeamCoreConfig teamCoreConfig, BlockStatsManager blockStatsManager) {
+    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig, TeamCoreConfig teamCoreConfig, BlockStatsManager blockStatsManager, NameTagService nameTagService) {
         this.clanConfig = clanConfig;
         this.playerConfig = playerConfig;
         this.natureBlockConfig = natureBlockConfig;
@@ -45,6 +48,7 @@ public class TcCommand extends BaseCommand {
         this.blockConfig = blockConfig;
         this.teamCoreConfig = teamCoreConfig;
         this.blockStatsManager = blockStatsManager;
+        this.nameTagService = nameTagService;
     }
 
     @Command("test")
@@ -94,5 +98,10 @@ public class TcCommand extends BaseCommand {
     @Command("head")
     public void givePlayerHead(BukkitCommandContext ctx, @Arg("name") Player player) {
         ctx.getPlayer().getInventory().addItem(ItemBuilder.of(XMaterial.PLAYER_HEAD).skull(player.getName()).build());
+    }
+
+    @Command("nametag")
+    public void updateNameTag(BukkitCommandContext ctx) {
+        nameTagService.update(MCPlayer.from(ctx.getPlayer()));
     }
 }

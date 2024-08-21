@@ -153,11 +153,18 @@ public class TeamCoreManager {
         // Find and remove blocks that are no longer connected to the core
         Set<Block> toRemove = new HashSet<>(teamCore.getConnectedBlocks());
         toRemove.removeAll(remainingConnectedBlocks);
-
         teamCore.getConnectedBlocks().removeAll(toRemove);
 
-        // Update the connectedBlocks set with the remaining ones
         teamCore.setConnectedBlocks(remainingConnectedBlocks);
+    }
+
+    private TeamCore getTeamCoreForBlock(Block block) {
+        for (TeamCore teamCore : getTeamCores()) {
+            if (teamCore.getConnectedBlocks().contains(block)) {
+                return teamCore;
+            }
+        }
+        return null;
     }
 
     private Set<Block> exploreConnectedBlocks(Block startBlock) {
@@ -197,14 +204,5 @@ public class TeamCoreManager {
                 }
             }
         }
-    }
-
-    private TeamCore getTeamCoreForBlock(Block block) {
-        for (TeamCore teamCore : getTeamCores()) {
-            if (teamCore.getConnectedBlocks().contains(block)) {
-                return teamCore;
-            }
-        }
-        return null;
     }
 }

@@ -3,6 +3,11 @@ package me.orange.anan.clan;
 import io.fairyproject.bukkit.events.player.PlayerDamageByPlayerEvent;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.MCPlayer;
+import io.fairyproject.mc.event.MCPlayerJoinEvent;
+import io.fairyproject.mc.nametag.NameTagService;
+import me.orange.anan.events.PlayerJoinClanEvent;
+import me.orange.anan.events.PlayerLeftClanEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,9 +17,21 @@ import org.bukkit.event.player.PlayerChatEvent;
 @InjectableComponent
 public class ClanEventListener implements Listener {
     private final ClanManager clanManager;
+    private final NameTagService nameTagService;
 
-    public ClanEventListener(ClanManager clanManager) {
+    public ClanEventListener(ClanManager clanManager, NameTagService nameTagService) {
         this.clanManager = clanManager;
+        this.nameTagService = nameTagService;
+    }
+
+    @EventHandler
+    public void onJoinTeam(PlayerJoinClanEvent event) {
+        nameTagService.update(MCPlayer.from(event.getPlayer()));
+    }
+
+    @EventHandler
+    public void onLeftTeam(PlayerLeftClanEvent event) {
+        event.getPlayers().forEach(player -> nameTagService.update(MCPlayer.from(player)));
     }
 
     @EventHandler

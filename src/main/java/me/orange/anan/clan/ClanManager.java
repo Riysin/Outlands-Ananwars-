@@ -50,6 +50,8 @@ public class ClanManager {
         Clan clan = new Clan(name);
         clan.setOwner(player);
         clan.addPlayer(player);
+        clan.setPrefix("§2[" + name + "]§f ");
+        clan.setSuffix("");
         clanMap.put(name, clan);
     }
 

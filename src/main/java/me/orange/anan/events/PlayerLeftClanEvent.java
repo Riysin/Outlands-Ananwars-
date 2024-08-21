@@ -12,7 +12,7 @@ public class PlayerLeftClanEvent extends Event {
     private List<Player> players = new ArrayList<>();
 
     public PlayerLeftClanEvent(List<Player> players) {
-        this.players = getPlayers();
+        this.players = players;
     }
     public List<Player> getPlayers(){
         return this.players;
