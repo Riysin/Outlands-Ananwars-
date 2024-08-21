@@ -1,9 +1,11 @@
 package me.orange.anan.craft.behaviour.teamCore;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
+import me.orange.anan.craft.config.CraftConfig;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -18,10 +20,12 @@ public class TeamCoreManager {
     private final TeamCoreConfig teamCoreConfig;
     private List<TeamCore> teamCores = new ArrayList<>();
     private final BlockStatsManager blockStatsManager;
+    private final CraftConfig craftConfig;
 
-    public TeamCoreManager(TeamCoreConfig teamCoreConfig, BlockStatsManager blockStatsManager) {
+    public TeamCoreManager(TeamCoreConfig teamCoreConfig, BlockStatsManager blockStatsManager, CraftConfig craftConfig) {
         this.teamCoreConfig = teamCoreConfig;
         this.blockStatsManager = blockStatsManager;
+        this.craftConfig = craftConfig;
 
         loadConfig();
     }
@@ -73,6 +77,11 @@ public class TeamCoreManager {
         TeamCore teamCore = new TeamCore(player.getUniqueId(), creeper, block);
         teamCore.setConnectedBlocks(exploreConnectedBlocks(block));
         teamCores.add(teamCore);
+    }
+
+    public void removeTeamCore(TeamCore teamCore) {
+        teamCore.getCoreBlock().setType(XMaterial.AIR.parseMaterial());
+        getTeamCores().remove(teamCore);
     }
 
     public TeamCore getTeamCore(Block block) {

@@ -1,12 +1,9 @@
 package me.orange.anan.craft.config;
 
-import com.cryptomorin.xseries.XItemStack;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.config.annotation.ConfigurationElement;
-import io.fairyproject.config.annotation.ElementType;
 import me.orange.anan.craft.CraftTier;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 
 @ConfigurationElement

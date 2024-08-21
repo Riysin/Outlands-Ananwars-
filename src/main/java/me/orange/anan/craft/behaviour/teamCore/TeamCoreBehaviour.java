@@ -4,11 +4,8 @@ import io.fairyproject.bukkit.listener.ListenerRegistry;
 import io.fairyproject.bukkit.util.items.behaviour.ItemBehaviour;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.behaviour.CraftBehaviour;
-import me.orange.anan.events.PlayerLeftClickHammerEvent;
 import me.orange.anan.events.PlayerPlaceTeamCoreEvent;
-import me.orange.anan.events.PlayerRightClickHammerEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.event.block.Action;
 
 import java.util.Arrays;
 import java.util.List;

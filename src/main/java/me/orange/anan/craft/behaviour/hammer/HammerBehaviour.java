@@ -8,7 +8,6 @@ import me.orange.anan.events.PlayerLeftClickHammerEvent;
 import me.orange.anan.events.PlayerRightClickHammerEvent;
 import me.orange.anan.events.PlayerShiftRightClickHammerEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
 import org.bukkit.event.block.Action;
 
 import java.util.Arrays;

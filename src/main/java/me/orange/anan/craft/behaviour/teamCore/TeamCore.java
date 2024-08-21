@@ -3,6 +3,7 @@ package me.orange.anan.craft.behaviour.teamCore;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +14,7 @@ public class TeamCore {
     private Creeper coreCreeper;
     private Block coreBlock;
     private Set<Block> connectedBlocks;
+    private Inventory inventory;
 
     public TeamCore(UUID uuid, Creeper creeper, Block coreBlock) {
         this.placePlayer = uuid;
@@ -68,5 +70,13 @@ public class TeamCore {
             }
         }
         return territoryBlocks;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 }

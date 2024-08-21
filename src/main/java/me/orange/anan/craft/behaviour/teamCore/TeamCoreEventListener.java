@@ -2,16 +2,15 @@ package me.orange.anan.craft.behaviour.teamCore;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.messages.ActionBar;
+import io.fairyproject.bukkit.events.player.EntityDamageByPlayerEvent;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
+import me.orange.anan.clan.ClanManager;
 import me.orange.anan.events.PlayerPlaceTeamCoreEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
@@ -20,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
@@ -35,10 +35,14 @@ public class TeamCoreEventListener implements Listener {
 
     private final TeamCoreManager teamCoreManager;
     private final BlockStatsManager blockStatsManager;
+    private final ClanManager clanManager;
+    private final TeamCoreMenu teamCoreMenu;
 
-    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager) {
+    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager, ClanManager clanManager, TeamCoreMenu teamCoreMenu) {
         this.teamCoreManager = teamCoreManager;
         this.blockStatsManager = blockStatsManager;
+        this.clanManager = clanManager;
+        this.teamCoreMenu = teamCoreMenu;
     }
 
     @EventHandler
@@ -92,14 +96,40 @@ public class TeamCoreEventListener implements Listener {
     }
 
     @EventHandler
+    public void onAttackCreeper(EntityDamageByPlayerEvent event) {
+        Player player = event.getPlayer();
+        if (event.getEntity() instanceof Creeper) {
+            Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
+            Creeper creeper = (Creeper) event.getEntity();
+
+            OfflinePlayer coreOwner = Bukkit.getOfflinePlayer(teamCoreManager.getTeamCore(creeper).getPlacePlayer());
+            Bukkit.broadcastMessage("§c" + player.getName() + "正在攻擊" + coreOwner + "'s 隊伍核心!");
+            if (clanManager.sameClan(coreOwner, player)) {
+                event.setCancelled(true);
+                player.sendMessage("§c你無法攻擊自己隊伍的核心!");
+            }
+        }
+    }
+
+    @EventHandler
+    public void onRightClickCreeper(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        if (event.getRightClicked() instanceof Creeper) {
+            Creeper creeper = (Creeper) event.getRightClicked();
+            TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
+            if (teamCore != null) {
+                teamCoreMenu.open(player, teamCore);
+            }
+        }
+    }
+
+    @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         if (event.getEntity() instanceof Creeper) {
             Creeper creeper = (Creeper) event.getEntity();
             TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
             if (teamCore != null) {
-                teamCore.getCoreBlock().setType(XMaterial.AIR.parseMaterial());
-                teamCoreManager.getTeamCores().remove(teamCore);
-                event.getEntity().getKiller().sendMessage("§c隊伍核心已被摧毀!");
+                teamCoreManager.removeTeamCore(teamCore);
             }
         }
     }

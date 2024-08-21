@@ -4,6 +4,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.clan.config.ClanConfigElement;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -88,9 +89,9 @@ public class ClanManager {
         return clanMap.values().stream().anyMatch(clan -> clan.getPlayers().contains(uuid));
     }
 
-    public boolean sameClan(Player player1, Player player2) {
-        Clan clan1 = getPlayerClan(player1);
-        Clan clan2 = getPlayerClan(player2);
+    public boolean sameClan(OfflinePlayer player1, OfflinePlayer player2) {
+        Clan clan1 = getPlayerClan(player1.getUniqueId());
+        Clan clan2 = getPlayerClan(player2.getUniqueId());
         return clan1 != null && clan1.equals(clan2);
     }
 
