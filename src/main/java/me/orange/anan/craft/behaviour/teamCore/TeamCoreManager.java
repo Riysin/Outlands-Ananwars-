@@ -75,10 +75,6 @@ public class TeamCoreManager {
         teamCores.add(teamCore);
     }
 
-    public void removeTeamCore(TeamCore teamCore) {
-        teamCores.remove(teamCore);
-    }
-
     public TeamCore getTeamCore(Block block) {
         for (TeamCore teamCore : teamCores) {
             if (teamCore.getCoreBlock().equals(block)) {

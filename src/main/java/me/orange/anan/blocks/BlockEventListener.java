@@ -19,6 +19,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,9 +27,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Bed;
+import org.bukkit.material.Door;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @InjectableComponent
 @RegisterAsListener
@@ -50,7 +54,7 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        Block block = event.getBlock();
+        Block block = getMainBlock(event.getBlock());
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
         //Managing the health of the block
@@ -97,6 +101,23 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
     }
 
+    private Block getMainBlock(Block block) {
+        Material type = block.getType();
+        if (type == Material.BED_BLOCK) {
+            Bed bed = (Bed) block.getState().getData();
+            if (bed.isHeadOfBed()) {
+                return block.getRelative(bed.getFacing().getOppositeFace());
+            }
+        }
+        else if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
+            Door door = (Door) block.getState().getData();
+            if (door.isTopHalf()) {
+                return block.getRelative(BlockFace.DOWN);
+            }
+        }
+        return block;
+    }
+
     private void dropItem(Player player, ItemStack itemStack) {
         player.getInventory().addItem(itemStack).forEach((k, v) -> {
             player.getWorld().dropItem(player.getLocation(), v);
@@ -128,35 +149,36 @@ public class BlockEventListener implements Listener {
         int health = buildConfig.getBuildBlocks().get(nbtValue);
         blockStatsManager.placeBlock(event.getPlayer(), event.getBlockPlaced(), health);
 
+        //Check if the block is connected to a team core
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
         if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
-
             TeamCore teamCore = teamCoreManager.findAdjacentBlockTeamCore(block);
             if (teamCore != null) {
-                Bukkit.broadcastMessage("Block is in team territory: " + block.getType());
                 teamCoreManager.addConnectedTeamBlocks(teamCore, block);
             }
         }
     }
 
     private boolean isBesideNatureBlock(Block block) {
-        return isNatureBlock(block.getLocation().clone().add(0, 1, 0).getBlock())
-                || isNatureBlock(block.getLocation().clone().add(0, -1, 0).getBlock())
-                || isNatureBlock(block.getLocation().clone().add(1, 0, 0).getBlock())
-                || isNatureBlock(block.getLocation().clone().add(-1, 0, 0).getBlock())
-                || isNatureBlock(block.getLocation().clone().add(0, 0, 1).getBlock())
-                || isNatureBlock(block.getLocation().clone().add(0, 0, -1).getBlock());
+        // Check surrounding blocks in six directions
+        return Stream.of(
+                block.getRelative(BlockFace.UP),
+                block.getRelative(BlockFace.DOWN),
+                block.getRelative(BlockFace.NORTH),
+                block.getRelative(BlockFace.SOUTH),
+                block.getRelative(BlockFace.EAST),
+                block.getRelative(BlockFace.WEST)
+        ).anyMatch(this::isNatureBlock);
     }
 
     private boolean isNatureBlock(Block block) {
         Integer id = block.getTypeId();
+        byte data = block.getData();
 
-        for (NatureBlockElement natureBlock : natureBlockConfig.getNatureBlocks()) {
-            Integer data = natureBlock.getData();
-            if (id.equals(natureBlock.getBlockId()) && (data == -1 || block.getData() == data))
-                return true;
-        }
-        return false;
+        // Stream through nature blocks and check ID and data
+        return natureBlockConfig.getNatureBlocks().stream().anyMatch(natureBlock ->
+                id.equals(natureBlock.getBlockId()) && (natureBlock.getData() == -1 || data == natureBlock.getData())
+        );
     }
 
     @EventHandler
@@ -170,9 +192,10 @@ public class BlockEventListener implements Listener {
         materials.add(XMaterial.LAVA.parseMaterial());
 
         Block targetBlock = player.getTargetBlock(materials, 4);
+        Block mainBlock = getMainBlock(targetBlock);
 
-        if (targetBlock != null) {
-            BlockStats blockStats = blockStatsManager.getBlockStats(targetBlock);
+        if (mainBlock != null) {
+            BlockStats blockStats = blockStatsManager.getBlockStats(mainBlock);
             if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
                 ActionBar.sendActionBar(player, " health:§a " + blockStats.getHealth());
             }

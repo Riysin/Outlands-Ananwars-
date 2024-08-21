@@ -86,16 +86,7 @@ public class TeamCoreEventListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        Player player = event.getPlayer();
         Block block = event.getBlock();
-
-        TeamCore teamCore = teamCoreManager.getTeamCore(block);
-        if (teamCore != null) {
-            teamCoreManager.removeTeamCore(teamCore);
-            event.setCancelled(true);
-            block.setType(XMaterial.AIR.parseMaterial());
-            ActionBar.sendActionBar(player, "Team Core has been removed!");
-        }
 
         teamCoreManager.onBlockBreak(block);
     }
@@ -106,7 +97,9 @@ public class TeamCoreEventListener implements Listener {
             Creeper creeper = (Creeper) event.getEntity();
             TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
             if (teamCore != null) {
-                teamCoreManager.removeTeamCore(teamCore);
+                teamCore.getCoreBlock().setType(XMaterial.AIR.parseMaterial());
+                teamCoreManager.getTeamCores().remove(teamCore);
+                event.getEntity().getKiller().sendMessage("§c隊伍核心已被摧毀!");
             }
         }
     }
