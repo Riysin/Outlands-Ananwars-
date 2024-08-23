@@ -5,10 +5,16 @@ import io.fairyproject.container.InjectableComponent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 
 @InjectableComponent
 @RegisterAsListener
 public class GeneralEventListener implements Listener {
+    @EventHandler
+    public void ServerListPingEvent(ServerListPingEvent event) {
+        event.setMotd("§b§l Anan§f§lWars §7§l| §e§lby §6§l@PvpForOrange\n          §f❥ §b§l§n1.8 Available!");
+        event.setMaxPlayers(134);
+    }
 
     @EventHandler
     public void onFoodChange(FoodLevelChangeEvent event) {

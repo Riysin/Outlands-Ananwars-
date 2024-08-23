@@ -9,19 +9,14 @@ import org.bukkit.Difficulty;
 
 @InjectableComponent
 public class WorldSetup {
+    private final WorldManager worldManager;
+
+    public WorldSetup(WorldManager worldManager) {
+        this.worldManager = worldManager;
+    }
+
     @PostInitialize
     public void init() {
-        Bukkit.getWorlds().forEach(world -> {
-            world.setGameRuleValue("keepInventory", "true");
-            world.setGameRuleValue("doMobSpawning", "false");
-            world.setGameRuleValue("doDaylightCycle", "true");
-            world.setGameRuleValue("doFireTick", "false");
-            world.setGameRuleValue("doTileDrops", "false");
-            world.setTime(7000);
-            world.setDifficulty(Difficulty.EASY);
-            world.setStorm(false);
-            world.setWeatherDuration(999999);
-            Log.info(world.getName() + " keepInventory on");
-        });
+        Bukkit.getWorlds().forEach(worldManager::initializeWorld);
     }
 }
