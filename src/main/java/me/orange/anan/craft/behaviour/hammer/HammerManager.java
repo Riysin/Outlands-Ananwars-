@@ -60,10 +60,12 @@ public class HammerManager {
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
         if (Objects.requireNonNull(hammerAction) == HammerAction.BREAK) {
-            if(!blockStats.isJustPlaced())
+            if (blockStats.isJustPlaced()) {
                 player.sendMessage("§c方塊放置1分鐘後即無法破壞!");
+                return;
+            }
             if (blockStats.getBlockType() == BlockType.BUILDING) {
-                if (block.getType() == XMaterial.END_PORTAL_FRAME.parseMaterial()) {
+                if (block.getType() != XMaterial.END_PORTAL_FRAME.parseMaterial()) {
                     blockStatsMap.remove(block);
                     block.setType(Material.AIR);
                     player.sendMessage("§c方塊已被破壞!");

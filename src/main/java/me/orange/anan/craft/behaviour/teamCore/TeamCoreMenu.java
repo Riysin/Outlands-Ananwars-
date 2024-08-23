@@ -12,8 +12,6 @@ import me.orange.anan.craft.config.CraftConfig;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 @InjectableComponent
 public class TeamCoreMenu {
     private final GuiFactory guiFactory;

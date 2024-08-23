@@ -30,9 +30,9 @@ public class ConfirmMenu {
     private final CraftManager craftManager;
     private final CraftTimerManager craftTimerManager;
 
-    public ConfirmMenu(GuiFactory guiFactory, CraftManager craftManager, CraftManager craftManager1, CraftTimerManager craftTimerManager) {
+    public ConfirmMenu(GuiFactory guiFactory, CraftManager craftManager, CraftTimerManager craftTimerManager) {
         this.guiFactory = guiFactory;
-        this.craftManager = craftManager1;
+        this.craftManager = craftManager;
         this.craftTimerManager = craftTimerManager;
     }
 

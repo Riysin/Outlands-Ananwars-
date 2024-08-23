@@ -1,10 +1,10 @@
-package me.orange.anan.craft.behaviour.teamCore;
+package me.orange.anan.craft.behaviour.teamCore.config;
 
 import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.config.annotation.ConfigurationElement;
 import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.mc.util.Position;
-import org.bukkit.Bukkit;
+import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -19,6 +19,9 @@ public class TeamCoreConfigElement {
 
     @ElementType(CoreConnectedBlockElement.class)
     private List<CoreConnectedBlockElement> connectedBlocks = new ArrayList<>();
+
+    @ElementType(TeamCoreInventoryElement.class)
+    private List<TeamCoreInventoryElement> inventories = new ArrayList<>();
 
     public UUID getPlacePlayerUUID() {
         return UUID.fromString(placePlayerUUID);
@@ -72,5 +75,17 @@ public class TeamCoreConfigElement {
             element.setPosition(BukkitPos.toMCPos(block.getLocation()));
             connectedBlocks.add(element);
         }
+    }
+
+    public List<TeamCoreInventoryElement> getInventories() {
+        return inventories;
+    }
+
+    public void addInventory(TeamCoreInventoryElement inventory) {
+        inventories.add(inventory);
+    }
+
+    public void setInventories(List<TeamCoreInventoryElement> inventories) {
+        this.inventories = inventories;
     }
 }

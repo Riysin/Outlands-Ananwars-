@@ -1,17 +1,29 @@
 package me.orange.anan.craft.behaviour.teamCore;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.github.retrooper.packetevents.protocol.nbt.NBT;
+import io.fairyproject.bukkit.nbt.NBTKey;
+import io.fairyproject.bukkit.nbt.NBTModifier;
+import io.fairyproject.container.DependsOn;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
+import me.orange.anan.clan.ClanManager;
+import me.orange.anan.craft.CraftManager;
+import me.orange.anan.craft.behaviour.teamCore.config.TeamCoreConfig;
+import me.orange.anan.craft.behaviour.teamCore.config.TeamCoreConfigElement;
+import me.orange.anan.craft.behaviour.teamCore.config.TeamCoreInventoryElement;
 import me.orange.anan.craft.config.CraftConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -20,12 +32,14 @@ public class TeamCoreManager {
     private final TeamCoreConfig teamCoreConfig;
     private List<TeamCore> teamCores = new ArrayList<>();
     private final BlockStatsManager blockStatsManager;
-    private final CraftConfig craftConfig;
+    private final ClanManager clanManager;
+    private final CraftManager craftManager;
 
-    public TeamCoreManager(TeamCoreConfig teamCoreConfig, BlockStatsManager blockStatsManager, CraftConfig craftConfig) {
+    public TeamCoreManager(TeamCoreConfig teamCoreConfig, BlockStatsManager blockStatsManager, ClanManager clanManager, CraftManager craftManager) {
         this.teamCoreConfig = teamCoreConfig;
         this.blockStatsManager = blockStatsManager;
-        this.craftConfig = craftConfig;
+        this.clanManager = clanManager;
+        this.craftManager = craftManager;
 
         loadConfig();
     }
@@ -36,6 +50,16 @@ public class TeamCoreManager {
             teamCore.getCoreCreeper().setHealth(element.getCoreCreeperHealth());
             teamCores.add(teamCore);
             teamCore.setConnectedBlocks(element.getConnectedBlocks());
+
+            for (TeamCoreInventoryElement inventoryElement : element.getInventories()) {
+                craftManager.getCrafts().forEach((id, craft) -> {
+                    if (inventoryElement.getId().equals(craft.getID())) {
+                        ItemStack itemStack = craft.getItemStack().clone();
+                        itemStack.setAmount(inventoryElement.getAmount());
+                        teamCore.getInventory().setItem(inventoryElement.getSlot(), itemStack);
+                    }
+                });
+            }
         }
     }
 
@@ -48,6 +72,19 @@ public class TeamCoreManager {
             element.setCoreCreeperPosition(teamCore.getCoreCreeper().getLocation());
             element.setCoreBlockLocation(teamCore.getCoreBlock().getLocation());
             element.setConnectedBlocks(teamCore.getConnectedBlocks());
+
+            int i = 0;
+            for (ItemStack itemStack : teamCore.getInventory().getContents()) {
+                if (itemStack != null) {
+                    TeamCoreInventoryElement inventoryElement = new TeamCoreInventoryElement();
+                    inventoryElement.setSlot(i);
+                    inventoryElement.setId(NBTModifier.get().getString(itemStack, NBTKey.create("craft")));
+                    inventoryElement.setAmount(itemStack.getAmount());
+                    element.addInventory(inventoryElement);
+                }
+                i++;
+            }
+
             teamCoreConfig.addTeamCore(element);
         }
     }
@@ -84,29 +121,19 @@ public class TeamCoreManager {
         getTeamCores().remove(teamCore);
     }
 
-    public TeamCore getTeamCore(Block block) {
-        for (TeamCore teamCore : teamCores) {
-            if (teamCore.getCoreBlock().equals(block)) {
-                return teamCore;
-            }
-        }
-        return null;
-    }
-
-    public TeamCore getTeamCore(UUID uuid) {
-        for (TeamCore teamCore : teamCores) {
-            if (teamCore.getPlacePlayer().equals(uuid)) {
-                return teamCore;
-            }
-        }
-        return null;
-    }
-
     public TeamCore getTeamCore(Creeper creeper) {
         for (TeamCore teamCore : teamCores) {
             if (teamCore.getCoreCreeper().equals(creeper)) {
                 return teamCore;
             }
+        }
+        return null;
+    }
+
+    public TeamCore getTeamCore(Player player){
+        for (TeamCore teamCore: teamCores){
+            if(clanManager.sameClan(player, Bukkit.getOfflinePlayer(teamCore.getPlacePlayer())))
+                return teamCore;
         }
         return null;
     }

@@ -1,4 +1,4 @@
-package me.orange.anan.craft.behaviour.teamCore;
+package me.orange.anan.craft.behaviour.teamCore.config;
 
 import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.config.yaml.YamlConfiguration;

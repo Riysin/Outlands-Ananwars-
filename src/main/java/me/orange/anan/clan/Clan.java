@@ -53,6 +53,10 @@ public class Clan {
         return Bukkit.getPlayer(owner);
     }
 
+    public OfflinePlayer getOfflineOwner() {
+        return Bukkit.getOfflinePlayer(owner);
+    }
+
     public UUID getOwnerUUID() {
         return owner;
     }

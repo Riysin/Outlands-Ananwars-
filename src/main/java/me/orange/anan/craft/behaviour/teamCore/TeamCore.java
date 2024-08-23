@@ -1,5 +1,7 @@
 package me.orange.anan.craft.behaviour.teamCore;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Player;
@@ -21,6 +23,7 @@ public class TeamCore {
         this.coreCreeper = creeper;
         this.coreBlock = coreBlock;
         this.connectedBlocks = new HashSet<>();
+        this.inventory = Bukkit.createInventory(null, 9*4, "§6隊伍核心");
     }
 
     public Creeper getCoreCreeper() {
@@ -41,6 +44,10 @@ public class TeamCore {
 
     public UUID getPlacePlayer() {
         return this.placePlayer;
+    }
+
+    public OfflinePlayer getOfflinePlacePlayer() {
+        return Bukkit.getOfflinePlayer(this.placePlayer);
     }
 
     public void setPlacePlayer(Player player) {

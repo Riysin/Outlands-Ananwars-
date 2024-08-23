@@ -90,6 +90,8 @@ public class ClanManager {
     }
 
     public boolean sameClan(OfflinePlayer player1, OfflinePlayer player2) {
+        if(player1.equals(player2)) return true;
+
         Clan clan1 = getPlayerClan(player1.getUniqueId());
         Clan clan2 = getPlayerClan(player2.getUniqueId());
         return clan1 != null && clan1.equals(clan2);

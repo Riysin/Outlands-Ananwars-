@@ -102,8 +102,7 @@ public class TeamCoreEventListener implements Listener {
             Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
             Creeper creeper = (Creeper) event.getEntity();
 
-            OfflinePlayer coreOwner = Bukkit.getOfflinePlayer(teamCoreManager.getTeamCore(creeper).getPlacePlayer());
-            Bukkit.broadcastMessage("§c" + player.getName() + "正在攻擊" + coreOwner + "'s 隊伍核心!");
+            OfflinePlayer coreOwner = teamCoreManager.getTeamCore(creeper).getOfflinePlacePlayer();
             if (clanManager.sameClan(coreOwner, player)) {
                 event.setCancelled(true);
                 player.sendMessage("§c你無法攻擊自己隊伍的核心!");
@@ -118,7 +117,11 @@ public class TeamCoreEventListener implements Listener {
             Creeper creeper = (Creeper) event.getRightClicked();
             TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
             if (teamCore != null) {
-                teamCoreMenu.open(player, teamCore);
+                if (player.isSneaking()) {
+                    teamCoreMenu.open(player, teamCore);
+                    return;
+                }
+                player.openInventory(teamCore.getInventory());
             }
         }
     }

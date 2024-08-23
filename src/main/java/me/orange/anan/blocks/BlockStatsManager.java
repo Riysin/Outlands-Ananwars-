@@ -11,7 +11,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 @InjectableComponent
 public class BlockStatsManager {
