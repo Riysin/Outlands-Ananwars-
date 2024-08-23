@@ -29,9 +29,9 @@ public class BedEventListener implements Listener {
     public void onBedPlace(BlockMultiPlaceEvent event) {
         Player player = event.getPlayer();
         if (event.getItemInHand().getType() == XMaterial.RED_BED.parseMaterial()) {
-            Bukkit.broadcastMessage("§c你放置了床");
             Block bed = event.getBlock();
             bedManager.addBed(player, bed.getLocation());
+            player.sendMessage("§a你放置了床");
         }
     }
 

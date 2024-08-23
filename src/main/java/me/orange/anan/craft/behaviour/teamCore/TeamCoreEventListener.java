@@ -17,9 +17,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
@@ -36,13 +38,11 @@ public class TeamCoreEventListener implements Listener {
     private final TeamCoreManager teamCoreManager;
     private final BlockStatsManager blockStatsManager;
     private final ClanManager clanManager;
-    private final TeamCoreMenu teamCoreMenu;
 
-    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager, ClanManager clanManager, TeamCoreMenu teamCoreMenu) {
+    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager, ClanManager clanManager) {
         this.teamCoreManager = teamCoreManager;
         this.blockStatsManager = blockStatsManager;
         this.clanManager = clanManager;
-        this.teamCoreMenu = teamCoreMenu;
     }
 
     @EventHandler
@@ -96,37 +96,6 @@ public class TeamCoreEventListener implements Listener {
     }
 
     @EventHandler
-    public void onAttackCreeper(EntityDamageByPlayerEvent event) {
-        Player player = event.getPlayer();
-        if (event.getEntity() instanceof Creeper) {
-            Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
-            Creeper creeper = (Creeper) event.getEntity();
-
-            OfflinePlayer coreOwner = teamCoreManager.getTeamCore(creeper).getOfflinePlacePlayer();
-            if (clanManager.sameClan(coreOwner, player)) {
-                event.setCancelled(true);
-                player.sendMessage("§c你無法攻擊自己隊伍的核心!");
-            }
-        }
-    }
-
-    @EventHandler
-    public void onRightClickCreeper(PlayerInteractEntityEvent event) {
-        Player player = event.getPlayer();
-        if (event.getRightClicked() instanceof Creeper) {
-            Creeper creeper = (Creeper) event.getRightClicked();
-            TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
-            if (teamCore != null) {
-                if (player.isSneaking()) {
-                    teamCoreMenu.open(player, teamCore);
-                    return;
-                }
-                player.openInventory(teamCore.getInventory());
-            }
-        }
-    }
-
-    @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         if (event.getEntity() instanceof Creeper) {
             Creeper creeper = (Creeper) event.getEntity();
@@ -167,5 +136,32 @@ public class TeamCoreEventListener implements Listener {
 
         double angle = playerDirection.angle(toEntity);
         return angle < 0.5236; // approximately 30 degrees
+    }
+
+    @EventHandler
+    public void onRightClickCreeper(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        if (event.getRightClicked() instanceof Creeper) {
+            Creeper creeper = (Creeper) event.getRightClicked();
+            TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
+            if (teamCore != null)
+                if (player.isSneaking())
+                    player.openInventory(teamCore.getInventory());
+        }
+    }
+
+    @EventHandler
+    public void onDoorOpen(PlayerInteractEvent event) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Player player = event.getPlayer();
+            Block block = event.getClickedBlock();
+            if (block != null && block.getType() == Material.WOOD_DOOR || block.getType() == Material.TRAP_DOOR) {
+                TeamCore teamCore = teamCoreManager.getTeamCoreByBlock(block);
+
+                if(!teamCoreManager.isInTeamCoreClan(teamCore, player))
+                    event.setCancelled(true);
+            }
+
+        }
     }
 }

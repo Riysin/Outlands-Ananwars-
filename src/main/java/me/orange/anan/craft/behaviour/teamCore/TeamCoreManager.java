@@ -138,8 +138,21 @@ public class TeamCoreManager {
         return null;
     }
 
+    public boolean isInTeamCoreClan(TeamCore teamCore, Player player){
+        return clanManager.sameClan(player, teamCore.getOfflinePlacePlayer());
+    }
+
     public TeamCore getTeamCoreByLocation(Location location) {
         Block block = location.getBlock();
+        for (TeamCore teamCore : teamCores) {
+            if (teamCore.getConnectedBlocks().contains(block) || teamCore.getTerritoryBlocks().contains(block)) {
+                return teamCore;
+            }
+        }
+        return null;
+    }
+
+    public TeamCore getTeamCoreByBlock(Block block) {
         for (TeamCore teamCore : teamCores) {
             if (teamCore.getConnectedBlocks().contains(block) || teamCore.getTerritoryBlocks().contains(block)) {
                 return teamCore;

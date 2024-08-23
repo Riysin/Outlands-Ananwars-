@@ -12,7 +12,7 @@ import org.bukkit.event.server.ServerListPingEvent;
 public class GeneralEventListener implements Listener {
     @EventHandler
     public void ServerListPingEvent(ServerListPingEvent event) {
-        event.setMotd("§b§l Anan§f§lWars §7§l| §e§lby §6§l@PvpForOrange\n          §f❥ §b§l§n1.8 Available!");
+        event.setMotd("§b§lAnan§f§lWars §r§7| §e§lby §6§l@PvpForOrange\n      §f❥ §b§l§n1.8 Available!");
         event.setMaxPlayers(134);
     }
 
