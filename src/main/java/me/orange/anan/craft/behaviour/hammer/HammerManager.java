@@ -60,7 +60,7 @@ public class HammerManager {
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
         if (Objects.requireNonNull(hammerAction) == HammerAction.BREAK) {
-            if (blockStats.isJustPlaced()) {
+            if (!blockStats.isJustPlaced()) {
                 player.sendMessage("§c方塊放置1分鐘後即無法破壞!");
                 return;
             }
@@ -111,7 +111,7 @@ public class HammerManager {
                     player.sendMessage("§c材料不足!");
             }
         } else
-            player.sendMessage("§c目標方塊比選擇的方塊高階，無法升級!");
+            player.sendMessage("§c無法升級為此建材!");
     }
 
     private String getConfigItemID(HammerAction hammerAction) {

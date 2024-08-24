@@ -27,7 +27,8 @@ public class KeyEventListener implements Listener {
     public void onRightClickKey(PlayerRightClickKeyEvent event) {
         Block block = blockStatsManager.getMainBlock(event.getBlock());
         Player player = event.getPlayer();
-        if (block.getType() == Material.WOODEN_DOOR) {
+
+        if (lockManager.isLockableBlock(block)) {
             if(lockManager.hasLock(block)) {
                 lockManager.unlockBlock(block);
 

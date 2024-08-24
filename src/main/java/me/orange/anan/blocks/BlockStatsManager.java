@@ -34,6 +34,7 @@ public class BlockStatsManager {
             blockStats.setBlockType(element.getBlockType());
             blockStats.setHealth(element.getHealth());
             blockStats.setLocation(element.getLocation());
+            blockStats.setJustPlaced(false);
             blockStatsMap.put(block, blockStats);
         }
     }
@@ -72,7 +73,7 @@ public class BlockStatsManager {
                 return block.getRelative(bed.getFacing().getOppositeFace());
             }
         }
-        else if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
+        else if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK || type == Material.IRON_DOOR) {
             Door door = (Door) block.getState().getData();
             if (door.isTopHalf()) {
                 return block.getRelative(BlockFace.DOWN);
@@ -112,7 +113,7 @@ public class BlockStatsManager {
     private void blockPlaceScheduler(Block block) {
         MCSchedulers.getGlobalScheduler().schedule(() -> {
             BlockStats blockStats = getBlockStats(block);
-            blockStats.setGettingDestroyed(false);
+            blockStats.setJustPlaced(false);
         }, Duration.ofSeconds(60));
     }
 }

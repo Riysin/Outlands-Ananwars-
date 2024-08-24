@@ -2,11 +2,14 @@ package me.orange.anan.craft.behaviour.lock;
 
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.ClanManager;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 @InjectableComponent
 public class LockManager {
@@ -66,5 +69,18 @@ public class LockManager {
 
     public boolean isInOwnerClan(Player player, Block block) {
         return locks.stream().anyMatch(lock -> lock.getLocation().equals(block.getLocation()) && clanManager.sameClan(player, lock.getOfflineOwner()));
+    }
+
+    private static final Set<Material> LOCKABLE_MATERIALS = EnumSet.of(
+            Material.FENCE_GATE,
+            Material.TRAP_DOOR,
+            Material.WOODEN_DOOR,
+            Material.IRON_DOOR_BLOCK,
+            Material.IRON_DOOR,
+            Material.CHEST
+    );
+
+    public boolean isLockableBlock(Block block) {
+        return LOCKABLE_MATERIALS.contains(block.getType());
     }
 }

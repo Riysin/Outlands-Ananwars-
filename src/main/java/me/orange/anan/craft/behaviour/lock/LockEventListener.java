@@ -4,6 +4,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.events.PlayerRightClickLockEvent;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +26,7 @@ public class LockEventListener implements Listener {
         Player player = event.getPlayer();
         Block block = blockStatsManager.getMainBlock(event.getBlock());
 
-        if (block != null) {
+        if (lockManager.isLockableBlock(block)) {
             if(lockManager.hasLock(block)) {
                 player.sendMessage("§cThis block is already locked");
                 return;

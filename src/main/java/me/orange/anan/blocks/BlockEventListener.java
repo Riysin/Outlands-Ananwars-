@@ -15,10 +15,7 @@ import me.orange.anan.blocks.config.NatureBlockElement;
 import me.orange.anan.craft.behaviour.lock.LockManager;
 import me.orange.anan.craft.behaviour.teamCore.TeamCore;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -196,29 +193,25 @@ public class BlockEventListener implements Listener {
             Player player = event.getPlayer();
             Block block = blockStatsManager.getMainBlock(event.getClickedBlock());
             Material type = block.getType();
+            boolean isKeyInHand = player.getItemInHand().isSimilar(craftManager.getItemStack(craftManager.getCrafts().get("key"), player));
 
-            // open iron door on player right click
-            if(type == Material.IRON_DOOR || type == Material.IRON_DOOR_BLOCK) {
-                Door door = (Door) block.getState().getData();
-                if (door.isOpen()) {
-                    door.setOpen(false);
-                } else {
-                    door.setOpen(true);
-                }
-                block.setData(door.getData());
-                block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
-            }
-
-            if (type == Material.WOODEN_DOOR || type == Material.TRAP_DOOR || type == Material.IRON_DOOR || type == Material.FENCE_GATE) {
-                TeamCore teamCore = teamCoreManager.getTeamCoreByBlock(block);
-
-                if (teamCore == null) {
-                    return;
-                }
+            if (lockManager.isLockableBlock(block)) {
 
                 if (lockManager.hasLock(block) && !lockManager.isInOwnerClan(player, block)) {
                     event.setCancelled(true);
                     player.sendMessage("§c這扇門已經被上鎖了!");
+                    return;
+                }
+            }
+
+            // open iron door on player right click
+            if (type == Material.IRON_DOOR_BLOCK || type == Material.IRON_DOOR) {
+                Bukkit.broadcastMessage("Iron door clicked");
+                if (!lockManager.hasLock(block) || !isKeyInHand) {
+                    Door door = (Door) block.getState().getData();
+                    door.setOpen(!door.isOpen());
+                    block.setData(door.getData());
+                    block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 1.0f, 1.0f);
                 }
             }
         }
