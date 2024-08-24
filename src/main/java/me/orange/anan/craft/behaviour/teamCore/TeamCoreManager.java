@@ -277,7 +277,6 @@ public class TeamCoreManager {
                         Block searchedBlock = currentLocation.getBlock();
 
                         if (blockStatsManager.getBlockStatsMap().containsKey(searchedBlock)) {
-                            Bukkit.broadcastMessage("§cBlock found");
                             for (TeamCore teamCore : getTeamCores()) {
                                 if (teamCore.getConnectedBlocks().contains(searchedBlock)) {
                                     if (!isInTeamCoreClan(teamCore, player)) {

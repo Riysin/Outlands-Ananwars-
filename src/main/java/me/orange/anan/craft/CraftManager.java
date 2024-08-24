@@ -1,5 +1,6 @@
 package me.orange.anan.craft;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.listener.ListenerRegistry;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
@@ -12,6 +13,7 @@ import me.orange.anan.craft.behaviour.BehaviourManager;
 import me.orange.anan.craft.behaviour.CraftBehaviour;
 import me.orange.anan.craft.config.CraftConfig;
 import me.orange.anan.craft.config.CraftElement;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -177,5 +179,25 @@ public class CraftManager {
                 .filter(item -> item != null && requiredNBT.equals(NBTModifier.get().getString(item, NBTKey.create("craft"))))
                 .mapToInt(ItemStack::getAmount)
                 .sum();
+    }
+
+    public Craft getCraft(ItemStack itemStack) {
+        AtomicReference<Craft> craft = new AtomicReference<>();
+        crafts.forEach((id, c) -> {
+            if (c.getItemStack().getType() == itemStack.getType()) {
+                craft.set(c);
+            }
+        });
+        return craft.get();
+    }
+
+    public Craft getCraft(Material material) {
+        AtomicReference<Craft> craft = new AtomicReference<>();
+        crafts.forEach((id, c) -> {
+            if (c.getItemStack().getType() == material) {
+                craft.set(c);
+            }
+        });
+        return craft.get();
     }
 }

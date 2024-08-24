@@ -26,6 +26,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.FurnaceExtractEvent;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -234,4 +236,19 @@ public class BlockEventListener implements Listener {
             }
         }
     }
+
+//    @EventHandler
+//    public void onGetItemFromFurnace(FurnaceSmeltEvent event) {
+//        event.getSource().setItemMeta(craftManager.getItemStack(craftManager.getCraft(event.getSource()), event.getPlayer()).getItemMeta());
+//    }
+//
+//    @EventHandler
+//    public void onGetItemFromFurnace(FurnaceExtractEvent event) {
+//        Player player = event.getPlayer();
+//        Craft craft = craftManager.getCraft(event.getSource());
+//        ItemStack itemStack = craftManager.getItemStack(craft, player);
+//        itemStack.setAmount(event.getResult().getAmount());
+//
+//        event.getResult().setItemMeta(itemStack.getItemMeta());
+//    }
 }
