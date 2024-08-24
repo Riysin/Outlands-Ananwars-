@@ -26,12 +26,10 @@ import java.util.UUID;
 @InjectableComponent
 public class PlayerDataManager {
     private final PlayerConfig playerConfig;
-    private final BedManager bedManager;
     private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
 
-    public PlayerDataManager(PlayerConfig playerConfig, BedManager bedManager) {
+    public PlayerDataManager(PlayerConfig playerConfig) {
         this.playerConfig = playerConfig;
-        this.bedManager = bedManager;
 
         loadConfig();
     }

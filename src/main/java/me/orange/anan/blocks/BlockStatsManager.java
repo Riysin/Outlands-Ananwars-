@@ -5,9 +5,13 @@ import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BlockConfigElement;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.material.Bed;
+import org.bukkit.material.Door;
 
 import java.time.Duration;
 import java.util.*;
@@ -58,6 +62,23 @@ public class BlockStatsManager {
         if (blockStatsMap.containsKey(block))
             return blockStatsMap.get(block);
         return new BlockStats();
+    }
+
+    public Block getMainBlock(Block block) {
+        Material type = block.getType();
+        if (type == Material.BED_BLOCK) {
+            Bed bed = (Bed) block.getState().getData();
+            if (bed.isHeadOfBed()) {
+                return block.getRelative(bed.getFacing().getOppositeFace());
+            }
+        }
+        else if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
+            Door door = (Door) block.getState().getData();
+            if (door.isTopHalf()) {
+                return block.getRelative(BlockFace.DOWN);
+            }
+        }
+        return block;
     }
 
     public void breakBlock(Player player, Block block) {

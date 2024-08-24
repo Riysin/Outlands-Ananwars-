@@ -2,6 +2,8 @@ package me.orange.anan.craft.behaviour;
 
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.behaviour.hammer.HammerBehaviour;
+import me.orange.anan.craft.behaviour.key.KeyBehaviour;
+import me.orange.anan.craft.behaviour.lock.LockBehaviour;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreBehaviour;
 
 import java.util.HashMap;
@@ -13,11 +15,14 @@ public class BehaviourManager {
 
     public BehaviourManager(
             HammerBehaviour hammerBehaviour,
-            TeamCoreBehaviour teamCoreBehaviour
-    ){
+            TeamCoreBehaviour teamCoreBehaviour,
+            KeyBehaviour keyBehaviour,
+            LockBehaviour lockBehaviour
+    ) {
         registerCraftBehaviour(hammerBehaviour);
         registerCraftBehaviour(teamCoreBehaviour);
-
+        registerCraftBehaviour(keyBehaviour);
+        registerCraftBehaviour(lockBehaviour);
     }
 
     public void registerCraftBehaviour(CraftBehaviour craftBehaviour){

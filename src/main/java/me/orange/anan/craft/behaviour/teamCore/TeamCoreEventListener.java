@@ -23,6 +23,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.material.Door;
 import org.bukkit.util.Vector;
 
 @InjectableComponent
@@ -116,8 +117,7 @@ public class TeamCoreEventListener implements Listener {
             ActionBar.sendActionBar(player, "§6Core HP: §a" + sightCreeper.getHealth());
         }
 
-        TeamCore teamCore = teamCoreManager.getTeamCoreByLocation(location);
-        if (teamCore != null) {
+        if (teamCoreManager.inTerritory(player)) {
             ActionBar.sendActionBar(player, "§3You are in a territory!");
         }
     }
@@ -147,21 +147,6 @@ public class TeamCoreEventListener implements Listener {
             if (teamCore != null)
                 if (player.isSneaking())
                     player.openInventory(teamCore.getInventory());
-        }
-    }
-
-    @EventHandler
-    public void onDoorOpen(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            Player player = event.getPlayer();
-            Block block = event.getClickedBlock();
-            if (block != null && block.getType() == Material.WOOD_DOOR || block.getType() == Material.TRAP_DOOR) {
-                TeamCore teamCore = teamCoreManager.getTeamCoreByBlock(block);
-
-                if(!teamCoreManager.isInTeamCoreClan(teamCore, player))
-                    event.setCancelled(true);
-            }
-
         }
     }
 }

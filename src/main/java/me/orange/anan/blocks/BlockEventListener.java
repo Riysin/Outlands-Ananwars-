@@ -12,8 +12,10 @@ import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
 import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.blocks.config.NatureBlockElement;
+import me.orange.anan.craft.behaviour.lock.LockManager;
 import me.orange.anan.craft.behaviour.teamCore.TeamCore;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
+import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -22,8 +24,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Bed;
@@ -41,19 +45,21 @@ public class BlockEventListener implements Listener {
     private final NatureBlockConfig natureBlockConfig;
     private final BuildConfig buildConfig;
     private final TeamCoreManager teamCoreManager;
+    private final LockManager lockManager;
 
-    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, TeamCoreManager teamCoreManager) {
+    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, TeamCoreManager teamCoreManager, LockManager lockManager) {
         this.blockStatsManager = blockStatsManager;
         this.craftManager = craftManager;
         this.natureBlockConfig = natureBlockConfig;
         this.buildConfig = buildConfig;
         this.teamCoreManager = teamCoreManager;
+        this.lockManager = lockManager;
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        Block block = getMainBlock(event.getBlock());
+        Block block = blockStatsManager.getMainBlock(event.getBlock());
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
         //Managing the health of the block
@@ -98,23 +104,6 @@ public class BlockEventListener implements Listener {
 
         if (!drop && player.getGameMode() != GameMode.CREATIVE)
             event.setCancelled(true);
-    }
-
-    private Block getMainBlock(Block block) {
-        Material type = block.getType();
-        if (type == Material.BED_BLOCK) {
-            Bed bed = (Bed) block.getState().getData();
-            if (bed.isHeadOfBed()) {
-                return block.getRelative(bed.getFacing().getOppositeFace());
-            }
-        }
-        else if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK) {
-            Door door = (Door) block.getState().getData();
-            if (door.isTopHalf()) {
-                return block.getRelative(BlockFace.DOWN);
-            }
-        }
-        return block;
     }
 
     private void dropItem(Player player, ItemStack itemStack) {
@@ -191,7 +180,7 @@ public class BlockEventListener implements Listener {
         materials.add(XMaterial.LAVA.parseMaterial());
 
         Block targetBlock = player.getTargetBlock(materials, 4);
-        Block mainBlock = getMainBlock(targetBlock);
+        Block mainBlock = blockStatsManager.getMainBlock(targetBlock);
 
         if (mainBlock != null) {
             BlockStats blockStats = blockStatsManager.getBlockStats(mainBlock);
@@ -201,4 +190,37 @@ public class BlockEventListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onDoorOpen(PlayerInteractEvent event) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Player player = event.getPlayer();
+            Block block = blockStatsManager.getMainBlock(event.getClickedBlock());
+            Material type = block.getType();
+
+            // open iron door on player right click
+            if(type == Material.IRON_DOOR || type == Material.IRON_DOOR_BLOCK) {
+                Door door = (Door) block.getState().getData();
+                if (door.isOpen()) {
+                    door.setOpen(false);
+                } else {
+                    door.setOpen(true);
+                }
+                block.setData(door.getData());
+                block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
+            }
+
+            if (type == Material.WOODEN_DOOR || type == Material.TRAP_DOOR || type == Material.IRON_DOOR || type == Material.FENCE_GATE) {
+                TeamCore teamCore = teamCoreManager.getTeamCoreByBlock(block);
+
+                if (teamCore == null) {
+                    return;
+                }
+
+                if (lockManager.hasLock(block) && !lockManager.isInOwnerClan(player, block)) {
+                    event.setCancelled(true);
+                    player.sendMessage("§c這扇門已經被上鎖了!");
+                }
+            }
+        }
+    }
 }
