@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -38,11 +37,11 @@ public class TimeManager {
                     Block block = world.getBlockAt(player.getLocation());
                     if(isDay.get(world) || block.getLightLevel() >= 5){
                         player.removePotionEffect(PotionEffectType.BLINDNESS);
-                        break;
+                    }else {
+                        PotionEffect blind = new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0, false, false);
+                        player.addPotionEffect(blind);
+                        player.setSprinting(true);
                     }
-
-                    PotionEffect blind = new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0, false, false);
-                    player.addPotionEffect(blind);
                 }
             }
         }, 0, 1);
