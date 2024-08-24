@@ -71,7 +71,7 @@ public class TeamCore {
     public Set<Block> getTerritoryBlocks() {
         Set<Block> territoryBlocks = new HashSet<>();
         for (Block connectedBlock : this.connectedBlocks) {
-            for (int i = 1; i <= 3; i++) {
+            for (int i = 0; i <= 3; i++) {
                 Block aboveBlock = connectedBlock.getRelative(0, i, 0);
                 territoryBlocks.add(aboveBlock);
             }
