@@ -5,8 +5,10 @@ import com.cryptomorin.xseries.messages.ActionBar;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
+import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.config.BuildConfig;
+import me.orange.anan.clan.ClanManager;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
@@ -43,14 +45,16 @@ public class BlockEventListener implements Listener {
     private final BuildConfig buildConfig;
     private final TeamCoreManager teamCoreManager;
     private final LockManager lockManager;
+    private final ClanManager clanManager;
 
-    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, TeamCoreManager teamCoreManager, LockManager lockManager) {
+    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, TeamCoreManager teamCoreManager, LockManager lockManager, ClanManager clanManager) {
         this.blockStatsManager = blockStatsManager;
         this.craftManager = craftManager;
         this.natureBlockConfig = natureBlockConfig;
         this.buildConfig = buildConfig;
         this.teamCoreManager = teamCoreManager;
         this.lockManager = lockManager;
+        this.clanManager = clanManager;
     }
 
     @EventHandler
@@ -131,15 +135,29 @@ public class BlockEventListener implements Listener {
             return;
         }
 
+        if (teamCoreManager.isAboveOtherTeamBlock(player, block) && block.getType() != Material.LADDER) {
+            event.setCancelled(true);
+            player.sendMessage("§c你不能在他人領地的上方建造方塊!");
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);
+            return;
+        }
+
+        if (teamCoreManager.otherTeamBlockInRadius(player, block) && block.getType() != Material.LADDER) {
+            event.setCancelled(true);
+            player.sendMessage("§c你不能在他人領地的旁建造方塊!");
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);
+            return;
+        }
+
         int health = buildConfig.getBuildBlocks().get(nbtValue);
         blockStatsManager.placeBlock(event.getPlayer(), event.getBlockPlaced(), health);
 
         //Check if the block is connected to a team core
+        TeamCore adjacentTeamCore = teamCoreManager.findAdjacentBlockTeamCore(block);
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
         if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
-            TeamCore teamCore = teamCoreManager.findAdjacentBlockTeamCore(block);
-            if (teamCore != null) {
-                teamCoreManager.addConnectedTeamBlocks(teamCore, block);
+            if (adjacentTeamCore != null) {
+                teamCoreManager.addConnectedTeamBlocks(adjacentTeamCore, block);
             }
         }
     }

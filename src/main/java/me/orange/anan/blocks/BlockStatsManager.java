@@ -72,8 +72,7 @@ public class BlockStatsManager {
             if (bed.isHeadOfBed()) {
                 return block.getRelative(bed.getFacing().getOppositeFace());
             }
-        }
-        else if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK || type == Material.IRON_DOOR) {
+        } else if (type == Material.WOODEN_DOOR || type == Material.IRON_DOOR_BLOCK || type == Material.IRON_DOOR) {
             Door door = (Door) block.getState().getData();
             if (door.isTopHalf()) {
                 return block.getRelative(BlockFace.DOWN);

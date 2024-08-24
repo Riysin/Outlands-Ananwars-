@@ -4,8 +4,10 @@ import com.cryptomorin.xseries.XMaterial;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
+import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.container.DependsOn;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.util.Position;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
@@ -17,6 +19,7 @@ import me.orange.anan.craft.behaviour.teamCore.config.TeamCoreInventoryElement;
 import me.orange.anan.craft.config.CraftConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
@@ -130,21 +133,21 @@ public class TeamCoreManager {
         return null;
     }
 
-    public TeamCore getTeamCore(Player player){
-        for (TeamCore teamCore: teamCores){
-            if(clanManager.sameClan(player, Bukkit.getOfflinePlayer(teamCore.getPlacePlayer())))
+    public TeamCore getTeamCore(Player player) {
+        for (TeamCore teamCore : teamCores) {
+            if (clanManager.sameClan(player, Bukkit.getOfflinePlayer(teamCore.getPlacePlayer())))
                 return teamCore;
         }
         return null;
     }
 
-    public boolean isInTeamCoreClan(TeamCore teamCore, Player player){
+    public boolean isInTeamCoreClan(TeamCore teamCore, Player player) {
         return clanManager.sameClan(player, teamCore.getOfflinePlacePlayer());
     }
 
-    public boolean inTerritory(Player player){
-        for (TeamCore teamCore: teamCores){
-            if(teamCore.getTerritoryBlocks().contains(player.getLocation().getBlock()))
+    public boolean inTerritory(Player player) {
+        for (TeamCore teamCore : teamCores) {
+            if (teamCore.getTerritoryBlocks().contains(player.getLocation().getBlock()))
                 return true;
         }
         return false;
@@ -257,5 +260,57 @@ public class TeamCoreManager {
                 }
             }
         }
+    }
+
+    public boolean otherTeamBlockInRadius(Player player, Block block) {
+        int radius = 20;
+        Location center = block.getLocation();
+        double radiusSquared = radius * radius;
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    Location currentLocation = center.clone().add(x, y, z);
+
+                    // Check if the squared distance is within the squared radius
+                    if (center.distanceSquared(currentLocation) <= radiusSquared) {
+                        Block searchedBlock = currentLocation.getBlock();
+
+                        if (blockStatsManager.getBlockStatsMap().containsKey(searchedBlock)) {
+                            Bukkit.broadcastMessage("§cBlock found");
+                            for (TeamCore teamCore : getTeamCores()) {
+                                if (teamCore.getConnectedBlocks().contains(searchedBlock)) {
+                                    if (!isInTeamCoreClan(teamCore, player)) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isAboveOtherTeamBlock(Player player, Block block) {
+        Location blockLocation = block.getLocation();
+
+        for (TeamCore teamCore : getTeamCores()) {
+            // Skip the player's own team core
+            if (isInTeamCoreClan(teamCore, player)) {
+                continue;
+            }
+
+            for (Block teamBlock : teamCore.getConnectedBlocks()) {
+                Location teamBlockLocation = teamBlock.getLocation();
+
+                if (blockLocation.getBlockX() == teamBlockLocation.getBlockX() &&
+                        blockLocation.getBlockZ() == teamBlockLocation.getBlockZ()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
