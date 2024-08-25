@@ -24,27 +24,33 @@ public class Sidebar implements SidebarAdapter {
 
     @Override
     public Component getTitle(MCPlayer player) {
-        return Component.text("§e§lTest");
+        return Component.text("§b§lAnan");
     }
 
     @Override
     public List<Component> getLines(MCPlayer mcPlayer) {
-        String clanName = "無";
+        String clanName = "No Clan";
+        int members = 0;
+        int onlineMembers = 0;
         Player player = mcPlayer.as(Player.class);
 
         if (clanManager.inClan(player)) {
             clanName = clanManager.getPlayerClan(player.getUniqueId()).getDisplayName();
+            members = clanManager.getClanSize(player);
+            onlineMembers = clanManager.getOnlineClanSize(player);
         }
         List<Component> sidebar = new ArrayList<>();
-        sidebar.add(Component.text("§7§m--------------------"));
-        sidebar.add(Component.text("§f玩家: §6" + player.getName()));
-        sidebar.add(Component.text("§f隊伍: " + clanName));
+        sidebar.add(Component.text("§7§m-----------------"));
+        sidebar.add(Component.text("§fClan"));
+        sidebar.add(Component.text("§3» §bName§7: §f" + clanName));
+        sidebar.add(Component.text("§3» §bMembers§7: §f" + onlineMembers + "§7/§f" + members));
         sidebar.add(Component.text(""));
-        sidebar.add(Component.text("§f職業: §6" + "test"));
+        sidebar.add(Component.text("§fPlayer"));
+        sidebar.add(Component.text("§3» §bClass§7: §f" + "test"));
 
         if (craftTimerManager.isCrafting(player)) {
             sidebar.add(Component.text(""));
-            sidebar.add(Component.text("§f正在製作:"));
+            sidebar.add(Component.text("§3» §bCrafting§7:"));
             int i = 4;
             for (CraftTimer craftTimer : craftTimerManager.getPlayerCraftTimerList(player)) {
                 sidebar.add(Component.text("   §f" + craftTimer.getCraft().getName() + "x" + craftTimer.getAmount() + " - §6" + craftTimer.getTime() + "s"));
@@ -53,8 +59,9 @@ public class Sidebar implements SidebarAdapter {
                     break;
             }
         }
-
-        sidebar.add(Component.text("§7§m--------------------"));
+        sidebar.add(Component.text(""));
+        sidebar.add(Component.text("§f134tc.ddns.net"));
+        sidebar.add(Component.text("§7§m-----------------"));
         return sidebar;
     }
 }

@@ -52,7 +52,7 @@ public class DeathBossBar {
 
         for (int i = 0; i < bossBarLength; i++) {
             if (isInFOV && i == (int) ((yawDifference + 45) / 90.0 * bossBarLength)) {
-                barTextBuilder.append(Component.text('☠', NamedTextColor.RED));
+                barTextBuilder.append(Component.text('✖', NamedTextColor.RED, TextDecoration.BOLD));
             } else {
                 barTextBuilder.append(Component.text('-', NamedTextColor.WHITE, TextDecoration.STRIKETHROUGH));
             }

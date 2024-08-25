@@ -123,6 +123,16 @@ public class ClanManager {
         return clan != null ? clan.getDisplayName() : null;
     }
 
+    public int getClanSize(Player player) {
+        Clan clan = getPlayerClan(player);
+        return clan != null ? clan.getPlayers().size() : 0;
+    }
+
+    public int getOnlineClanSize(Player player) {
+        Clan clan = getPlayerClan(player);
+        return clan != null ? clan.getOnlinePlayers().size() : 0;
+    }
+
     public void sendClanOwner(Player player, String message) {
         Clan clan = getPlayerClan(player);
         if (clan != null) {

@@ -6,6 +6,7 @@ import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.config.PlayerConfigElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -57,6 +58,15 @@ public class BedManager {
         });
 
         return beds;
+    }
+
+    public Bed getBed(Block block) {
+        for (Bed bed : bedList) {
+            if (bed.getLocation().equals(block.getLocation())) {
+                return bed;
+            }
+        }
+        return null;
     }
 
     public void addBed(Player player, Location location) {

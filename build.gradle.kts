@@ -16,7 +16,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.23" apply false
 
     //Shadow plugin, provides the ability to shade fairy and other dependencies to compiled jar
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 val libPlugin = properties("lib.plugin").toBoolean()
@@ -92,6 +92,7 @@ repositories {
 dependencies {
     // Spigot dependency
     compileOnly("org.spigotmc:spigot-api:${properties("spigot.version")}-R0.1-SNAPSHOT")
+    implementation("net.wesjd:anvilgui:1.10.2-SNAPSHOT")
 }
 
 tasks.withType(ShadowJar::class.java) {

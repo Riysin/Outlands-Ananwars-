@@ -22,6 +22,7 @@ public class WorldManager {
         world.setGameRuleValue("doFireTick", "false");
         world.setGameRuleValue("doTileDrops", "false");
         world.setGameRuleValue("doEntityDrops", "false");
+        world.setGameRuleValue("doMobLoot", "false");
         world.setTime(7000);
         world.setDifficulty(Difficulty.EASY);
         world.setStorm(false);

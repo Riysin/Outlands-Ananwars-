@@ -18,7 +18,7 @@ public class TimeManager {
     private Map<World, Boolean> isDay = new HashMap<>();
 
     public String getTimeState(World world){
-        return isDay.getOrDefault(world, true) ? "白天" : "夜晚";
+        return isDay.getOrDefault(world, true) ? "Day §6✹" : "Night §b☾";
     }
 
     @PostInitialize

@@ -6,6 +6,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.bukkit.util.BukkitPos;
+import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.clan.ClanManager;
@@ -20,6 +21,7 @@ import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,6 +30,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -36,6 +40,7 @@ import org.bukkit.material.Door;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Vector;
 import java.util.stream.Stream;
 
 @InjectableComponent
@@ -237,18 +242,26 @@ public class BlockEventListener implements Listener {
         }
     }
 
-//    @EventHandler
-//    public void onGetItemFromFurnace(FurnaceSmeltEvent event) {
-//        event.getSource().setItemMeta(craftManager.getItemStack(craftManager.getCraft(event.getSource()), event.getPlayer()).getItemMeta());
-//    }
-//
-//    @EventHandler
-//    public void onGetItemFromFurnace(FurnaceExtractEvent event) {
-//        Player player = event.getPlayer();
-//        Craft craft = craftManager.getCraft(event.getSource());
-//        ItemStack itemStack = craftManager.getItemStack(craft, player);
-//        itemStack.setAmount(event.getResult().getAmount());
-//
-//        event.getResult().setItemMeta(itemStack.getItemMeta());
-//    }
+    @EventHandler
+    public void onSmelt(FurnaceSmeltEvent event) {
+        ItemStack item = event.getResult();
+        Craft craft = craftManager.getCraft(item);
+
+        event.setResult(craft.getItemStack());
+    }
+
+    @EventHandler
+    public void onExtractFromFurnace(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        if(event.getInventory().getType() == InventoryType.FURNACE && event.getSlotType() == InventoryType.SlotType.RESULT) {
+            ItemStack itemStack = craftManager.getItemStack(craftManager.getCraft(event.getCurrentItem()), player).clone();
+            itemStack.setAmount(event.getCurrentItem().getAmount());
+            event.setCurrentItem(itemStack);
+        }
+    }
+
+    @EventHandler
+    public void onFurnaceExtract(FurnaceExtractEvent event) {
+        event.setExpToDrop(0);
+    }
 }
