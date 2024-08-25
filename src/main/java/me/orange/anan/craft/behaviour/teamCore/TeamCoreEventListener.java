@@ -38,12 +38,10 @@ public class TeamCoreEventListener implements Listener {
 
     private final TeamCoreManager teamCoreManager;
     private final BlockStatsManager blockStatsManager;
-    private final ClanManager clanManager;
 
-    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager, ClanManager clanManager) {
+    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager) {
         this.teamCoreManager = teamCoreManager;
         this.blockStatsManager = blockStatsManager;
-        this.clanManager = clanManager;
     }
 
     @EventHandler
@@ -147,6 +145,13 @@ public class TeamCoreEventListener implements Listener {
             if (teamCore != null)
                 if (player.isSneaking())
                     player.openInventory(teamCore.getInventory());
+        }
+    }
+
+    @EventHandler
+    public void onCreeperHurt(EntityDamageByPlayerEvent event) {
+        if (event.getEntity() instanceof Creeper) {
+            Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(event.getDamager(), event.getDamager().getLocation(), event.getDamager().getLocation()));
         }
     }
 }

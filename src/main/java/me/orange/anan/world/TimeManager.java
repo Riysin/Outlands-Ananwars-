@@ -4,6 +4,7 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.container.PostInitialize;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -35,7 +36,7 @@ public class TimeManager {
             for (World world : Bukkit.getWorlds()) {
                 for (Player player : world.getPlayers()) {
                     Block block = world.getBlockAt(player.getLocation());
-                    if(isDay.get(world) || block.getLightLevel() >= 5){
+                    if(isDay.get(world) || block.getLightLevel() >= 5 || player.getGameMode()== GameMode.CREATIVE){
                         player.removePotionEffect(PotionEffectType.BLINDNESS);
                     }else {
                         PotionEffect blind = new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0, false, false);

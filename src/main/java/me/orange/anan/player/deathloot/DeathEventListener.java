@@ -53,6 +53,10 @@ public class DeathEventListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
+
+        if(player.hasMetadata("NPC")) {
+            return;
+        }
         boolean isKnocked = playerDataManager.checkKnocked(player);
 
         if (!isKnocked) {

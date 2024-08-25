@@ -8,6 +8,8 @@ import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
 import me.orange.anan.craft.crafting.CraftTimerManager;
 import me.orange.anan.player.config.PlayerConfig;
+import me.orange.anan.player.npc.PlayerNPCManager;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -26,20 +28,25 @@ import java.util.Set;
 public class PlayerEventListener implements Listener {
     private final PlayerDataManager playerDataManager;
     private final CraftTimerManager craftTimerManager;
+    private final PlayerNPCManager playerNPCManager;
     private final NameTagService nameTagService;
 
-    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService) {
+    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, PlayerNPCManager playerNPCManager, NameTagService nameTagService) {
         this.playerDataManager = playerDataManager;
         this.craftTimerManager = craftTimerManager;
+        this.playerNPCManager = playerNPCManager;
         this.nameTagService = nameTagService;
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
         playerDataManager.setUpPlayer(event);
+        playerNPCManager.setUpNPC(player);
+        playerNPCManager.despawnNPC(player);
 
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            nameTagService.update(MCPlayer.from(player));
+        Bukkit.getOnlinePlayers().forEach(player1 -> {
+            nameTagService.update(MCPlayer.from(player1));
         });
 
     }
@@ -57,6 +64,8 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerLeft(PlayerQuitEvent event) {
         event.setQuitMessage("§e" + event.getPlayer().getName() + " has left!");
+        playerNPCManager.spawnNPC(event.getPlayer());
+
         craftTimerManager.getPlayerCraftTimerList(event.getPlayer()).forEach(craftTimer -> {
             craftTimerManager.craftingFailed(event.getPlayer(), craftTimer);
         });

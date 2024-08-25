@@ -86,6 +86,9 @@ repositories {
     // Spigot's repository for spigot api dependency
     maven(url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/"))
     maven(url = uri("https://repo.imanity.dev/imanity-libraries"))
+    maven(url = uri("https://maven.citizensnpcs.co/repo")) {
+        name = "citizens-repo"
+    }
 }
 
 // Dependencies
@@ -93,6 +96,9 @@ dependencies {
     // Spigot dependency
     compileOnly("org.spigotmc:spigot-api:${properties("spigot.version")}-R0.1-SNAPSHOT")
     implementation("net.wesjd:anvilgui:1.10.2-SNAPSHOT")
+    implementation("net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT") {
+        exclude(group = "*", module = "*")
+    }
 }
 
 tasks.withType(ShadowJar::class.java) {
