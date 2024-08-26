@@ -8,6 +8,8 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.player.PlayerDataManager;
+import me.orange.anan.player.npc.PlayerNPCManager;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -27,10 +29,12 @@ public class DeathLootManager {
     Map<UUID, DeathLoot> deathLootMap = new HashMap<>();
     private final PlayerDataManager playerDataManager;
     private final DeathBossBar deathBossBar;
+    private final PlayerNPCManager playerNPCManager;
 
-    public DeathLootManager(PlayerDataManager playerDataManager, DeathBossBar deathBossBar) {
+    public DeathLootManager(PlayerDataManager playerDataManager, DeathBossBar deathBossBar, PlayerNPCManager playerNPCManager) {
         this.playerDataManager = playerDataManager;
         this.deathBossBar = deathBossBar;
+        this.playerNPCManager = playerNPCManager;
     }
 
     public Map<UUID, DeathLoot> getDeathLootMap() {
@@ -84,6 +88,12 @@ public class DeathLootManager {
            armorStand.remove();
            deathBossBar.hideBossBar(player);
         },20*60);
+    }
+
+    public void addNPC(NPC npc, Location location) {
+        ArmorStand armorStand = npc.getEntity().getWorld().spawn(location.clone().add(0, -0.3, 0), ArmorStand.class);
+        armorStand.setMarker(false);
+
     }
 
     public DeathLoot getDeathLoot(String uuid) {

@@ -3,11 +3,8 @@ package me.orange.anan.craft;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
-import io.fairyproject.bukkit.util.items.behaviour.ItemBehaviour;
-import io.fairyproject.container.InjectableComponent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +16,6 @@ public class Craft {
     private CraftTier tier = CraftTier.COMMON;
     private CraftType type = CraftType.ALL;
     private XMaterial menuIcon = XMaterial.STONE;
-    private List<ItemBehaviour> itemBehaviours = new ArrayList<>();
 
     public ItemStack getItemStack() {
         return itemStack;
@@ -79,9 +75,5 @@ public class Craft {
 
     public void setMenuIcon(XMaterial menuIcon) {
         this.menuIcon = menuIcon;
-    }
-
-    public void addBehavior(ItemBehaviour behaviour){
-        this.itemBehaviours.add(behaviour);
     }
 }

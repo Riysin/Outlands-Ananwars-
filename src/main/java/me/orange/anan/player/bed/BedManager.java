@@ -36,8 +36,8 @@ public class BedManager {
     }
 
     public void saveConfig() {
+        playerConfig.clearBeds();
         bedList.forEach(bed -> {
-            String uuid = bed.getOwner().toString();
             playerConfig.addBed(Bukkit.getPlayer(bed.getOwner()), bed.getLocation());
         });
 

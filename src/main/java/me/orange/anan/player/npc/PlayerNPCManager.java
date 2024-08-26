@@ -7,7 +7,9 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.SitTrait;
+import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -19,9 +21,10 @@ public class PlayerNPCManager {
         if (getPlayerNPC(player) == null) {
             NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, player.getName());
             npc.getOrAddTrait(Owner.class).setOwner(player.getUniqueId());
-            npc.getOrAddTrait(SitTrait.class).setSitting(player.getLocation().add(0, -0.4, 0));
+            npc.getOrAddTrait(SkinTrait.class).setSkinName(player.getName());
+            npc.getOrAddTrait(HologramTrait.class).addLine("§c[Offline]");
+            npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.25);
             npc.setProtected(false);
-            Bukkit.broadcastMessage("NPC created for " + player.getName());
         }
     }
 
@@ -43,6 +46,7 @@ public class PlayerNPCManager {
     public void spawnNPC(Player player) {
         NPC npc = getPlayerNPC(player);
         if (npc != null) {
+            npc.getOrAddTrait(SitTrait.class).setSitting(player.getLocation().add(0, -0.35, 0));
             npc.getOrAddTrait(Inventory.class).setContents(player.getInventory().getContents());
             npc.getOrAddTrait(Equipment.class).set(Equipment.EquipmentSlot.HELMET, player.getInventory().getHelmet());
             npc.getOrAddTrait(Equipment.class).set(Equipment.EquipmentSlot.CHESTPLATE, player.getInventory().getChestplate());
@@ -56,10 +60,9 @@ public class PlayerNPCManager {
         NPC npc = getPlayerNPC(player);
         if (npc != null) {
             npc.despawn();
-            // Get the NPC's inventory
+
             ItemStack[] npcItems = npc.getOrAddTrait(Inventory.class).getContents();
 
-            // Set the player's inventory, limiting to 36 items (player inventory size)
             for (int i = 0; i < Math.min(npcItems.length, 36); i++) {
                 player.getInventory().setItem(i, npcItems[i]);
             }

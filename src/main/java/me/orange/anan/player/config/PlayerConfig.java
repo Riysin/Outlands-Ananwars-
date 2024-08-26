@@ -52,4 +52,11 @@ public class PlayerConfig extends YamlConfiguration {
 
         this.save();
     }
+
+    public void clearBeds() {
+        playerElementMap.forEach((uuid, playerConfigElement) -> {
+            playerConfigElement.getBedList().clear();
+        });
+        this.save();
+    }
 }

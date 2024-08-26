@@ -28,13 +28,11 @@ import java.util.Set;
 public class PlayerEventListener implements Listener {
     private final PlayerDataManager playerDataManager;
     private final CraftTimerManager craftTimerManager;
-    private final PlayerNPCManager playerNPCManager;
     private final NameTagService nameTagService;
 
-    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, PlayerNPCManager playerNPCManager, NameTagService nameTagService) {
+    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService) {
         this.playerDataManager = playerDataManager;
         this.craftTimerManager = craftTimerManager;
-        this.playerNPCManager = playerNPCManager;
         this.nameTagService = nameTagService;
     }
 
@@ -42,8 +40,6 @@ public class PlayerEventListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         playerDataManager.setUpPlayer(event);
-        playerNPCManager.setUpNPC(player);
-        playerNPCManager.despawnNPC(player);
 
         Bukkit.getOnlinePlayers().forEach(player1 -> {
             nameTagService.update(MCPlayer.from(player1));
@@ -64,7 +60,6 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerLeft(PlayerQuitEvent event) {
         event.setQuitMessage("§e" + event.getPlayer().getName() + " has left!");
-        playerNPCManager.spawnNPC(event.getPlayer());
 
         craftTimerManager.getPlayerCraftTimerList(event.getPlayer()).forEach(craftTimer -> {
             craftTimerManager.craftingFailed(event.getPlayer(), craftTimer);
