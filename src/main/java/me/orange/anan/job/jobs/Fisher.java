@@ -85,6 +85,11 @@ public class Fisher implements Job {
     }
 
     @Override
+    public XMaterial getActiveIcon() {
+        return null;
+    }
+
+    @Override
     public void active() {
 
     }

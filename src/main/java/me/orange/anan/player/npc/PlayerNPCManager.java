@@ -3,7 +3,6 @@ package me.orange.anan.player.npc;
 import io.fairyproject.container.InjectableComponent;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -11,6 +10,7 @@ import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.SitTrait;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -32,12 +32,23 @@ public class PlayerNPCManager {
         return Bukkit.getPlayer(npc.getTraitNullable(Owner.class).getOwnerId());
     }
 
+    public OfflinePlayer getNPCOfflineOwner(NPC npc) {
+        return Bukkit.getOfflinePlayer(npc.getTraitNullable(Owner.class).getOwnerId());
+    }
+
     public NPC getPlayerNPC(Player player) {
-        for (NPCRegistry npcRegistry : CitizensAPI.getNPCRegistries()) {
-            for (NPC npc : npcRegistry) {
-                if (npc.getTraitNullable(Owner.class).getOwnerId().equals(player.getUniqueId())) {
-                    return npc;
-                }
+        for (NPC npc : CitizensAPI.getNPCRegistry()) {
+            if (npc.getTraitNullable(Owner.class).getOwnerId().equals(player.getUniqueId())) {
+                return npc;
+            }
+        }
+        return null;
+    }
+
+    public NPC getPlayerNPC(OfflinePlayer player) {
+        for (NPC npc : CitizensAPI.getNPCRegistry()) {
+            if (npc.getTraitNullable(Owner.class).getOwnerId().equals(player.getUniqueId())) {
+                return npc;
             }
         }
         return null;
@@ -66,15 +77,24 @@ public class PlayerNPCManager {
             for (int i = 0; i < Math.min(npcItems.length, 36); i++) {
                 player.getInventory().setItem(i, npcItems[i]);
             }
+
+            player.getInventory().setHelmet(npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.HELMET));
+            player.getInventory().setChestplate(npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.CHESTPLATE));
+            player.getInventory().setLeggings(npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.LEGGINGS));
+            player.getInventory().setBoots(npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.BOOTS));
         }
     }
 
-    public Inventory getTraitInventory(Player player) {
+    public Inventory getTraitInventory(OfflinePlayer player) {
         NPC npc = getPlayerNPC(player);
         if (npc != null) {
             return npc.getOrAddTrait(Inventory.class);
         }
         return null;
+    }
+
+    public Inventory getTraitInventory(NPC npc) {
+        return npc.getOrAddTrait(Inventory.class);
     }
 }
 

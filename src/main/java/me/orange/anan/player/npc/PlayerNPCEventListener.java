@@ -1,6 +1,7 @@
 package me.orange.anan.player.npc;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
+import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.log.Log;
 import me.orange.anan.player.deathloot.DeathLootManager;
@@ -8,13 +9,15 @@ import net.citizensnpcs.api.event.CitizensEnableEvent;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Inventory;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 @InjectableComponent
 @RegisterAsListener
@@ -49,19 +52,19 @@ public class PlayerNPCEventListener implements Listener {
     public void onNPCDeath(NPCDeathEvent event) {
         Bukkit.broadcastMessage("NPC died.");
         NPC npc = event.getNPC();
-        Player owner = playerNPCManager.getNPCOwner(npc);
 
-        deathLootManager.addPlayer(owner, npc.getStoredLocation());
-        playerNPCManager.getTraitInventory(owner).getInventoryView().clear();
+        deathLootManager.addNPC(npc, npc.getStoredLocation());
+        Inventory traitInventory = playerNPCManager.getTraitInventory(npc);
+        traitInventory.getInventoryView().clear();
+        traitInventory.setContents(traitInventory.getInventoryView().getContents());
     }
 
     @EventHandler
     public void onClickNPC(NPCRightClickEvent event) {
-        Bukkit.broadcastMessage("NPC clicked.");
         Player player = event.getClicker();
+        NPC npc = event.getNPC();
 
-        Inventory inventory = playerNPCManager.getTraitInventory(player).getInventoryView();
-        player.openInventory(inventory);
+        playerNPCManager.getTraitInventory(npc).openInventory(player);
     }
 
 }

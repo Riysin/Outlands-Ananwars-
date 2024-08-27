@@ -97,7 +97,7 @@ public class TcCommand extends BaseCommand {
 
     @Command("head")
     public void givePlayerHead(BukkitCommandContext ctx, @Arg("name") Player player) {
-        ctx.getPlayer().getInventory().addItem(ItemBuilder.of(XMaterial.PLAYER_HEAD).skull(player).build());
+        ctx.getPlayer().getInventory().addItem(ItemBuilder.of(XMaterial.PLAYER_HEAD).skull(player.getName()).build());
     }
 
     @Command("nametag")

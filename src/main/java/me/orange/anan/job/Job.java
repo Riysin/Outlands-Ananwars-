@@ -20,5 +20,6 @@ public interface Job {
     void skill3();
     String getActiveName();
     String getActiveDescription();
+    XMaterial getActiveIcon();
     void active();
 }
