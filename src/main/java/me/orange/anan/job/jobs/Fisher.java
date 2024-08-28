@@ -21,7 +21,17 @@ public class Fisher implements Job {
 
     @Override
     public XMaterial getIcon() {
-        return null;
+        return XMaterial.COD;
+    }
+
+    @Override
+    public String getUpgradeName() {
+        return "";
+    }
+
+    @Override
+    public String getUpgradeDescription() {
+        return "";
     }
 
     @Override

@@ -8,7 +8,6 @@ import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.SitTrait;
-import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.EntityType;
@@ -21,7 +20,6 @@ public class PlayerNPCManager {
         if (getPlayerNPC(player) == null) {
             NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, player.getName());
             npc.getOrAddTrait(Owner.class).setOwner(player.getUniqueId());
-            npc.getOrAddTrait(SkinTrait.class).setSkinName(player.getName());
             npc.getOrAddTrait(HologramTrait.class).addLine("§c[Offline]");
             npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.25);
             npc.setProtected(false);

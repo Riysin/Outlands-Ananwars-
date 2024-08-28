@@ -7,8 +7,10 @@ public interface Job {
     String getName();
     String getDescription();
     XMaterial getIcon();
-    double calculateEarning();
 
+    String getUpgradeName();
+    String getUpgradeDescription();
+    double calculateEarning();
     String getSkill1Name();
     String getSkill1Description();
     void skill1();
