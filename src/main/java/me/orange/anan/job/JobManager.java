@@ -1,11 +1,13 @@
 package me.orange.anan.job;
 
+import io.fairyproject.container.InjectableComponent;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@InjectableComponent
 public class JobManager {
 
     private Map<UUID, JobStats> jobStatsMap = new HashMap<>();

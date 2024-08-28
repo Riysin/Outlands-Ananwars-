@@ -5,9 +5,7 @@ import io.fairyproject.bukkit.gui.Gui;
 import io.fairyproject.bukkit.gui.GuiFactory;
 import io.fairyproject.bukkit.gui.pane.NormalPane;
 import io.fairyproject.bukkit.gui.pane.Pane;
-import io.fairyproject.bukkit.gui.pane.mapping.OutlinePaneMapping;
 import io.fairyproject.bukkit.gui.pane.mapping.PaneMapping;
-import io.fairyproject.bukkit.gui.pane.mapping.RectanglePaneMapping;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
@@ -15,7 +13,6 @@ import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
 import me.orange.anan.job.JobRegister;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @InjectableComponent
