@@ -69,10 +69,9 @@ public class JobUpgradeMenu {
                         player.sendMessage("§eYou need to upgrade to level " + (playerLevel + 1) + " first");
                         player.getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
                     } else if (!hasMoney(player, clickLevel)) {
-                        player.sendMessage("§eYou need: " + (-calculateRequire(player, clickLevel)) + " more");
+                        player.sendMessage("§eYou need: " + (-calculateRequire(player, clickLevel)) + " more emeralds!");
                         player.getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
                     } else {
-                        player.sendMessage("§aYou have upgraded to level " + clickLevel);
                         player.getWorld().playSound(player.getLocation(), Sound.ANVIL_USE,  0.6f, 1);
                         jobManager.addJobLevel(player.getUniqueId(), job);
                         craftManger.removeItemsFromInventory(player, craftManger.getItemStack(craftManger.getCraft(Material.EMERALD), player), clickLevel * 5);
@@ -88,10 +87,8 @@ public class JobUpgradeMenu {
         ui.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .skull(player.getName())
                 .name("§f" + player.getName())
-                .lore("§7Job Stats:", "§7Level: 1", "§eClick to view job stats")
-                .build(), clicker -> {
-            // Open job stats menu
-        }));
+                .lore("§6" + job.getName() , "§fLevel: " + jobManager.getPlayerJobLevel(player, job))
+                .build()));
         ui.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.ARROW)
                 .lore("§eClick to scroll backward")
                 .build(), clicker -> {

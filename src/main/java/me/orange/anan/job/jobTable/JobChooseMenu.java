@@ -45,6 +45,11 @@ public class JobChooseMenu {
             slot++;
         }
 
+        pane.setSlot(5,2,GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER).name("§cResign").lore("§eClick to have no job!").build(), clicker -> {
+            jobManager.setPlayerCurrentJob(player.getUniqueId(),null);
+            player.closeInventory();
+        }));
+
         //border
         NormalPane border = Pane.normal(PaneMapping.outline(9, 6));
         border.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).name(" ").build()));

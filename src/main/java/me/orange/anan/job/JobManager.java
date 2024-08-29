@@ -1,9 +1,13 @@
 package me.orange.anan.job;
 
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.blocks.config.BuildConfig;
+import me.orange.anan.events.PlayerChooseJobEvent;
+import me.orange.anan.events.PlayerLevelUpEvent;
 import me.orange.anan.player.config.JobElement;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.config.PlayerConfigElement;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -86,11 +90,13 @@ public class JobManager {
         jobStats.setCurrentJob(job);
         if(!jobStats.getJobLevelMap().containsKey(job.getName()))
             jobStats.getJobLevelMap().put(job.getName(), 0);
+        Bukkit.getPluginManager().callEvent(new PlayerChooseJobEvent(Bukkit.getPlayer(uuid), job));
     }
 
     public void addJobLevel(UUID uuid, Job job) {
         if (jobStatsMap.get(uuid).getJobLevelMap().containsKey(job.getName())) {
             jobStatsMap.get(uuid).getJobLevelMap().replace(job.getName(), jobStatsMap.get(uuid).getJobLevelMap().get(job.getName()) + 1);
+            Bukkit.getPluginManager().callEvent(new PlayerLevelUpEvent(Bukkit.getPlayer(uuid), job));
         }
     }
 }
