@@ -11,12 +11,12 @@ public class Fisher implements Job {
 
     @Override
     public String getName() {
-        return "Fisher";
+        return "漁夫";
     }
 
     @Override
     public String getDescription() {
-        return "Fisher is a job that catches fish.";
+        return "漁夫是一個捕魚的工作。";
     }
 
     @Override
@@ -26,81 +26,81 @@ public class Fisher implements Job {
 
     @Override
     public String getUpgradeName() {
-        return "";
+        return "大師級漁夫";
     }
 
     @Override
     public String getUpgradeDescription() {
-        return "";
+        return "增加捕捉稀有魚類的機率。";
     }
 
     @Override
     public double calculateEarning() {
-        return 0;
+        return 100; // 範例收益金額
     }
 
     @Override
     public String getSkill1Name() {
-        return "";
+        return "快速捕魚";
     }
 
     @Override
     public String getSkill1Description() {
-        return "";
+        return "能更快地捕魚。";
     }
 
     @Override
     public void skill1() {
-
+        // 實現快速捕魚的邏輯
     }
 
     @Override
     public String getSkill2Name() {
-        return "";
+        return "雙重捕魚";
     }
 
     @Override
     public String getSkill2Description() {
-        return "";
+        return "有機會一次捕到兩條魚。";
     }
 
     @Override
     public void skill2() {
-
+        // 實現雙重捕魚的邏輯
     }
 
     @Override
     public String getSkill3Name() {
-        return "";
+        return "幸運魚鉤";
     }
 
     @Override
     public String getSkill3Description() {
-        return "";
+        return "增加捕捉寶藏的機率。";
     }
 
     @Override
     public void skill3() {
-
+        // 實現幸運魚鉤的邏輯
     }
 
     @Override
     public String getActiveName() {
-        return "";
+        return "捕魚狂熱";
     }
 
     @Override
     public String getActiveDescription() {
-        return "";
+        return "暫時提升捕魚速度。";
     }
 
     @Override
     public XMaterial getActiveIcon() {
-        return null;
+        return XMaterial.FISHING_ROD;
     }
 
     @Override
     public void active() {
-
+        // 實現捕魚狂熱的邏輯
     }
 }

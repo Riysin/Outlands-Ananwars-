@@ -28,10 +28,6 @@ public class JobManager {
         return jobStatsMap;
     }
 
-    public void setJobStatsMap(Map<UUID, JobStats> jobStatsMap) {
-        this.jobStatsMap = jobStatsMap;
-    }
-
     public Job getPlayerCurrentJob(UUID uuid) {
         return jobStatsMap.get(uuid).getCurrentJob();
     }
@@ -41,19 +37,22 @@ public class JobManager {
     }
 
     public int getPlayerJobLevel(Player player, Job job) {
-        return jobStatsMap.get(player.getUniqueId()).getJobLevelMap().get(job);
+        return jobStatsMap.get(player.getUniqueId()).getJobLevelMap().get(job.getName());
     }
 
     public void addPlayer(Player player, Job job) {
-        if (jobStatsMap.containsKey(player.getUniqueId())) return;
-        JobStats jobStats = new JobStats();
+        UUID uuid = player.getUniqueId();
+        if (!jobStatsMap.containsKey(uuid))
+            jobStatsMap.put(uuid, new JobStats());
+        JobStats jobStats = jobStatsMap.get(uuid);
         jobStats.setCurrentJob(job);
-        jobStatsMap.put(player.getUniqueId(), jobStats);
+        if(!jobStats.getJobLevelMap().containsKey(job.getName()))
+            jobStats.getJobLevelMap().put(job.getName(), 0);
     }
 
     public void addJobLevel(UUID uuid, Job job) {
-        if (jobStatsMap.get(uuid).getJobLevelMap().containsKey(job)) {
-            jobStatsMap.get(uuid).getJobLevelMap().put(job, jobStatsMap.get(uuid).getJobLevelMap().get(job) + 1);
+        if (jobStatsMap.get(uuid).getJobLevelMap().containsKey(job.getName())) {
+            jobStatsMap.get(uuid).getJobLevelMap().replace(job.getName(), jobStatsMap.get(uuid).getJobLevelMap().get(job.getName()) + 1);
         }
     }
 }

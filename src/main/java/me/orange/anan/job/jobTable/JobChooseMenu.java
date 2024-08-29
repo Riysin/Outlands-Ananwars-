@@ -39,8 +39,8 @@ public class JobChooseMenu {
                     .name("§f" + job.getName())
                     .lore("§7" + job.getDescription())
                     .build(), clicker -> {
-                jobUpgradeMenu.open(player, job);
                 jobManager.addPlayer(player,job);
+                jobUpgradeMenu.open(player, job);
             }));
             slot++;
         }

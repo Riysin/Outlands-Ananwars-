@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class JobStats {
     private Job currentJob;
-    private Map<Job,Integer> jobLevelMap = new HashMap<>();
+    private Map<String,Integer> jobLevelMap = new HashMap<>();
 
     public Job getCurrentJob() {
         return currentJob;
@@ -15,11 +15,11 @@ public class JobStats {
         this.currentJob = currentJob;
     }
 
-    public Map<Job, Integer> getJobLevelMap() {
+    public Map<String, Integer> getJobLevelMap() {
         return jobLevelMap;
     }
 
-    public void setJobLevelMap(Map<Job, Integer> jobLevelMap) {
+    public void setJobLevelMap(Map<String, Integer> jobLevelMap) {
         this.jobLevelMap = jobLevelMap;
     }
 }

@@ -6,6 +6,7 @@ import io.fairyproject.sidebar.SidebarAdapter;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.craft.crafting.CraftTimer;
 import me.orange.anan.craft.crafting.CraftTimerManager;
+import me.orange.anan.job.JobManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -16,10 +17,12 @@ import java.util.List;
 public class Sidebar implements SidebarAdapter {
     private final ClanManager clanManager;
     private final CraftTimerManager craftTimerManager;
+    private final JobManager jobManager;
 
-    public Sidebar(ClanManager clanManager, CraftTimerManager craftTimerManager) {
+    public Sidebar(ClanManager clanManager, CraftTimerManager craftTimerManager, JobManager jobManager) {
         this.clanManager = clanManager;
         this.craftTimerManager = craftTimerManager;
+        this.jobManager = jobManager;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class Sidebar implements SidebarAdapter {
         sidebar.add(Component.text("§3» §bMembers§7: §f" + onlineMembers + "§7/§f" + members));
         sidebar.add(Component.text(""));
         sidebar.add(Component.text("§fPlayer"));
-        sidebar.add(Component.text("§3» §bClass§7: §f" + "test"));
+        sidebar.add(Component.text("§3» §bJob§7: §f" + jobManager.getPlayerCurrentJob(player.getUniqueId()).getName()));
 
         if (craftTimerManager.isCrafting(player)) {
             sidebar.add(Component.text(""));
