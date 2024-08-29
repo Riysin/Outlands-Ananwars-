@@ -18,7 +18,7 @@ public class JobTableEventListener implements Listener {
 
     @EventHandler
     public void onRightClick(PlayerInteractEvent event) {
-        if (event.getClickedBlock().getType() == XMaterial.ENCHANTING_TABLE.parseMaterial()) {
+        if (event.hasBlock() && event.getClickedBlock().getType() == XMaterial.ENCHANTING_TABLE.parseMaterial()) {
             event.setCancelled(true);
             jobChooseMenu.open(event.getPlayer());
         }

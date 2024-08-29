@@ -26,13 +26,14 @@ public class JobManager {
 
     public void loadConfig() {
         playerConfig.getPlayerElementMap().forEach((uuid, playerConfigElement) -> {
-            JobStats jobStats = new JobStats();
-            jobStats.setCurrentJob(getJob(playerConfigElement.getJobName()));
-            playerConfigElement.getJobLevelMap().forEach((jobName, element) -> {
-                jobStats.getJobLevelMap().put(jobName, element.getLevel());
-            });
-
-            jobStatsMap.put(UUID.fromString(uuid), jobStats);
+            if(getJob(playerConfigElement.getJobName()) != null) {
+                JobStats jobStats = new JobStats();
+                jobStats.setCurrentJob(getJob(playerConfigElement.getJobName()));
+                playerConfigElement.getJobLevelMap().forEach((jobName, jobElement) -> {
+                    jobStats.getJobLevelMap().put(jobName, jobElement.getLevel());
+                });
+                jobStatsMap.put(UUID.fromString(uuid), jobStats);
+            }
         });
     }
 
@@ -56,7 +57,9 @@ public class JobManager {
     }
 
     public Job getPlayerCurrentJob(UUID uuid) {
-        return jobStatsMap.get(uuid).getCurrentJob();
+        if(jobStatsMap.containsKey(uuid))
+            return jobStatsMap.get(uuid).getCurrentJob();
+        return null;
     }
 
     public void setPlayerCurrentJob(UUID uuid, Job job) {
@@ -68,7 +71,7 @@ public class JobManager {
     }
 
     public boolean hasJob(Player player) {
-        return jobStatsMap.containsKey(player.getUniqueId());
+        return jobStatsMap.get(player.getUniqueId()).getCurrentJob() != null;
     }
 
     public int getPlayerJobLevel(Player player, Job job) {

@@ -7,6 +7,8 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
 import me.orange.anan.craft.crafting.CraftTimerManager;
+import me.orange.anan.job.JobManager;
+import me.orange.anan.job.JobStats;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.npc.PlayerNPCManager;
 import net.citizensnpcs.api.npc.NPC;
@@ -29,17 +31,20 @@ public class PlayerEventListener implements Listener {
     private final PlayerDataManager playerDataManager;
     private final CraftTimerManager craftTimerManager;
     private final NameTagService nameTagService;
+    private final JobManager jobManager;
 
-    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService) {
+    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService, JobManager jobManager) {
         this.playerDataManager = playerDataManager;
         this.craftTimerManager = craftTimerManager;
         this.nameTagService = nameTagService;
+        this.jobManager = jobManager;
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         playerDataManager.setUpPlayer(event);
+        jobManager.getJobStatsMap().putIfAbsent(player.getUniqueId(), new JobStats());
 
         Bukkit.getOnlinePlayers().forEach(player1 -> {
             nameTagService.update(MCPlayer.from(player1));

@@ -10,6 +10,7 @@ import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
+import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -64,7 +65,10 @@ public class PlayerNPCEventListener implements Listener {
         Player player = event.getClicker();
         NPC npc = event.getNPC();
 
-        playerNPCManager.getTraitInventory(npc).openInventory(player);
+        if(npc.getOrAddTrait(HologramTrait.class).getLines().get(0).equals("§c[Offline]")) {
+            playerNPCManager.getTraitInventory(npc).openInventory(player);
+        }
+
     }
 
 }

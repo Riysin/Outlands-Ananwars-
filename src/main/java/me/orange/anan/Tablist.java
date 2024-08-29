@@ -106,11 +106,15 @@ public class Tablist implements TablistAdapter {
                 .skin(new Skin("ewogICJ0aW1lc3RhbXAiIDogMTY5NjY0MTIyNTQ4MywKICAicHJvZmlsZUlkIiA6ICIwYTc1N2ZlZjYzODA0Njk3OGExMDExNjc4MDZhM2U0NCIsCiAgInByb2ZpbGVOYW1lIiA6ICJWYXBvcmtpdHRlbiIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS85OTkyMjQzOWZkYWYyZTllZWEwMmUzMWEyZjIwNzc3ZmQ2YjdjNWUxZjFmMTYwYmJmNDRmOTIwNTBhNjM0MDZhIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=",
                         "hS3WKWUQ55mpSr/n/Pwi60jfm+nyK1GDrhl7pG/PF31x4KfZshK6xzWjZOa5nqtAizAfNvVzyO1Q4NAiRiiN9K98xKr5UsoJPX3mvYyD0UIAHi48P9QcBxrblk7P1vJb13VIaEVSDGrzSPKe04eWefjEfX8PtAjWLRLZ7E/J26ZvxI15vUU+wkeimqfFcpfCe5xXCTksIvtSu4li3Vl2EZ7+YfvYWbP08oRnjkpESFtcwIgByD/i6dQbVQqXR27RQygRtdqWLm4qCpqN31uC83YfChMYfgK0fFUkpEB27AYAhYbW3c9n+9lafZ4kARsuRsxGNQCbBJhJSxUh1CAba8s0dhZY5u+lwpoS0y4iTGuT9b/eYb2CuBdBJpPKo0BhOzSr7WkaQHKJcdscIRCWKV8DFjTCtEU3njqvHwHe8MfLkYW+nbQFFy1RgSOU2Txnng8V1euJuMx+3r+6M/Nzv+WGFyry2+yh4/z9xd0GfzjnFhoPDMkH4YMmJQDU+0r52CmDS0KQhB+R0vd+CmtQEBNjpGX7m5Da0o72xA2i8TQllEXgB4PlaAycsqqARytUWyYBc86OBLg8IDZ+uC5Uj0vziQwIakU8Afa97OErG137D7e04GvV/qWfz1+CnGF9QrUehlzxu15M04oUlwYpQdUUnsvsxQWZ3DULbrajXsk="))
         );
+        String name = "No Job";
+        if (jobManager.hasJob(player.as(Player.class))) {
+            name = jobManager.getPlayerCurrentJob(player.getUUID()).getName();
+        }
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
                 .slot(8)
-                .text(Component.text("§f" + jobManager.getPlayerCurrentJob(player.getUUID()).getName()))
-                );
+                .text(Component.text("§f" + name))
+        );
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
                 .slot(11)
