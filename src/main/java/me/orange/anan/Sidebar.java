@@ -33,9 +33,13 @@ public class Sidebar implements SidebarAdapter {
     @Override
     public List<Component> getLines(MCPlayer mcPlayer) {
         String clanName = "No Clan";
+        String jobName = "No Job";
         int members = 0;
         int onlineMembers = 0;
         Player player = mcPlayer.as(Player.class);
+        if(jobManager.hasJob(player)) {
+            jobName = jobManager.getPlayerCurrentJob(player.getUniqueId()).getName();
+        }
 
         if (clanManager.inClan(player)) {
             clanName = clanManager.getPlayerClan(player.getUniqueId()).getDisplayName();
@@ -49,7 +53,7 @@ public class Sidebar implements SidebarAdapter {
         sidebar.add(Component.text("§3» §bMembers§7: §f" + onlineMembers + "§7/§f" + members));
         sidebar.add(Component.text(""));
         sidebar.add(Component.text("§fPlayer"));
-        sidebar.add(Component.text("§3» §bJob§7: §f" + jobManager.getPlayerCurrentJob(player.getUniqueId()).getName()));
+        sidebar.add(Component.text("§3» §bJob§7: §f" + jobName));
 
         if (craftTimerManager.isCrafting(player)) {
             sidebar.add(Component.text(""));

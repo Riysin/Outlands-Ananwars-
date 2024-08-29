@@ -7,7 +7,9 @@ import io.fairyproject.mc.util.Position;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ConfigurationElement
 public class PlayerConfigElement {
@@ -18,6 +20,9 @@ public class PlayerConfigElement {
     private boolean bossBarActive = false;
     @ElementType(BedElement.class)
     private List<BedElement> bedList = new ArrayList<>();
+    private String jobName = "";
+    @ElementType(JobElement.class)
+    private Map<String,JobElement> jobLevelMap = new HashMap<>();
 
     public String getName() {
         return name;
@@ -74,5 +79,21 @@ public class PlayerConfigElement {
 
     public void setBedList(List<BedElement> bedList) {
         this.bedList = bedList;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
+    public Map<String, JobElement> getJobLevelMap() {
+        return jobLevelMap;
+    }
+
+    public void setJobLevelMap(Map<String, JobElement> jobLevelMap) {
+        this.jobLevelMap = jobLevelMap;
     }
 }

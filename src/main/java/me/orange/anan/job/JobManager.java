@@ -1,6 +1,9 @@
 package me.orange.anan.job;
 
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.player.config.JobElement;
+import me.orange.anan.player.config.PlayerConfig;
+import me.orange.anan.player.config.PlayerConfigElement;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -9,19 +12,43 @@ import java.util.UUID;
 
 @InjectableComponent
 public class JobManager {
+    private final PlayerConfig playerConfig;
+    private final JobRegister jobRegister;
 
     private Map<UUID, JobStats> jobStatsMap = new HashMap<>();
 
-    public JobManager() {
+    public JobManager(PlayerConfig playerConfig, JobRegister jobRegister) {
+        this.playerConfig = playerConfig;
+        this.jobRegister = jobRegister;
+
         loadConfig();
     }
 
     public void loadConfig() {
-        // Load config
+        playerConfig.getPlayerElementMap().forEach((uuid, playerConfigElement) -> {
+            JobStats jobStats = new JobStats();
+            jobStats.setCurrentJob(getJob(playerConfigElement.getJobName()));
+            playerConfigElement.getJobLevelMap().forEach((jobName, element) -> {
+                jobStats.getJobLevelMap().put(jobName, element.getLevel());
+            });
+
+            jobStatsMap.put(UUID.fromString(uuid), jobStats);
+        });
     }
 
     public void saveConfig() {
-        // Save config
+        jobStatsMap.forEach((uuid, jobStats) -> {
+            PlayerConfigElement configElement = playerConfig.getPlayerElementMap().get(uuid.toString());
+
+            configElement.getJobLevelMap().clear();
+            configElement.setJobName(jobStats.getCurrentJob().getName());
+            jobStats.getJobLevelMap().forEach((jobName, level) -> {
+                JobElement element = new JobElement();
+                element.setLevel(level);
+                configElement.getJobLevelMap().put(jobName, element);
+            });
+        });
+        playerConfig.save();
     }
 
     public Map<UUID, JobStats> getJobStatsMap() {
@@ -34,6 +61,14 @@ public class JobManager {
 
     public void setPlayerCurrentJob(UUID uuid, Job job) {
         jobStatsMap.get(uuid).setCurrentJob(job);
+    }
+
+    public Job getJob(String jobName) {
+        return jobRegister.getJobs().stream().filter(job -> job.getName().equals(jobName)).findFirst().orElse(null);
+    }
+
+    public boolean hasJob(Player player) {
+        return jobStatsMap.containsKey(player.getUniqueId());
     }
 
     public int getPlayerJobLevel(Player player, Job job) {
