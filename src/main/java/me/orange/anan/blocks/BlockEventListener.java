@@ -224,7 +224,7 @@ public class BlockEventListener implements Listener {
 
                 if (lockManager.hasLock(block) && !lockManager.isInOwnerClan(player, block)) {
                     event.setCancelled(true);
-                    player.sendMessage("§c這扇門已經被上鎖了!");
+                    player.sendMessage("§c此物已經被上鎖了!");
                     return;
                 }
             }
