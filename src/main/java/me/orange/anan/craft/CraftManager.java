@@ -13,6 +13,7 @@ import me.orange.anan.craft.behaviour.BehaviourManager;
 import me.orange.anan.craft.behaviour.CraftBehaviour;
 import me.orange.anan.craft.config.CraftConfig;
 import me.orange.anan.craft.config.CraftElement;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -122,6 +123,11 @@ public class CraftManager {
         return fairyItemRegistry.get(craft.getID()).provideItemStack(player);
     }
 
+    public ItemStack getItemStack(ItemStack itemStack, Player player) {
+        Craft craft = getCraft(itemStack);
+        return fairyItemRegistry.get(craft.getID()).provideItemStack(player);
+    }
+
     private void createFairyItem(Craft craft) {
         FairyItem.Builder builder = FairyItem.builder(craft.getID())
                 .item(craft.getItemStack());
@@ -146,20 +152,13 @@ public class CraftManager {
     }
 
     public void removeItemsFromInventory(Player player, ItemStack itemStack, int count) {
-        int amountToRemove = itemStack.getAmount() * count;
+        int amountToRemove = itemStack.clone().getAmount() * count;
 
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.isSimilar(itemStack)) {
-                int itemAmount = item.getAmount();
-                if (itemAmount > amountToRemove) {
-                    item.setAmount(itemAmount - amountToRemove);
-                    break;
-                } else {
-                    player.getInventory().remove(item);
-                    amountToRemove -= itemAmount;
-                    if (amountToRemove <= 0) break;
-                }
-            }
+        int playerAmount = countPlayerItemAmount(player, itemStack);
+        if (playerAmount < amountToRemove) {
+            throw new IllegalArgumentException("Player does not have enough items to remove");
+        }else {
+            player.getInventory().removeItem(ItemBuilder.of(itemStack).amount(amountToRemove).build());
         }
     }
 
@@ -181,20 +180,27 @@ public class CraftManager {
                 .sum();
     }
 
+    private int countPlayerItemAmount(Player player, ItemStack itemStack) {
+        return Arrays.stream(player.getInventory().getContents())
+                .filter(item -> item != null && item.isSimilar(itemStack))
+                .mapToInt(ItemStack::getAmount)
+                .sum();
+    }
+
     public Craft getCraft(ItemStack itemStack) {
         AtomicReference<Craft> craft = new AtomicReference<>();
         crafts.forEach((id, c) -> {
-            if (c.getItemStack().getType() == itemStack.getType()) {
+            if (c.getMenuIcon() == XMaterial.matchXMaterial(itemStack)) {
                 craft.set(c);
             }
         });
         return craft.get();
     }
 
-    public Craft getCraft(Material material) {
+    public Craft getCraft(XMaterial material) {
         AtomicReference<Craft> craft = new AtomicReference<>();
         crafts.forEach((id, c) -> {
-            if (c.getItemStack().getType() == material) {
+            if (c.getMenuIcon() == material) {
                 craft.set(c);
             }
         });

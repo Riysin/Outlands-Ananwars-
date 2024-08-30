@@ -33,8 +33,8 @@ public class JobManager {
             if(getJob(playerConfigElement.getJobName()) != null) {
                 JobStats jobStats = new JobStats();
                 jobStats.setCurrentJob(getJob(playerConfigElement.getJobName()));
-                playerConfigElement.getJobLevelMap().forEach((jobName, jobElement) -> {
-                    jobStats.getJobLevelMap().put(jobName, jobElement.getLevel());
+                playerConfigElement.getJobLevelMap().forEach((jobID, jobElement) -> {
+                    jobStats.getJobLevelMap().put(jobID, jobElement.getLevel());
                 });
                 jobStatsMap.put(UUID.fromString(uuid), jobStats);
             }
@@ -47,10 +47,10 @@ public class JobManager {
 
             configElement.getJobLevelMap().clear();
             configElement.setJobName(jobStats.getCurrentJob().getName());
-            jobStats.getJobLevelMap().forEach((jobName, level) -> {
+            jobStats.getJobLevelMap().forEach((jobID, level) -> {
                 JobElement element = new JobElement();
                 element.setLevel(level);
-                configElement.getJobLevelMap().put(jobName, element);
+                configElement.getJobLevelMap().put(jobID, element);
             });
         });
         playerConfig.save();
@@ -66,6 +66,10 @@ public class JobManager {
         return null;
     }
 
+    public Job getPlayerCurrentJob(Player player) {
+        return getPlayerCurrentJob(player.getUniqueId());
+    }
+
     public void setPlayerCurrentJob(UUID uuid, Job job) {
         jobStatsMap.get(uuid).setCurrentJob(job);
     }
@@ -74,12 +78,16 @@ public class JobManager {
         return jobRegister.getJobs().stream().filter(job -> job.getName().equals(jobName)).findFirst().orElse(null);
     }
 
+    public Job getJobByID(String jobID) {
+        return jobRegister.getJobs().stream().filter(job -> job.getID().equals(jobID)).findFirst().orElse(null);
+    }
+
     public boolean hasJob(Player player) {
         return jobStatsMap.get(player.getUniqueId()).getCurrentJob() != null;
     }
 
     public int getPlayerJobLevel(Player player, Job job) {
-        return jobStatsMap.get(player.getUniqueId()).getJobLevelMap().get(job.getName());
+        return jobStatsMap.get(player.getUniqueId()).getJobLevelMap().get(job.getID());
     }
 
     public void addPlayer(Player player, Job job) {
@@ -88,14 +96,15 @@ public class JobManager {
             jobStatsMap.put(uuid, new JobStats());
         JobStats jobStats = jobStatsMap.get(uuid);
         jobStats.setCurrentJob(job);
-        if(!jobStats.getJobLevelMap().containsKey(job.getName()))
-            jobStats.getJobLevelMap().put(job.getName(), 0);
+        if(!jobStats.getJobLevelMap().containsKey(job.getID()))
+            jobStats.getJobLevelMap().put(job.getID(), 0);
         Bukkit.getPluginManager().callEvent(new PlayerChooseJobEvent(Bukkit.getPlayer(uuid), job));
     }
 
     public void addJobLevel(UUID uuid, Job job) {
-        if (jobStatsMap.get(uuid).getJobLevelMap().containsKey(job.getName())) {
-            jobStatsMap.get(uuid).getJobLevelMap().replace(job.getName(), jobStatsMap.get(uuid).getJobLevelMap().get(job.getName()) + 1);
+        Map<String, Integer> levelMap = jobStatsMap.get(uuid).getJobLevelMap();
+        if (levelMap.containsKey(job.getID())) {
+            levelMap.replace(job.getID(), levelMap.get(job.getID()) + 1);
             Bukkit.getPluginManager().callEvent(new PlayerLevelUpEvent(Bukkit.getPlayer(uuid), job));
         }
     }

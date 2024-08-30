@@ -65,16 +65,20 @@ public class JobUpgradeMenu {
                         .lore(getLore(level, playerLevel, job))
                         .amount(level)
                         .build(), clicker -> {
-                    if (playerLevel + 1 != clickLevel) {
+                    if (playerLevel + 1 < clickLevel) {
                         player.sendMessage("§eYou need to upgrade to level " + (playerLevel + 1) + " first");
                         player.getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+                    } else if (playerLevel >= clickLevel) {
+                        player.sendMessage("§eYou can't downgrade your level");
+                        player.getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+
                     } else if (!hasMoney(player, clickLevel)) {
                         player.sendMessage("§eYou need: " + (-calculateRequire(player, clickLevel)) + " more emeralds!");
                         player.getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
                     } else {
-                        player.getWorld().playSound(player.getLocation(), Sound.ANVIL_USE,  0.6f, 1);
+                        player.getWorld().playSound(player.getLocation(), Sound.ANVIL_USE, 0.5f, 1);
                         jobManager.addJobLevel(player.getUniqueId(), job);
-                        craftManger.removeItemsFromInventory(player, craftManger.getItemStack(craftManger.getCraft(Material.EMERALD), player), clickLevel * 5);
+                        craftManger.removeItemsFromInventory(player, craftManger.getItemStack(craftManger.getCraft(XMaterial.EMERALD), player), clickLevel * 5);
 
                         gui.update(player);
                     }
@@ -84,11 +88,16 @@ public class JobUpgradeMenu {
 
         NormalPane ui = Pane.normal(PaneMapping.rectangle(0, 4, 9, 2));
 
-        ui.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                .skull(player.getName())
-                .name("§f" + player.getName())
-                .lore("§6" + job.getName() , "§fLevel: " + jobManager.getPlayerJobLevel(player, job))
-                .build()));
+        gui.onDrawCallback($ -> {
+            int level = jobManager.getPlayerJobLevel(player, job);
+            ui.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                    .skull(player.getName())
+                    .name("§e§l" + job.getName())
+                    .lore(getStatsLore(level, job))
+                    .build()));
+        });
+
+
         ui.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.ARROW)
                 .lore("§eClick to scroll backward")
                 .build(), clicker -> {
@@ -194,6 +203,35 @@ public class JobUpgradeMenu {
         } else {
             lore.add("§cLocked");
         }
+        return lore;
+    }
+
+    private List<String> getStatsLore(int level, Job job) {
+        List<String> lore = new ArrayList<>();
+        lore.add("§6" + job.getUpgradeName());
+        lore.add("§7" + job.getUpgradeDescription());
+        lore.add("§fChance: §a" + job.getChancePerLevel() * level + "§f%");
+        lore.add("");
+        lore.add("§6" + job.getSkill1Name());
+        lore.add("§7"+job.getSkill1Description());
+        if (level >= 10) lore.add("§aUnlocked");
+        else lore.add("§cLocked");
+        lore.add("");
+        lore.add("§6" + job.getSkill2Name());
+        lore.add("§7"+job.getSkill2Description());
+        if (level >= 20) lore.add("§aUnlocked");
+        else lore.add("§cLocked");
+        lore.add("");
+        lore.add("§6" + job.getSkill3Name());
+        lore.add("§7"+job.getSkill3Description());
+        if (level >= 30) lore.add("§aUnlocked");
+        else lore.add("§cLocked");
+        lore.add("");
+        lore.add("§6" + job.getActiveName());
+        lore.add("§7"+job.getActiveDescription());
+        if (level == 35) lore.add("§aUnlocked");
+        else lore.add("§cLocked");
+
         return lore;
     }
 

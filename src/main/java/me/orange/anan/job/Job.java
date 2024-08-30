@@ -1,16 +1,20 @@
 package me.orange.anan.job;
 
 import com.cryptomorin.xseries.XMaterial;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public interface Job {
     String getID();
     String getName();
     String getDescription();
+    String getPrefix();
     XMaterial getIcon();
 
     String getUpgradeName();
     String getUpgradeDescription();
-    double calculateEarning();
+    int getChancePerLevel();
+    ItemStack upgradeSKill(ItemStack itemStack, Player player,int level);
     String getSkill1Name();
     String getSkill1Description();
     void skill1();
