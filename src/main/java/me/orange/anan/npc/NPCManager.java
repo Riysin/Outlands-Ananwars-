@@ -14,6 +14,8 @@ import org.bukkit.entity.EntityType;
 public class NPCManager {
     public void setUpMerchantNPC(int id) {
         NPC npc = CitizensAPI.getNPCRegistry().getById(id);
+        npc.setBukkitEntityType(EntityType.SLIME);
+        npc.getStoredLocation().getWorld().getBlockAt(npc.getStoredLocation()).setTypeIdAndData(16, (byte) 0,true);
         getTemplateNPC("merchant").spawn(npc.getStoredLocation());
     }
 

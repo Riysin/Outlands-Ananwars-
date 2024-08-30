@@ -9,6 +9,7 @@ import io.fairyproject.mc.tablist.util.Skin;
 import io.fairyproject.mc.tablist.util.TabSlot;
 import me.orange.anan.clan.Clan;
 import me.orange.anan.clan.ClanManager;
+import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
 import me.orange.anan.player.PlayerDataManager;
 import me.orange.anan.world.TimeManager;
@@ -107,29 +108,37 @@ public class Tablist implements TablistAdapter {
                         "hS3WKWUQ55mpSr/n/Pwi60jfm+nyK1GDrhl7pG/PF31x4KfZshK6xzWjZOa5nqtAizAfNvVzyO1Q4NAiRiiN9K98xKr5UsoJPX3mvYyD0UIAHi48P9QcBxrblk7P1vJb13VIaEVSDGrzSPKe04eWefjEfX8PtAjWLRLZ7E/J26ZvxI15vUU+wkeimqfFcpfCe5xXCTksIvtSu4li3Vl2EZ7+YfvYWbP08oRnjkpESFtcwIgByD/i6dQbVQqXR27RQygRtdqWLm4qCpqN31uC83YfChMYfgK0fFUkpEB27AYAhYbW3c9n+9lafZ4kARsuRsxGNQCbBJhJSxUh1CAba8s0dhZY5u+lwpoS0y4iTGuT9b/eYb2CuBdBJpPKo0BhOzSr7WkaQHKJcdscIRCWKV8DFjTCtEU3njqvHwHe8MfLkYW+nbQFFy1RgSOU2Txnng8V1euJuMx+3r+6M/Nzv+WGFyry2+yh4/z9xd0GfzjnFhoPDMkH4YMmJQDU+0r52CmDS0KQhB+R0vd+CmtQEBNjpGX7m5Da0o72xA2i8TQllEXgB4PlaAycsqqARytUWyYBc86OBLg8IDZ+uC5Uj0vziQwIakU8Afa97OErG137D7e04GvV/qWfz1+CnGF9QrUehlzxu15M04oUlwYpQdUUnsvsxQWZ3DULbrajXsk="))
         );
         String name = "No Job";
+        int level = 0;
         if (jobManager.hasJob(player.as(Player.class))) {
-            name = jobManager.getPlayerCurrentJob(player.getUUID()).getName();
+            Job currentJob = jobManager.getPlayerCurrentJob(player.getUUID());
+            name = currentJob.getName();
+            level = jobManager.getPlayerJobLevel(Bukkit.getPlayer(player.getUUID()), currentJob);
         }
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
                 .slot(8)
-                .text(Component.text("§f" + name))
+                .text(Component.text("§fName: " + name))
         );
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
-                .slot(11)
+                .slot(9)
+                .text(Component.text("§fLevel: " + level))
+        );
+        slots.add(new TabSlot()
+                .column(TabColumn.MIDDLE)
+                .slot(12)
                 .text(Component.text("§bStatistics"))
                 .skin(new Skin("ewogICJ0aW1lc3RhbXAiIDogMTY5MzY4NjU1NzAwMCwKICAicHJvZmlsZUlkIiA6ICI0M2NmNWJkNjUyMDM0YzU5ODVjMDIwYWI3NDE0OGQxYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJrYW1pbDQ0NSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS8xNDhkMTViMWM1NWM0ZWYzMDM1MDQ0NjQ5OTc0NmQxMDQ0NDBmZGEzNmQ3MDM1NDY3ZWVkOWZmYmU1NTY2Y2ZlIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0=",
                         "TzYSxpy2UQb/uk3ORRL6Yxc7xq0zylMlreWEntXgipUBmPTl/3GDX0TMoEuDpjXbuvhc6jJhxwRpdHGn0c/4E6zPnYhfxYB2y9mZ6DndXxCCYGbnBH3kyfnHTksM0VPgVQVDYCqYb+3gcGyEmJD22hbMHt6MF5sz5354J5Mvd+s58ICKaEkKYowRAmeiMLgpY7Ks/oCev+UK3XvpAClWbsXJA7h7+4osw9ALDz4eQs6A+fRY1GDK516wdtItKBxdTWjFwfISA+kAadUK2oHGcma6+wnO06PG/CYayPOL0qnJTTHbr5etBgfXIcWZr2Z1o4OLcwPITm1E4OGQPJ06COcy7W2LUClIrYw145KjDnkBZESrJaanGYlcV21q0QWBiBOgjObkuDIGTQ9E3IBfJxFkdX6J0rM8YKLdHB3bzSHqpoZNbTvcPI7DXjgQ0J7BVq+YFFvposGJR0lkcpULSl7qIegScwqwAQUNml4dygQMuJ6Tqc24O5HVqggacmE0HmeOwdPl96sYCz1uOqJ1XD5BoLDk3JHVI8gqLiNufzt34UqjB+DT5fyZF9/KdCdNBUWlPdC6XWxdW7r1MWH7oiOOW3pTnxWiPPHpz17s8dKBeDdRrG4N+pwfJb0mjox+cNSzFAJWX/HM1OQXuIgzn59D4wvS5vMVU35ZrFKZskU="))
         );
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
-                .slot(12)
+                .slot(13)
                 .text(Component.text("§fKills: " + playerDataManager.getPlayerData(player.getUUID()).getKills()))
         );
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
-                .slot(13)
+                .slot(14)
                 .text(Component.text("§fDeaths: " + playerDataManager.getPlayerData(player.getUUID()).getDeaths()))
         );
 

@@ -2,6 +2,10 @@ package me.orange.anan.job.jobs;
 
 import com.cryptomorin.xseries.XMaterial;
 import me.orange.anan.job.Job;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Random;
 
 public class Fisher implements Job {
     @Override
@@ -20,6 +24,11 @@ public class Fisher implements Job {
     }
 
     @Override
+    public String getPrefix() {
+        return "";
+    }
+
+    @Override
     public XMaterial getIcon() {
         return XMaterial.COD;
     }
@@ -35,8 +44,23 @@ public class Fisher implements Job {
     }
 
     @Override
-    public double calculateEarning() {
-        return 100; // 範例收益金額
+    public int getChancePerLevel() {
+        return 3;
+    }
+
+    @Override
+    public ItemStack upgradeSKill(ItemStack itemStack, Player player, int level) {
+        Random random = new Random();
+        int roll = random.nextInt(100);
+        int chancePerLevel = 3;
+        ItemStack clone = itemStack.clone();
+
+        if (roll < level * chancePerLevel) {
+            clone.setAmount(itemStack.getAmount() * 2);
+            player.sendMessage("§a漁夫職業幫你捕捉到了雙倍的魚！");
+        }
+
+        return clone;
     }
 
     @Override

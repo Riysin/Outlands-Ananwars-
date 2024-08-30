@@ -1,6 +1,9 @@
 package me.orange.anan.clan;
 
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.hologram.Hologram;
+import io.fairyproject.mc.hologram.entity.HologramEntity;
+import io.fairyproject.mc.hologram.entity.factory.HologramEntityFactory;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.clan.config.ClanConfigElement;
 import org.bukkit.Bukkit;
