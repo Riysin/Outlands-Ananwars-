@@ -139,12 +139,25 @@ public class ClanCommand extends BaseCommand {
         }
 
         Clan clan = clanManager.getPlayerClan(player);
-        player.sendMessage("§eClan: §6" + clanManager.getClanName(player));
-        player.sendMessage("§eOwner: §b" + clanManager.getOwnerName(player));
-        player.sendMessage("§eOnline Players: ");
-        clan.getOnlineBukkitPlayers().forEach(member -> player.sendMessage("§a" + member.getName()));
-        player.sendMessage("§eOffline Players: ");
-        clan.getOfflineBukkitPlayers().forEach(member -> player.sendMessage("§7" + member.getName() + ", "));
+        StringBuilder message = new StringBuilder();
+
+        message.append("§eClan: §6").append(clanManager.getClanName(player)).append("\n");
+        message.append("§eOwner: §b").append(clanManager.getOwnerName(player)).append("\n");
+
+        message.append("§eOnline Players: §a");
+        clan.getOnlineBukkitPlayers().forEach(member -> message.append(member.getName()).append(", "));
+        if (!clan.getOnlineBukkitPlayers().isEmpty()) {
+            message.setLength(message.length() - 2); // Remove the last comma and space
+        }
+        message.append("\n");
+
+        message.append("§eOffline Players: §7");
+        clan.getOfflineBukkitPlayers().forEach(member -> message.append(member.getName()).append(", "));
+        if (!clan.getOfflineBukkitPlayers().isEmpty()) {
+            message.setLength(message.length() - 2); // Remove the last comma and space
+        }
+
+        player.sendMessage(message.toString());
     }
 
     @Command("disband")

@@ -38,6 +38,7 @@ public class JobTableEventListener implements Listener {
         Job job = event.getJob();
         int jobLevel = jobManager.getPlayerJobLevel(player, job);
         player.sendMessage("§fYou have chosen the §6§l" + job.getName() + " §fjob!");
+        player.setLevel(0);
         player.setLevel(jobLevel);
     }
 
@@ -47,6 +48,7 @@ public class JobTableEventListener implements Listener {
         Job job = event.getJob();
         int jobLevel = jobManager.getPlayerJobLevel(player, job);
         player.sendMessage("§fYour §6§l" + job.getName() + " §fhas become level§a" + jobLevel + "§f!");
+        player.setLevel(0);
         player.setLevel(jobLevel);
     }
 }

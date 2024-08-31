@@ -1,21 +1,20 @@
 package me.orange.anan.craft;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.github.retrooper.packetevents.protocol.world.chunk.palette.Palette;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.events.PlayerOpenInventoryEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
+import org.bukkit.event.player.PlayerAchievementAwardedEvent;
+import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemStack;
 
 @InjectableComponent
 @RegisterAsListener
@@ -39,9 +38,32 @@ public class CraftEventListener implements Listener {
             } else if (event.getSlot() == 2 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
                 player.performCommand("craft ongoing");
                 event.setCancelled(true);
+            } else if (event.getSlot() == 3 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+                player.performCommand("player menu "+ player.getName());
+                event.setCancelled(true);
+            } else if (event.getSlot() == 4 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+                player.performCommand("settings");
+                event.setCancelled(true);
             }
+            Bukkit.getPluginManager().callEvent(new InventoryCloseEvent(event.getView()));
         }
     }
 
+    @EventHandler
+    public void onInventoryOpen(PlayerOpenInventoryEvent event) {
+        if(event.getTopInventory().getType() == InventoryType.CRAFTING && event.getTopInventory().getItem(1) == null) {
+            event.getTopInventory().setItem(1, ItemBuilder.of(XMaterial.CRAFTING_TABLE).name("§eCraft Menu").lore("§7Open the crafting menu").build());
+            event.getTopInventory().setItem(2, ItemBuilder.of(XMaterial.ITEM_FRAME).name("§eCraft Ongoing").lore("§7Check your ongoing crafts").build());
+            event.getTopInventory().setItem(3, ItemBuilder.of(XMaterial.PLAYER_HEAD).name("§ePlayerMenu").lore("§7Check your stats").skull(event.getPlayer().getName()).build());
+            event.getTopInventory().setItem(4, ItemBuilder.of(XMaterial.BOOK).name("§eSettings").lore("§7Open the settings menu").build());
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (event.getInventory().getType() == InventoryType.CRAFTING && event.getInventory().getItem(1) != null) {
+            event.getView().getTopInventory().clear();
+        }
+    }
 }
 

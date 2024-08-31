@@ -117,12 +117,12 @@ public class Tablist implements TablistAdapter {
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
                 .slot(8)
-                .text(Component.text("§fName: " + name))
+                .text(Component.text("§fName: §6" + name))
         );
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
                 .slot(9)
-                .text(Component.text("§fLevel: " + level))
+                .text(Component.text("§fLevel: §a" + level))
         );
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
@@ -162,7 +162,7 @@ public class Tablist implements TablistAdapter {
                 slots.add(new TabSlot()
                         .column(TabColumn.RIGHT)
                         .slot(clanManager.getPlayerClan(uuid).getOnlinePlayers().indexOf(uuid) + 4)
-                        .text(Component.text("§2" + p.getName())).skin(playerDataManager.getPlayerData(p.getUniqueId()).getSkin())
+                        .text(Component.text("§2" + p.getName() + ((clanManager.isOwner(p)) ? "§f§o**" : ""))).skin(playerDataManager.getPlayerData(p.getUniqueId()).getSkin())
                         .ping(MCPlayer.from(p).getPing()));
             });
         }

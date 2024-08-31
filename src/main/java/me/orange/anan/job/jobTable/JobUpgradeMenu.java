@@ -12,6 +12,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
+import me.orange.anan.player.PlayerDataManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -30,11 +31,13 @@ public class JobUpgradeMenu {
     private final GuiFactory guiFactory;
     private final CraftManager craftManger;
     private final JobManager jobManager;
+    private final PlayerDataManager playerDataManager;
 
-    public JobUpgradeMenu(GuiFactory guiFactory, CraftManager craftManger, JobManager jobManager) {
+    public JobUpgradeMenu(GuiFactory guiFactory, CraftManager craftManger, JobManager jobManager, PlayerDataManager playerDataManager) {
         this.guiFactory = guiFactory;
         this.craftManger = craftManger;
         this.jobManager = jobManager;
+        this.playerDataManager = playerDataManager;
     }
 
     public void open(Player player, Job job) {
@@ -93,7 +96,7 @@ public class JobUpgradeMenu {
             ui.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                     .skull(player.getName())
                     .name("§e§l" + job.getName())
-                    .lore(getStatsLore(level, job))
+                    .lore(playerDataManager.getJobStatsLore(level, job))
                     .build()));
         });
 
@@ -203,35 +206,6 @@ public class JobUpgradeMenu {
         } else {
             lore.add("§cLocked");
         }
-        return lore;
-    }
-
-    private List<String> getStatsLore(int level, Job job) {
-        List<String> lore = new ArrayList<>();
-        lore.add("§6" + job.getUpgradeName());
-        lore.add("§7" + job.getUpgradeDescription());
-        lore.add("§fChance: §a" + job.getChancePerLevel() * level + "§f%");
-        lore.add("");
-        lore.add("§6" + job.getSkill1Name());
-        lore.add("§7"+job.getSkill1Description());
-        if (level >= 10) lore.add("§aUnlocked");
-        else lore.add("§cLocked");
-        lore.add("");
-        lore.add("§6" + job.getSkill2Name());
-        lore.add("§7"+job.getSkill2Description());
-        if (level >= 20) lore.add("§aUnlocked");
-        else lore.add("§cLocked");
-        lore.add("");
-        lore.add("§6" + job.getSkill3Name());
-        lore.add("§7"+job.getSkill3Description());
-        if (level >= 30) lore.add("§aUnlocked");
-        else lore.add("§cLocked");
-        lore.add("");
-        lore.add("§6" + job.getActiveName());
-        lore.add("§7"+job.getActiveDescription());
-        if (level == 35) lore.add("§aUnlocked");
-        else lore.add("§cLocked");
-
         return lore;
     }
 
