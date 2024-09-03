@@ -4,8 +4,7 @@ import io.fairyproject.mc.tablist.util.Skin;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class PlayerData {
     //config
@@ -13,7 +12,9 @@ public class PlayerData {
     private int deaths = 0;
     private Location lastDeathLocation;
     private boolean bossBarActive = false;
+    private List<UUID> friends = new ArrayList<>();
     //stats
+    private List<UUID> friendRequests = new ArrayList<>();
     private BossBar BossBar;
     private boolean knocked = false;
     private boolean saving = false;
@@ -66,6 +67,22 @@ public class PlayerData {
 
     public void setBossBarActive(boolean bossBarActive) {
         this.bossBarActive = bossBarActive;
+    }
+
+    public List<UUID> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<UUID> friends) {
+        this.friends = friends;
+    }
+
+    public List<UUID> getFriendRequests() {
+        return friendRequests;
+    }
+
+    public void setFriendRequests(List<UUID> friendRequests) {
+        this.friendRequests = friendRequests;
     }
 
     public Set<String> getCanCraftItems() {

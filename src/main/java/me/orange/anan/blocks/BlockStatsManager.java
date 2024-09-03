@@ -4,12 +4,15 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BlockConfigElement;
+import me.orange.anan.craft.CraftManager;
+import me.orange.anan.craft.config.ToolConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Bed;
 import org.bukkit.material.Door;
 
@@ -19,10 +22,14 @@ import java.util.*;
 @InjectableComponent
 public class BlockStatsManager {
     private final BlockConfig blockConfig;
+    private final ToolConfig toolConfig;
+    private final CraftManager craftManager;
     private Map<Block, BlockStats> blockStatsMap = new HashMap<>();
 
-    public BlockStatsManager(BlockConfig blockConfig) {
+    public BlockStatsManager(BlockConfig blockConfig, ToolConfig toolConfig, CraftManager craftManager) {
         this.blockConfig = blockConfig;
+        this.toolConfig = toolConfig;
+        this.craftManager = craftManager;
 
         loadConfig();
     }
@@ -81,9 +88,10 @@ public class BlockStatsManager {
         return block;
     }
 
-    public void breakBlock(Player player, Block block) {
+    public void breakBlock(Player player, Block block, ItemStack toolItem) {
         BlockStats blockStats = getBlockStats(block);
-        blockStats.setHealth(blockStats.getHealth() - 1);
+        String toolId = craftManager.getCraft(toolItem).getID();
+        blockStats.setHealth(blockStats.getHealth() - toolConfig.getToolDamage(toolId));
 
         blockBreakScheduler(block);
         Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));

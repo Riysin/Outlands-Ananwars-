@@ -59,13 +59,4 @@ public class PlayerConfig extends YamlConfiguration {
         });
         this.save();
     }
-
-    public void addJob(Player player, String jobName) {
-        String uuid = player.getUniqueId().toString();
-        if (!playerElementMap.containsKey(uuid)) {
-            playerElementMap.put(uuid, new PlayerConfigElement());
-        }
-        playerElementMap.get(uuid).setJobName(jobName);
-        this.save();
-    }
 }

@@ -40,9 +40,7 @@ public class OngoingCraftMenu {
         });
 
         gui.onDrawCallback($ -> {
-            for (int usedSlot : pane.getUsedSlots()) {
-                pane.setSlot(usedSlot, GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
-            }
+            pane.clear();
 
             int i = 0;
             for (CraftTimer craftTimer : craftTimerManager.getPlayerCraftTimerList(player)) {

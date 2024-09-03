@@ -10,11 +10,13 @@ import me.orange.anan.clan.ClanManager;
 import me.orange.anan.events.PlayerOpenInventoryEvent;
 import me.orange.anan.job.Job;
 import me.orange.anan.player.bed.BedManager;
+import me.orange.anan.player.config.FriendElement;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.config.PlayerConfigElement;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffect;
@@ -42,6 +44,9 @@ public class PlayerDataManager {
             playerData.setDeaths(playerConfigElement.getDeaths());
             playerData.setLastDeathLocation(playerConfigElement.getLastDeathLocation());
             playerData.setBossBarActive(playerConfigElement.isBossBarActive());
+            playerConfigElement.getFriendList().forEach(friendElement -> {
+                playerData.getFriends().add(friendElement.getUuid());
+            });
 
             playerDataMap.put(UUID.fromString(uuid), playerData);
         });
@@ -54,6 +59,13 @@ public class PlayerDataManager {
             element.setDeaths(playerData.getDeaths());
             element.setLastDeathLocation(playerData.getLastDeathLocation());
             element.setBossBarActive(playerData.isBossBarActive());
+            element.getFriendList().clear();
+            playerData.getFriends().forEach(friend -> {
+                FriendElement friendElement = new FriendElement();
+                friendElement.setUuid(friend);
+                element.getFriendList().add(friendElement);
+            });
+
         });
         playerConfig.save();
     }
@@ -66,7 +78,7 @@ public class PlayerDataManager {
         this.playerDataMap = playerDataMap;
     }
 
-    public PlayerData getPlayerData(Player player) {
+    public PlayerData getPlayerData(OfflinePlayer player) {
         return playerDataMap.get(player.getUniqueId());
     }
 
@@ -128,6 +140,37 @@ public class PlayerDataManager {
         playerConfig.addPlayer(player);
         PlayerData playerData = playerDataMap.get(uuid);
         playerData.setSkin(Skin.load(uuid));
+    }
+
+    public List<UUID> getFriends(Player player) {
+        return getPlayerData(player).getFriends();
+    }
+
+    public boolean isFriend(Player player, OfflinePlayer friend) {
+        return getPlayerData(player).getFriends().contains(friend.getUniqueId());
+    }
+
+    public void removeFriend(Player player, OfflinePlayer friend) {
+        getPlayerData(player).getFriends().remove(friend.getUniqueId());
+        getPlayerData(friend).getFriends().remove(player.getUniqueId());
+    }
+
+    public void addFriendRequest(Player player, OfflinePlayer friend) {
+        getPlayerData(player).getFriendRequests().add(friend.getUniqueId());
+    }
+
+    public boolean hasInvitation(Player player, OfflinePlayer friend) {
+        return getPlayerData(player).getFriendRequests().contains(friend.getUniqueId());
+    }
+
+    public void acceptFriendRequest(Player player, OfflinePlayer friend) {
+        getPlayerData(player).getFriends().add(friend.getUniqueId());
+        getPlayerData(friend).getFriends().add(player.getUniqueId());
+        getPlayerData(player).getFriendRequests().remove(friend.getUniqueId());
+    }
+
+    public void denyFriendRequest(Player player, OfflinePlayer friend) {
+        getPlayerData(player).getFriendRequests().remove(friend.getUniqueId());
     }
 
     public List<String> getJobStatsLore(int level, Job job) {

@@ -27,12 +27,14 @@ public class PlayerStatsMenu {
     private final PlayerDataManager playerDataManager;
     private final JobManager jobManager;
     private final ClanManager clanManager;
+    private final FriendMenu friendMenu;
 
-    public PlayerStatsMenu(GuiFactory guiFactory, PlayerDataManager playerDataManager, JobManager jobManager, ClanManager clanManager) {
+    public PlayerStatsMenu(GuiFactory guiFactory, PlayerDataManager playerDataManager, JobManager jobManager, ClanManager clanManager, FriendMenu friendMenu) {
         this.guiFactory = guiFactory;
         this.playerDataManager = playerDataManager;
         this.jobManager = jobManager;
         this.clanManager = clanManager;
+        this.friendMenu = friendMenu;
     }
 
     public void open(Player ctx, Player player) {
@@ -60,16 +62,20 @@ public class PlayerStatsMenu {
                 .of(XMaterial.PLAYER_HEAD)
                 .skull(player.getName())
                 .name("§b§l" + player.getName())
+
                 .build()));
 
         pane.setSlot(2, 1, GuiSlot.of(ItemBuilder.of(XMaterial.IRON_SWORD)
                 .name("§eJob")
-                .lore(jobLore)
+                .lore("§f Kills: §e" + playerDataManager.getPlayerData(player).getKills()
+                        , "§f Deaths: §c" + playerDataManager.getPlayerData(player).getDeaths())
                 .build()));
 
-        pane.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK).name("§eStats")
-                .lore("§f Kills: §e" + playerDataManager.getPlayerData(player).getKills()
-                        , "§f Deaths: §c" + playerDataManager.getPlayerData(player).getDeaths()).build()));
+        pane.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
+                .name("§eFriends")
+                .lore("§fFriends: §a" + playerDataManager.getFriends(player).size(), "", "§eClick to view friends")
+                .build(), friendMenu::open));
+
 
         pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.GOLDEN_HELMET).name("§eClan Info")
                 .lore("§fClan: §6" + clanName

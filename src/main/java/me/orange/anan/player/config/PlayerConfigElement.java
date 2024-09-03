@@ -23,6 +23,8 @@ public class PlayerConfigElement {
     private String jobName = "";
     @ElementType(JobElement.class)
     private Map<String,JobElement> jobLevelMap = new HashMap<>();
+    @ElementType(FriendElement.class)
+    private List<FriendElement> friendList = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -95,5 +97,13 @@ public class PlayerConfigElement {
 
     public void setJobLevelMap(Map<String, JobElement> jobLevelMap) {
         this.jobLevelMap = jobLevelMap;
+    }
+
+    public List<FriendElement> getFriendList() {
+        return friendList;
+    }
+
+    public void setFriendList(List<FriendElement> friendList) {
+        this.friendList = friendList;
     }
 }

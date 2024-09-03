@@ -19,6 +19,7 @@ import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.craft.behaviour.teamCore.config.TeamCoreConfig;
+import me.orange.anan.craft.config.ToolConfig;
 import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -36,10 +37,11 @@ public class TcCommand extends BaseCommand {
     private final BuildConfig buildConfig;
     private final BlockConfig blockConfig;
     private final TeamCoreConfig teamCoreConfig;
+    private final ToolConfig toolConfig;
     private final BlockStatsManager blockStatsManager;
     private final NameTagService nameTagService;
 
-    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig, TeamCoreConfig teamCoreConfig, BlockStatsManager blockStatsManager, NameTagService nameTagService) {
+    public TcCommand(PlayerConfig playerConfig, ClanConfig clanConfig, NatureBlockConfig natureBlockConfig, CraftManager craftManager, BuildConfig buildConfig, BlockConfig blockConfig, TeamCoreConfig teamCoreConfig, ToolConfig toolConfig, BlockStatsManager blockStatsManager, NameTagService nameTagService) {
         this.clanConfig = clanConfig;
         this.playerConfig = playerConfig;
         this.natureBlockConfig = natureBlockConfig;
@@ -47,6 +49,7 @@ public class TcCommand extends BaseCommand {
         this.buildConfig = buildConfig;
         this.blockConfig = blockConfig;
         this.teamCoreConfig = teamCoreConfig;
+        this.toolConfig = toolConfig;
         this.blockStatsManager = blockStatsManager;
         this.nameTagService = nameTagService;
     }
@@ -77,6 +80,7 @@ public class TcCommand extends BaseCommand {
         buildConfig.loadAndSave();
         blockConfig.loadAndSave();
         teamCoreConfig.loadAndSave();
+        toolConfig.loadAndSave();
 
         ctx.getPlayer().sendMessage(ChatColor.GREEN + "Config reloaded");
     }

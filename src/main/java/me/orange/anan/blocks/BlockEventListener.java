@@ -73,7 +73,7 @@ public class BlockEventListener implements Listener {
 
         //Managing the health of the block
         if (blockStats.getBlockType() == BlockType.BUILDING) {
-            blockStatsManager.breakBlock(player, block);
+            blockStatsManager.breakBlock(player, block, player.getItemInHand());
             if (player.getGameMode() == GameMode.CREATIVE)
                 blockStats.setHealth(0);
 
