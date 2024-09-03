@@ -12,7 +12,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
-import me.orange.anan.player.config.PlayerConfig;
+import me.orange.anan.player.friend.FriendMenu;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

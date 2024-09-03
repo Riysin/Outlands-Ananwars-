@@ -1,4 +1,4 @@
-package me.orange.anan.player;
+package me.orange.anan.player.friend;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;
@@ -9,6 +9,7 @@ import io.fairyproject.bukkit.gui.pane.mapping.PaneMapping;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.player.PlayerDataManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

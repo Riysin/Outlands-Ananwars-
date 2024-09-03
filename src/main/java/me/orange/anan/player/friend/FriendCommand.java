@@ -1,4 +1,4 @@
-package me.orange.anan.player;
+package me.orange.anan.player.friend;
 
 import io.fairyproject.bukkit.command.event.BukkitCommandContext;
 import io.fairyproject.command.BaseCommand;
@@ -6,10 +6,12 @@ import io.fairyproject.command.annotation.Arg;
 import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
+import me.orange.anan.player.PlayerDataManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 @InjectableComponent
@@ -92,7 +94,7 @@ public class FriendCommand extends BaseCommand {
         Player player = ctx.getPlayer();
         StringBuilder message = new StringBuilder("§eFriends: \n");
         playerDataManager.getFriends(player).forEach(uuid -> {
-            Player friend = Bukkit.getPlayer(uuid);
+            OfflinePlayer friend = Bukkit.getOfflinePlayer(uuid);
             message.append((friend.isOnline())?"§a":"§7").append(friend.getName()).append("§e, ");
         });
         player.sendMessage(message.toString());
