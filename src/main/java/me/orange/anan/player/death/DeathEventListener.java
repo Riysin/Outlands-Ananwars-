@@ -1,10 +1,9 @@
-package me.orange.anan.player.deathloot;
+package me.orange.anan.player.death;
 
 import com.cryptomorin.xseries.messages.Titles;
 import io.fairyproject.bukkit.events.player.EntityDamageByPlayerEvent;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import io.fairyproject.scheduler.repeat.RepeatPredicate;
 import io.fairyproject.scheduler.response.TaskResponse;
@@ -12,8 +11,6 @@ import me.orange.anan.clan.ClanManager;
 import me.orange.anan.events.PlayerSaveCanceledEvent;
 import me.orange.anan.events.PlayerSaveEvent;
 import me.orange.anan.player.PlayerDataManager;
-import me.orange.anan.player.bed.RespawnMenu;
-import me.orange.anan.player.config.PlayerConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -26,7 +23,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.util.Vector;
 
 import java.time.Duration;

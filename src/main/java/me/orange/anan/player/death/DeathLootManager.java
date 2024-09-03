@@ -1,4 +1,4 @@
-package me.orange.anan.player.deathloot;
+package me.orange.anan.player.death;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.profiles.builder.XSkull;

@@ -1,11 +1,7 @@
-package me.orange.anan.player.deathloot;
+package me.orange.anan.player.death;
 
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class DeathLoot {

@@ -2,7 +2,7 @@ package me.orange.anan.npc.player;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
-import me.orange.anan.player.deathloot.DeathLootManager;
+import me.orange.anan.player.death.DeathLootManager;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;

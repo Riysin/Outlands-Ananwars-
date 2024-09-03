@@ -1,4 +1,4 @@
-package me.orange.anan.player.deathloot;
+package me.orange.anan.player.death;
 
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
