@@ -5,8 +5,6 @@ import com.cryptomorin.xseries.messages.ActionBar;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
-import io.fairyproject.bukkit.util.BukkitPos;
-import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.clan.ClanManager;
@@ -18,16 +16,20 @@ import me.orange.anan.blocks.config.NatureBlockElement;
 import me.orange.anan.craft.behaviour.lock.LockManager;
 import me.orange.anan.craft.behaviour.teamCore.TeamCore;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
+import me.orange.anan.events.BlockResourceBreakEvent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Item;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -35,12 +37,11 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Bed;
 import org.bukkit.material.Door;
+import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
 import java.util.stream.Stream;
 
 @InjectableComponent
@@ -94,6 +95,8 @@ public class BlockEventListener implements Listener {
             Integer natureBlockBlockId = natureBlock.getBlockId();
 
             if (id.equals(natureBlockBlockId) && (natureBlockData == -1 || data == natureBlockData)) {
+                Bukkit.getPluginManager().callEvent(new BlockResourceBreakEvent(player, block));
+
                 if (natureBlock.getDrops().isEmpty()) {
                     drop = true;
                     break;
@@ -210,6 +213,39 @@ public class BlockEventListener implements Listener {
                 ActionBar.sendActionBar(player, " health:§a " + blockStats.getHealth());
             }
         }
+
+        Entity target = getTargetEntity(player, 5); // 10 is the max distance to check
+
+        if (target instanceof Slime) {
+            Slime slime = (Slime) target;
+            double health = slime.getHealth();
+            ActionBar.sendActionBar(player, " health:§a " + health);
+        }
+
+        if (target instanceof Creeper) {
+            Creeper creeper = (Creeper) target;
+
+            if (teamCoreManager.inTerritory(player)) {
+                ActionBar.sendActionBar(player, "§3You are in a territory!");
+            }
+
+            ActionBar.sendActionBar(player, "§6Core HP: §a" + creeper.getHealth());
+        }
+    }
+
+    private Entity getTargetEntity(Player player, int range) {
+        Location eyeLocation = player.getEyeLocation();
+         Vector direction = eyeLocation.getDirection().normalize();
+
+        for (int i = 0; i < range; i++) {
+            Location checkLocation = eyeLocation.add(direction);
+            for (Entity entity : player.getNearbyEntities(range, range, range)) {
+                if (entity.getLocation().distance(checkLocation) < 1.5) {
+                    return entity;
+                }
+            }
+        }
+        return null;
     }
 
     @EventHandler
@@ -253,7 +289,7 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onExtractFromFurnace(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        if(event.getInventory().getType() == InventoryType.FURNACE && event.getSlotType() == InventoryType.SlotType.RESULT) {
+        if (event.getInventory().getType() == InventoryType.FURNACE && event.getSlotType() == InventoryType.SlotType.RESULT) {
             ItemStack itemStack = craftManager.getItemStack(craftManager.getCraft(event.getCurrentItem()), player).clone();
             itemStack.setAmount(event.getCurrentItem().getAmount());
             event.setCurrentItem(itemStack);
@@ -263,5 +299,27 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onFurnaceExtract(FurnaceExtractEvent event) {
         event.setExpToDrop(0);
+    }
+
+    @EventHandler
+    public void onExplosion(EntityExplodeEvent event) {
+        event.setCancelled(true);
+
+        for (Block block : event.blockList()) {
+            Block mainBlock = blockStatsManager.getMainBlock(block);
+
+            if(!blockStatsManager.getBlockStatsMap().containsKey(mainBlock)) {
+                continue;
+            }
+
+            BlockStats blockStats = blockStatsManager.getBlockStats(mainBlock);
+            blockStats.setHealth(blockStats.getHealth() - 10);
+            if (blockStats.getHealth() <= 0) {
+                blockStatsManager.getBlockStatsMap().remove(mainBlock);
+                mainBlock.setType(Material.AIR);
+            }
+
+        }
+
     }
 }

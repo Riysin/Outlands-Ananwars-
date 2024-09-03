@@ -106,37 +106,6 @@ public class TeamCoreEventListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        Location location = player.getLocation();
-
-        Creeper sightCreeper = getSightCreeper(player);
-        if (sightCreeper != null && location.distance(sightCreeper.getLocation()) < 4) {
-            ActionBar.sendActionBar(player, "§6Core HP: §a" + sightCreeper.getHealth());
-        }
-
-        if (teamCoreManager.inTerritory(player)) {
-            ActionBar.sendActionBar(player, "§3You are in a territory!");
-        }
-    }
-
-    private Creeper getSightCreeper(Player player) {
-        return teamCoreManager.getTeamCores().parallelStream()
-                .map(TeamCore::getCoreCreeper)
-                .filter(creeper -> player.hasLineOfSight(creeper) && isLookingAt(player, creeper))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private boolean isLookingAt(Player player, Entity entity) {
-        Vector playerDirection = player.getLocation().getDirection();
-        Vector toEntity = entity.getLocation().toVector().subtract(player.getLocation().toVector()).normalize();
-
-        double angle = playerDirection.angle(toEntity);
-        return angle < 0.5236; // approximately 30 degrees
-    }
-
-    @EventHandler
     public void onRightClickCreeper(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         if (event.getRightClicked() instanceof Creeper) {

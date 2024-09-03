@@ -3,6 +3,8 @@ package me.orange.anan.job.jobTable;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.MCPlayer;
+import io.fairyproject.mc.nametag.NameTagService;
 import me.orange.anan.events.PlayerChooseJobEvent;
 import me.orange.anan.events.PlayerLevelUpEvent;
 import me.orange.anan.job.Job;
@@ -18,10 +20,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class JobTableEventListener implements Listener {
     private final JobChooseMenu jobChooseMenu;
     private final JobManager jobManager;
+    private final NameTagService nameTagService;
 
-    public JobTableEventListener(JobChooseMenu jobChooseMenu, JobManager jobManager) {
+    public JobTableEventListener(JobChooseMenu jobChooseMenu, JobManager jobManager, NameTagService nameTagService) {
         this.jobChooseMenu = jobChooseMenu;
         this.jobManager = jobManager;
+        this.nameTagService = nameTagService;
     }
 
     @EventHandler
@@ -40,6 +44,8 @@ public class JobTableEventListener implements Listener {
         player.sendMessage("§fYou have chosen the §6§l" + job.getName() + " §fjob!");
         player.setLevel(0);
         player.setLevel(jobLevel);
+
+        nameTagService.update(MCPlayer.from(player));
     }
 
     @EventHandler

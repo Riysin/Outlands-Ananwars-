@@ -8,7 +8,7 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.player.PlayerDataManager;
-import me.orange.anan.player.npc.PlayerNPCManager;
+import me.orange.anan.npc.player.PlayerNPCManager;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import org.bukkit.Bukkit;

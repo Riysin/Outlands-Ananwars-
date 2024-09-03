@@ -9,6 +9,8 @@ import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyCompon
 import me.orange.anan.clan.Clan;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.clan.NametagVisibility;
+import me.orange.anan.job.Job;
+import me.orange.anan.job.JobManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
@@ -17,10 +19,12 @@ import org.jetbrains.annotations.NotNull;
 @InjectableComponent
 public class PlayerNameTag extends NameTagAdapter {
     private final ClanManager clanManager;
+    private final JobManager jobManager;
 
-    public PlayerNameTag(ClanManager clanManager) {
+    public PlayerNameTag(ClanManager clanManager, JobManager jobManager) {
         super("nametag", 0);
         this.clanManager = clanManager;
+        this.jobManager = jobManager;
     }
 
     @Override
@@ -34,8 +38,12 @@ public class PlayerNameTag extends NameTagAdapter {
         //output
         if (clanManager.inClan(bukkitTarget)) {
             Clan clan = clanManager.getPlayerClan(bukkitTarget);
+            String jobPrefix = "";
+            if(jobManager.hasJob(bukkitTarget)) {
+                jobPrefix = jobManager.getPlayerCurrentJob(bukkitTarget).getPrefix();
+            }
             Component prefix = Component.text(clan.getPrefix());
-            Component suffix = Component.text(clan.getSuffix());
+            Component suffix = Component.text(jobPrefix);
             TextColor color = LegacyComponentSerializer.parseChar(clan.getColor().getChar()).color();
             WrapperPlayServerTeams.NameTagVisibility nameTagVisibility = getNameTagVisibility(playerClan, targetClan);
             return new NameTag(prefix, suffix, color, nameTagVisibility);

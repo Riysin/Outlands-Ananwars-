@@ -38,7 +38,7 @@ public class Sidebar implements SidebarAdapter {
         int members = 0;
         int onlineMembers = 0;
         Player player = mcPlayer.as(Player.class);
-        if(jobManager.hasJob(player)) {
+        if (jobManager.hasJob(player)) {
             jobName = jobManager.getPlayerCurrentJob(player.getUniqueId()).getName();
             jobLevel = jobManager.getPlayerJobLevel(player, jobManager.getPlayerCurrentJob(player.getUniqueId()));
         }
@@ -54,12 +54,12 @@ public class Sidebar implements SidebarAdapter {
         sidebar.add(Component.text("§3» §bName§7: §f" + clanName));
         sidebar.add(Component.text("§3» §bMembers§7: §f" + onlineMembers + "§7/§f" + members));
         sidebar.add(Component.text(""));
-        if(jobManager.hasJob(player)) {
-            sidebar.add(Component.text("§fPlayer"));
-            sidebar.add(Component.text("§3» §bJob§7: §f" + jobName));
-            sidebar.add(Component.text("§3» §bLevel§7: §f" + jobLevel));
-            sidebar.add(Component.text(""));
-        }
+
+        sidebar.add(Component.text("§fPlayer"));
+        sidebar.add(Component.text("§3» §bJob§7: §f" + jobName));
+        sidebar.add(Component.text("§3» §bLevel§7: §f" + jobLevel));
+        sidebar.add(Component.text(""));
+
         if (craftTimerManager.isCrafting(player)) {
             sidebar.add(Component.text("§3» §bCrafting§7:"));
             int i = 4;
@@ -69,8 +69,8 @@ public class Sidebar implements SidebarAdapter {
                 if (i == 0)
                     break;
             }
+            sidebar.add(Component.text(""));
         }
-        sidebar.add(Component.text(""));
         sidebar.add(Component.text("§f134tc.ddns.net"));
         sidebar.add(Component.text("§7§m-----------------"));
         return sidebar;

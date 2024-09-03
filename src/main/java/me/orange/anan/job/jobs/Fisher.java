@@ -25,7 +25,7 @@ public class Fisher implements Job {
 
     @Override
     public String getPrefix() {
-        return "";
+        return "" ;
     }
 
     @Override
