@@ -5,16 +5,11 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.PlayerOpenInventoryEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
-import org.bukkit.event.player.PlayerAchievementAwardedEvent;
-import org.bukkit.event.player.PlayerStatisticIncrementEvent;
-import org.bukkit.inventory.CraftingInventory;
-import org.bukkit.inventory.Inventory;
 
 @InjectableComponent
 @RegisterAsListener
@@ -45,7 +40,9 @@ public class CraftEventListener implements Listener {
                 player.performCommand("settings");
                 event.setCancelled(true);
             }
-            Bukkit.getPluginManager().callEvent(new InventoryCloseEvent(event.getView()));
+            if (event.getInventory().getType() == InventoryType.CRAFTING && event.getInventory().getItem(1) != null) {
+                event.getView().getTopInventory().clear();
+            }
         }
     }
 
