@@ -35,7 +35,7 @@ public class Fisher implements Job {
 
     @Override
     public String getUpgradeName() {
-        return "大師級漁夫";
+        return "幸運漁夫";
     }
 
     @Override
@@ -95,12 +95,12 @@ public class Fisher implements Job {
 
     @Override
     public String getSkill3Name() {
-        return "幸運魚鉤";
+        return "海神之力";
     }
 
     @Override
     public String getSkill3Description() {
-        return "增加捕捉寶藏的機率。";
+        return "在水中擁有水中呼吸效果。";
     }
 
     @Override
