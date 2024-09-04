@@ -4,12 +4,8 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.container.PostInitialize;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,13 +13,14 @@ import java.util.Map;
 @InjectableComponent
 public class TimeManager {
     private Map<World, Boolean> isDay = new HashMap<>();
+    private static final double HIDE_DISTANCE = 10.0;
 
-    public String getTimeState(World world){
+    public String getTimeState(World world) {
         return isDay.getOrDefault(world, true) ? "Day §6✹" : "Night §b☾";
     }
 
     @PostInitialize
-    public void init(){
+    public void init() {
         MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
             for (World world : Bukkit.getWorlds()) {
                 long time = world.getTime();
@@ -33,15 +30,16 @@ public class TimeManager {
         }, 0, 10);
 
         MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
-            for (World world : Bukkit.getWorlds()) {
-                for (Player player : world.getPlayers()) {
-                    Block block = world.getBlockAt(player.getLocation());
-                    if(isDay.get(world) || block.getLightLevel() >= 5 || player.getGameMode()== GameMode.CREATIVE){
-                        player.removePotionEffect(PotionEffectType.BLINDNESS);
-                    }else {
-                        PotionEffect blind = new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0, false, false);
-                        player.addPotionEffect(blind);
-                        player.setSprinting(true);
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
+                    if(isDay.get(player.getWorld())) continue;
+                    if (player.equals(otherPlayer)) continue;
+
+                    double distance = player.getLocation().distance(otherPlayer.getLocation());
+                    if (distance > HIDE_DISTANCE && otherPlayer.getWorld().getBlockAt(otherPlayer.getLocation()).getLightLevel() <= 5) {
+                        player.hidePlayer(otherPlayer);
+                    } else {
+                        player.showPlayer(otherPlayer);
                     }
                 }
             }
