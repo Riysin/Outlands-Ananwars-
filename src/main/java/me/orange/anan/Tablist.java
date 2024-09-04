@@ -162,7 +162,7 @@ public class Tablist implements TablistAdapter {
                 slots.add(new TabSlot()
                         .column(TabColumn.RIGHT)
                         .slot(clanManager.getPlayerClan(uuid).getOnlinePlayers().indexOf(uuid) + 4)
-                        .text(Component.text("§2" + p.getName() + ((clanManager.isOwner(p)) ? "§f§o**" : ""))).skin(playerDataManager.getPlayerData(p.getUniqueId()).getSkin())
+                        .text(Component.text("§2" + p.getName() + ((clanManager.isOwner(p)) ? "§f**" : ""))).skin(playerDataManager.getPlayerData(p.getUniqueId()).getSkin())
                         .ping(MCPlayer.from(p).getPing()));
             });
         }

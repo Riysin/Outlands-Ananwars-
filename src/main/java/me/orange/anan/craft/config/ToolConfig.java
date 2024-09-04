@@ -30,6 +30,8 @@ public class ToolConfig extends YamlConfiguration {
     }
 
     public int getToolDamage(String toolId) {
-        return toolMap.get(toolId);
+        if(toolMap.containsKey(toolId))
+            return toolMap.get(toolId);
+        return 1;
     }
 }

@@ -4,6 +4,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
+import me.orange.anan.clan.ClanManager;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.crafting.CraftTimerManager;
 import me.orange.anan.job.JobManager;
@@ -25,13 +26,15 @@ public class PlayerEventListener implements Listener {
     private final NameTagService nameTagService;
     private final JobManager jobManager;
     private final CraftManager craftManager;
+    private final ClanManager clanManager;
 
-    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService, JobManager jobManager, CraftManager craftManager) {
+    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService, JobManager jobManager, CraftManager craftManager, ClanManager clanManager) {
         this.playerDataManager = playerDataManager;
         this.craftTimerManager = craftTimerManager;
         this.nameTagService = nameTagService;
         this.jobManager = jobManager;
         this.craftManager = craftManager;
+        this.clanManager = clanManager;
     }
 
     @EventHandler
@@ -39,6 +42,7 @@ public class PlayerEventListener implements Listener {
         Player player = event.getPlayer();
         playerDataManager.setUpPlayer(event);
         jobManager.getJobStatsMap().putIfAbsent(player.getUniqueId(), new JobStats());
+        clanManager.setHologram(player);
 
         playerDataManager.getFriends(player).forEach(friend -> {
             if (Bukkit.getOfflinePlayer(friend).isOnline()) {
@@ -77,9 +81,6 @@ public class PlayerEventListener implements Listener {
         ItemStack item = event.getItem().getItemStack();
         if (craftManager.getCraft(item) == null) {
             event.setCancelled(true);
-            return;
         }
-        ItemStack itemStack = craftManager.getItemStack(item, event.getPlayer());
-        item.setItemMeta(itemStack.getItemMeta());
     }
 }

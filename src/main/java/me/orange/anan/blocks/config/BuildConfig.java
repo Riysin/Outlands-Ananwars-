@@ -19,7 +19,7 @@ public class BuildConfig extends YamlConfiguration {
 
         craftManager.loadConfigFile();
         craftManager.getCrafts().forEach((s, craft) -> {
-            if(craft.getType() == CraftType.BUILD || craft.getType() == CraftType.USAGE && !buildBlocks.containsKey(s))
+            if((craft.getType() == CraftType.BUILD || craft.getType() == CraftType.USAGE) && !buildBlocks.containsKey(s))
                 buildBlocks.put(s, 10);
         });
         this.save();

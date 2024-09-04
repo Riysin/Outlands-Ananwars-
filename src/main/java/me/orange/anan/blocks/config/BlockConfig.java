@@ -26,13 +26,4 @@ public class BlockConfig extends YamlConfiguration {
     public void setBlockData(List<BlockConfigElement> blockData) {
         this.blockData = blockData;
     }
-
-    public BlockConfigElement getBlockConfigElement(Block block) {
-        for (BlockConfigElement blockConfigElement : blockData) {
-            if (blockConfigElement.getLocation().equals(block.getLocation())) {
-                return blockConfigElement;
-            }
-        }
-        return null;
-    }
 }

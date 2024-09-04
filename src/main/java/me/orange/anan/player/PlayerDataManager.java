@@ -1,19 +1,11 @@
 package me.orange.anan.player;
 
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.mc.MCPlayer;
-import io.fairyproject.mc.nametag.NameTagService;
 import io.fairyproject.mc.tablist.util.Skin;
-import me.orange.anan.clan.Clan;
-import me.orange.anan.clan.ClanManager;
-import me.orange.anan.events.PlayerOpenInventoryEvent;
 import me.orange.anan.job.Job;
-import me.orange.anan.player.bed.BedManager;
 import me.orange.anan.player.config.FriendElement;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.config.PlayerConfigElement;
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -22,7 +14,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
