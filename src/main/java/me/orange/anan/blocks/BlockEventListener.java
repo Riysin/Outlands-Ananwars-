@@ -249,12 +249,13 @@ public class BlockEventListener implements Listener {
     }
 
     @EventHandler
-    public void onDoorOpen(PlayerInteractEvent event) {
+    public void onDoorClicked(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Player player = event.getPlayer();
             Block block = blockStatsManager.getMainBlock(event.getClickedBlock());
             Material type = block.getType();
             boolean isKeyInHand = player.getItemInHand().isSimilar(craftManager.getItemStack(craftManager.getCrafts().get("key"), player));
+            boolean isLockInHand = player.getItemInHand().isSimilar(craftManager.getItemStack(craftManager.getCrafts().get("lock"), player));
 
             if (lockManager.isLockableBlock(block)) {
 
@@ -267,12 +268,13 @@ public class BlockEventListener implements Listener {
 
             // open iron door on player right click
             if (type == Material.IRON_DOOR_BLOCK || type == Material.IRON_DOOR) {
-                Bukkit.broadcastMessage("Iron door clicked");
-                if (!lockManager.hasLock(block) || !isKeyInHand) {
+                if ((!lockManager.hasLock(block)|| lockManager.isInOwnerClan(player,block)) && !isKeyInHand && !isLockInHand) {
                     Door door = (Door) block.getState().getData();
                     door.setOpen(!door.isOpen());
                     block.setData(door.getData());
                     block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 1.0f, 1.0f);
+                }else {
+                    event.setCancelled(true);
                 }
             }
         }

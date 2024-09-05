@@ -68,8 +68,6 @@ public class PlayerNPCManager {
     public void despawnNPC(Player player) {
         NPC npc = getPlayerNPC(player);
         if (npc != null) {
-            npc.despawn();
-
             ItemStack[] npcItems = npc.getOrAddTrait(Inventory.class).getContents();
 
             for (int i = 0; i < Math.min(npcItems.length, 36); i++) {
@@ -80,6 +78,8 @@ public class PlayerNPCManager {
             player.getInventory().setChestplate(npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.CHESTPLATE));
             player.getInventory().setLeggings(npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.LEGGINGS));
             player.getInventory().setBoots(npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.BOOTS));
+
+            npc.despawn();
         }
     }
 

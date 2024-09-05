@@ -9,7 +9,9 @@ import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.crafting.CraftTimerManager;
 import me.orange.anan.job.JobManager;
 import me.orange.anan.job.JobStats;
+import me.orange.anan.player.death.RespawnMenu;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,7 +44,6 @@ public class PlayerEventListener implements Listener {
         Player player = event.getPlayer();
         playerDataManager.setUpPlayer(event);
         jobManager.getJobStatsMap().putIfAbsent(player.getUniqueId(), new JobStats());
-        clanManager.setHologram(player);
 
         playerDataManager.getFriends(player).forEach(friend -> {
             if (Bukkit.getOfflinePlayer(friend).isOnline()) {
@@ -53,7 +54,7 @@ public class PlayerEventListener implements Listener {
         Bukkit.getOnlinePlayers().forEach(player1 -> {
             nameTagService.update(MCPlayer.from(player1));
         });
-
+        clanManager.setHologram(player);
     }
 
     @EventHandler

@@ -27,6 +27,12 @@ public class WorldManager {
         world.setDifficulty(Difficulty.EASY);
         world.setStorm(false);
         world.setWeatherDuration(999999);
+
+        WorldBorder worldBorder = world.getWorldBorder();
+
+        worldBorder.setCenter(0, 0);
+        worldBorder.setSize(3000);
+        worldBorder.setWarningDistance(10);
         Log.info(world.getName() + " keepInventory on");
     }
 

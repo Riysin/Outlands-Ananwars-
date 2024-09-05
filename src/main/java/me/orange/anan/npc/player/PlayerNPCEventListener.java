@@ -2,13 +2,17 @@ package me.orange.anan.npc.player;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.player.PlayerDataManager;
+import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.death.DeathLootManager;
+import me.orange.anan.player.death.RespawnMenu;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,10 +24,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class PlayerNPCEventListener implements Listener {
     private final PlayerNPCManager playerNPCManager;
     private final DeathLootManager deathLootManager;
+    private final PlayerDataManager playerDataManager;
+    private final RespawnMenu respawnMenu;
 
-    public PlayerNPCEventListener(PlayerNPCManager playerNPCManager, DeathLootManager deathLootManager) {
+    public PlayerNPCEventListener(PlayerNPCManager playerNPCManager, DeathLootManager deathLootManager, PlayerDataManager playerDataManager, RespawnMenu respawnMenu) {
         this.playerNPCManager = playerNPCManager;
         this.deathLootManager = deathLootManager;
+        this.playerDataManager = playerDataManager;
+        this.respawnMenu = respawnMenu;
     }
 
     @EventHandler
@@ -31,6 +39,12 @@ public class PlayerNPCEventListener implements Listener {
         Player player = event.getPlayer();
         playerNPCManager.setUpNPC(player);
         playerNPCManager.despawnNPC(player);
+
+        if (playerDataManager.getPlayerData(player).isNpcDied()) {
+            playerDataManager.getPlayerData(player).setNpcDied(false);
+            player.sendMessage("§c§lYour NPC died while you were offline. You have to respawn!.");
+        }
+
     }
 
     @EventHandler
@@ -41,7 +55,6 @@ public class PlayerNPCEventListener implements Listener {
 
     @EventHandler
     public void onNPCDeath(NPCDeathEvent event) {
-        Bukkit.broadcastMessage("NPC died.");
         NPC npc = event.getNPC();
 
         if(!npc.getOrAddTrait(HologramTrait.class).getLines().get(0).equals("§c[Offline]")) {
@@ -51,6 +64,7 @@ public class PlayerNPCEventListener implements Listener {
         Inventory traitInventory = playerNPCManager.getTraitInventory(npc);
         traitInventory.getInventoryView().clear();
         traitInventory.setContents(traitInventory.getInventoryView().getContents());
+        playerDataManager.getPlayerData(playerNPCManager.getNPCOfflineOwner(npc)).setNpcDied(true);
     }
 
     @EventHandler

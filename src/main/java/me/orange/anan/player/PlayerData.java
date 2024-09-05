@@ -18,6 +18,7 @@ public class PlayerData {
     private BossBar BossBar;
     private boolean knocked = false;
     private boolean saving = false;
+    private boolean npcDied = false;
     private Skin skin = Skin.GRAY;
     private Set<String> canCraftItems = new HashSet<>();
 
@@ -43,6 +44,14 @@ public class PlayerData {
 
     public void addKill() {
         kills++;
+    }
+
+    public boolean isNpcDied() {
+        return npcDied;
+    }
+
+    public void setNpcDied(boolean npcDied) {
+        this.npcDied = npcDied;
     }
 
     public Location getLastDeathLocation() {

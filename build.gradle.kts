@@ -7,7 +7,7 @@ plugins {
     id("java-library")
 
     //Fairy framework plugin
-    id("io.fairyproject") version "0.7.8b5-SNAPSHOT"
+    id("io.fairyproject") version "0.7.8b7-SNAPSHOT"
 
     // Dependency management plugin
     id("io.spring.dependency-management") version "1.1.6"
@@ -97,7 +97,7 @@ dependencies {
     // Spigot dependency
     compileOnly("org.spigotmc:spigot-api:${properties("spigot.version")}-R0.1-SNAPSHOT")
     implementation("net.wesjd:anvilgui:1.10.2-SNAPSHOT")
-    implementation("net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT") {
+    compileOnly("net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
     compileOnly("com.github.NEZNAMY:TAB-API:4.1.8")

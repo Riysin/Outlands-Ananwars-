@@ -13,7 +13,7 @@ public class InventoryEventDectector {
     public void init() {
         MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null) {
+                if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory().getItem(1) == null) {
                     Bukkit.getPluginManager().callEvent(new PlayerOpenInventoryEvent(player,player.getOpenInventory()));
                 }
             }
