@@ -1,7 +1,6 @@
 package me.orange.anan.job;
 
 import io.fairyproject.container.InjectableComponent;
-import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.events.PlayerChooseJobEvent;
 import me.orange.anan.events.PlayerLevelUpEvent;
 import me.orange.anan.player.config.JobElement;
@@ -17,13 +16,13 @@ import java.util.UUID;
 @InjectableComponent
 public class JobManager {
     private final PlayerConfig playerConfig;
-    private final JobRegister jobRegister;
+    private final JobRegistry jobRegistry;
 
     private Map<UUID, JobStats> jobStatsMap = new HashMap<>();
 
-    public JobManager(PlayerConfig playerConfig, JobRegister jobRegister) {
+    public JobManager(PlayerConfig playerConfig, JobRegistry jobRegistry) {
         this.playerConfig = playerConfig;
-        this.jobRegister = jobRegister;
+        this.jobRegistry = jobRegistry;
 
         loadConfig();
     }
@@ -75,11 +74,11 @@ public class JobManager {
     }
 
     public Job getJob(String jobName) {
-        return jobRegister.getJobs().stream().filter(job -> job.getName().equals(jobName)).findFirst().orElse(null);
+        return jobRegistry.getJobs().stream().filter(job -> job.getName().equals(jobName)).findFirst().orElse(null);
     }
 
     public Job getJobByID(String jobID) {
-        return jobRegister.getJobs().stream().filter(job -> job.getID().equals(jobID)).findFirst().orElse(null);
+        return jobRegistry.getJobs().stream().filter(job -> job.getID().equals(jobID)).findFirst().orElse(null);
     }
 
     public boolean hasJob(Player player) {

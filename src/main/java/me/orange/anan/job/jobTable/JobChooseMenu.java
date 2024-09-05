@@ -11,7 +11,7 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
-import me.orange.anan.job.JobRegister;
+import me.orange.anan.job.JobRegistry;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -32,9 +32,9 @@ public class JobChooseMenu {
         NormalPane pane = Pane.normal(PaneMapping.rectangle(1,1,7,4));
 
         //for Job in JobRegister
-        JobRegister jobRegister = new JobRegister();
+        JobRegistry jobRegistry = new JobRegistry();
         int slot =1;
-        for (Job job : jobRegister.getJobs()) {
+        for (Job job : jobRegistry.getJobs()) {
             pane.setSlot(slot, slot / 7 + 1, GuiSlot.of(ItemBuilder.of(job.getIcon())
                     .name("§f" + job.getName())
                     .lore("§7" + job.getDescription())

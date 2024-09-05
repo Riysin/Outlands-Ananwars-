@@ -8,7 +8,7 @@ public interface Job {
     String getID();
     String getName();
     String getDescription();
-    String getPrefix();
+    String getSuffix();
     XMaterial getIcon();
 
     String getUpgradeName();

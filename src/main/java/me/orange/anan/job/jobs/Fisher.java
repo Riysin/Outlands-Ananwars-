@@ -24,8 +24,8 @@ public class Fisher implements Job {
     }
 
     @Override
-    public String getPrefix() {
-        return "" ;
+    public String getSuffix() {
+        return " §3[F]§f" ;
     }
 
     @Override

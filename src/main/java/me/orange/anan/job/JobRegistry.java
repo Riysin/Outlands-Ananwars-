@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @InjectableComponent
-public class JobRegister {
+public class JobRegistry {
     private List<Job> jobs = new ArrayList<>();
 
-    public JobRegister() {
+    public JobRegistry() {
         registerJob(new Fisher());
     }
 

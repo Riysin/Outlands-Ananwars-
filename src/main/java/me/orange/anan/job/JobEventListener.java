@@ -29,9 +29,11 @@ public class JobEventListener implements Listener {
         Player player = event.getPlayer();
         Job job = jobManager.getJobByID("fisher");
         event.setExpToDrop(0);
+
         if (!jobManager.hasJob(player) || jobManager.getPlayerCurrentJob(player) != job) {
             return;
         }
+
         if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
             ItemStack itemStack = ((Item) event.getCaught()).getItemStack();
             int level = jobManager.getPlayerJobLevel(player, job);

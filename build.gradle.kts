@@ -89,6 +89,7 @@ repositories {
     maven(url = uri("https://maven.citizensnpcs.co/repo")) {
         name = "citizens-repo"
     }
+    maven(url = uri("https://jitpack.io"))
 }
 
 // Dependencies
@@ -99,6 +100,7 @@ dependencies {
     implementation("net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
+    compileOnly("com.github.NEZNAMY:TAB-API:4.1.8")
 }
 
 tasks.withType(ShadowJar::class.java) {

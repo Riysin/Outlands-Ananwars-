@@ -1,9 +1,10 @@
 package me.orange.anan.clan;
 
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.mc.hologram.Hologram;
-import io.fairyproject.mc.hologram.entity.HologramEntity;
-import io.fairyproject.mc.hologram.entity.factory.HologramEntityFactory;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
+import me.neznamy.tab.api.nametag.NameTagManager;
+import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import me.orange.anan.clan.config.ClanConfig;
 import me.orange.anan.clan.config.ClanConfigElement;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import java.util.*;
 public class ClanManager {
     private final Map<String, Clan> clanMap = new HashMap<>();
     private final ClanConfig clanConfig;
+    private NameTagManager nameTagManager;
 
     public ClanManager(ClanConfig clanConfig) {
         this.clanConfig = clanConfig;
@@ -150,6 +152,22 @@ public class ClanManager {
         Clan clan = getPlayerClan(player);
         if (clan != null) {
             clan.getOnlineBukkitPlayers().forEach(p -> p.sendMessage(message));
+        }
+    }
+
+    public void setHologram(Player player ){
+        TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+        String clanPrefix = "§2";
+
+        if(TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager){
+            if(inClan(player)){
+               clanPrefix = "§2[" + getClanName(player) + "]";
+            }
+
+            UnlimitedNameTagManager manager = (UnlimitedNameTagManager) TabAPI.getInstance().getNameTagManager();
+            manager.setName(tabPlayer, "§f");
+            manager.setLine(tabPlayer,"myCustomLine", clanPrefix);
+            manager.enableArmorStands(tabPlayer);
         }
     }
 }

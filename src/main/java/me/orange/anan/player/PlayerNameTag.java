@@ -13,6 +13,7 @@ import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,28 +34,27 @@ public class PlayerNameTag extends NameTagAdapter {
         Player bukkitPlayer = player.as(Player.class);//看的人
         Clan targetClan = clanManager.getPlayerClan(bukkitTarget);
         Clan playerClan = clanManager.getPlayerClan(bukkitPlayer);
-        NameTag noClan = new NameTag(Component.text("§7[NoTeam]§r "), Component.empty(), TextColor.color(255, 255, 255), WrapperPlayServerTeams.NameTagVisibility.ALWAYS);
+        NameTag noJob = new NameTag(Component.empty(), Component.empty(), TextColor.color(255, 255, 255), WrapperPlayServerTeams.NameTagVisibility.ALWAYS);
 
         //output
-        if (clanManager.inClan(bukkitTarget)) {
-            Clan clan = clanManager.getPlayerClan(bukkitTarget);
-            String jobPrefix = "";
-            if(jobManager.hasJob(bukkitTarget)) {
-                jobPrefix = jobManager.getPlayerCurrentJob(bukkitTarget).getPrefix();
-            }
-            Component prefix = Component.text(clan.getPrefix());
-            Component suffix = Component.text(jobPrefix);
-            TextColor color = LegacyComponentSerializer.parseChar(clan.getColor().getChar()).color();
+        if (jobManager.hasJob(bukkitTarget)) {
+            String jobSuffix = jobManager.getPlayerCurrentJob(bukkitTarget).getSuffix();
+
+            Component prefix = Component.text("");
+            Component suffix = Component.text(jobSuffix);
+            TextColor color = TextColor.color(255, 255, 255);
             WrapperPlayServerTeams.NameTagVisibility nameTagVisibility = getNameTagVisibility(playerClan, targetClan);
+
             return new NameTag(prefix, suffix, color, nameTagVisibility);
         }
-        return noClan;
+        return noJob;
     }
 
-    @NotNull
     private static WrapperPlayServerTeams.NameTagVisibility getNameTagVisibility(Clan playerClan, Clan targetClan) {
         WrapperPlayServerTeams.NameTagVisibility nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.ALWAYS;
         //nametag visibility option
+        if (playerClan == null || targetClan == null) return nameTagVisibility;
+
         if (playerClan == targetClan && targetClan.getNametagVisibility() == NametagVisibility.hideForOwnTeams)
             nameTagVisibility = WrapperPlayServerTeams.NameTagVisibility.NEVER;
         else if (playerClan != targetClan && targetClan.getNametagVisibility() == NametagVisibility.hideForOtherTeams)

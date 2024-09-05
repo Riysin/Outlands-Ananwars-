@@ -27,6 +27,7 @@ public class ClanEventListener implements Listener {
     @EventHandler
     public void onJoinTeam(PlayerJoinClanEvent event) {
         nameTagService.update(MCPlayer.from(event.getPlayer()));
+        clanManager.setHologram(event.getPlayer());
     }
 
     @EventHandler
