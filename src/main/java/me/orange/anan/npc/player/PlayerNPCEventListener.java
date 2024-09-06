@@ -3,16 +3,13 @@ package me.orange.anan.npc.player;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.player.PlayerDataManager;
-import me.orange.anan.player.config.PlayerConfig;
-import me.orange.anan.player.death.DeathLootManager;
-import me.orange.anan.player.death.RespawnMenu;
+import me.orange.anan.player.death.DeathRespawnMenu;
+import me.orange.anan.player.death.deathloot.DeathLootManager;
 import net.citizensnpcs.api.event.NPCDeathEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.trait.HologramTrait;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,13 +22,13 @@ public class PlayerNPCEventListener implements Listener {
     private final PlayerNPCManager playerNPCManager;
     private final DeathLootManager deathLootManager;
     private final PlayerDataManager playerDataManager;
-    private final RespawnMenu respawnMenu;
+    private final DeathRespawnMenu deathRespawnMenu;
 
-    public PlayerNPCEventListener(PlayerNPCManager playerNPCManager, DeathLootManager deathLootManager, PlayerDataManager playerDataManager, RespawnMenu respawnMenu) {
+    public PlayerNPCEventListener(PlayerNPCManager playerNPCManager, DeathLootManager deathLootManager, PlayerDataManager playerDataManager, DeathRespawnMenu deathRespawnMenu) {
         this.playerNPCManager = playerNPCManager;
         this.deathLootManager = deathLootManager;
         this.playerDataManager = playerDataManager;
-        this.respawnMenu = respawnMenu;
+        this.deathRespawnMenu = deathRespawnMenu;
     }
 
     @EventHandler

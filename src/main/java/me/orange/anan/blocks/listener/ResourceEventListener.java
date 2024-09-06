@@ -1,9 +1,10 @@
-package me.orange.anan.blocks;
+package me.orange.anan.blocks.listener;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
+import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import me.orange.anan.events.BlockResourceBreakEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,29 +21,29 @@ import java.util.Set;
 @InjectableComponent
 @RegisterAsListener
 public class ResourceEventListener implements Listener {
+    private final TeamCoreManager teamCoreManager;
     private Set<Location> treeLogs = new HashSet<>();
     private final Random random = new Random();
+
+    public ResourceEventListener(TeamCoreManager teamCoreManager) {
+        this.teamCoreManager = teamCoreManager;
+    }
 
     @EventHandler
     public void onResourceBreak(BlockResourceBreakEvent event) {
         Block block = event.getBlock();
 
-        if (block.getType() == Material.LOG) { // You can expand this to include other tree types
+        if (block.getType() == Material.LOG) {
             if (treeLogs.isEmpty()) {
-                // Start tracking a new tree
                 trackTree(block);
             }
-
-            // Remove the block from the set of logs
             treeLogs.remove(block.getLocation());
 
-            // If all logs are chopped, respawn the tree
             if (treeLogs.isEmpty()) {
                 final Location treeLocation = block.getLocation();
-                Bukkit.broadcastMessage("Tree chopped down at " + treeLocation.toVector().toString());
                 MCSchedulers.getGlobalScheduler().schedule(()->{
                     Location respawnLocation = getValidSpawnLocation(treeLocation, 10);
-                    if (respawnLocation != null) {
+                    if (respawnLocation != null ) {
                         respawnLocation.getWorld().generateTree(respawnLocation, TreeType.TREE);
                         Bukkit.broadcastMessage("Tree respawned at " + BukkitPos.toMCPos(respawnLocation));
                     }
@@ -83,7 +84,7 @@ public class ResourceEventListener implements Listener {
 
             // Check if the block below is grass or dirt
             Block baseBlock = spawnLocation.getBlock().getRelative(0, -1, 0);
-            if (baseBlock.getType() == Material.GRASS || baseBlock.getType() == Material.DIRT) {
+            if ((baseBlock.getType() == Material.GRASS || baseBlock.getType() == Material.DIRT || baseBlock.getType() == Material.SNOW)&& !teamCoreManager.isInTerritory(spawnLocation)){
                 return spawnLocation; // Found a valid location
             }
         }

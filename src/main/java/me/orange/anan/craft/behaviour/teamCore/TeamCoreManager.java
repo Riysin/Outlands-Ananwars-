@@ -145,9 +145,17 @@ public class TeamCoreManager {
         return clanManager.sameClan(player, teamCore.getOfflinePlacePlayer());
     }
 
-    public boolean inTerritory(Player player) {
+    public boolean isInTerritory(Player player) {
         for (TeamCore teamCore : teamCores) {
             if (teamCore.getTerritoryBlocks().contains(player.getLocation().getBlock()))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isInTerritory(Location location) {
+        for (TeamCore teamCore : teamCores) {
+            if (teamCore.getTerritoryBlocks().contains(location.getBlock()))
                 return true;
         }
         return false;
