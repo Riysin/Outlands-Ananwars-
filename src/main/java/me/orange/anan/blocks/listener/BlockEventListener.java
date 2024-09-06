@@ -1,4 +1,4 @@
-package me.orange.anan.blocks;
+package me.orange.anan.blocks.listener;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.messages.ActionBar;
@@ -6,6 +6,9 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.blocks.BlockStats;
+import me.orange.anan.blocks.BlockStatsManager;
+import me.orange.anan.blocks.BlockType;
 import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.craft.Craft;
@@ -52,17 +55,13 @@ public class BlockEventListener implements Listener {
     private final NatureBlockConfig natureBlockConfig;
     private final BuildConfig buildConfig;
     private final TeamCoreManager teamCoreManager;
-    private final LockManager lockManager;
-    private final ClanManager clanManager;
 
-    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, TeamCoreManager teamCoreManager, LockManager lockManager, ClanManager clanManager) {
+    public BlockEventListener(BlockStatsManager blockStatsManager, CraftManager craftManager, NatureBlockConfig natureBlockConfig, BuildConfig buildConfig, TeamCoreManager teamCoreManager) {
         this.blockStatsManager = blockStatsManager;
         this.craftManager = craftManager;
         this.natureBlockConfig = natureBlockConfig;
         this.buildConfig = buildConfig;
         this.teamCoreManager = teamCoreManager;
-        this.lockManager = lockManager;
-        this.clanManager = clanManager;
     }
 
     @EventHandler
@@ -194,134 +193,7 @@ public class BlockEventListener implements Listener {
         );
     }
 
-    @EventHandler
-    public void onTargetBlock(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
 
-        //ignored materials
-        Set<Material> materials = new HashSet<>();
-        materials.add(XMaterial.AIR.parseMaterial());
-        materials.add(XMaterial.WATER.parseMaterial());
-        materials.add(XMaterial.LAVA.parseMaterial());
 
-        Block targetBlock = player.getTargetBlock(materials, 4);
-        Block mainBlock = blockStatsManager.getMainBlock(targetBlock);
 
-        if (mainBlock != null) {
-            BlockStats blockStats = blockStatsManager.getBlockStats(mainBlock);
-            if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
-                ActionBar.sendActionBar(player, " health:§a " + blockStats.getHealth());
-            }
-        }
-
-        Entity target = getTargetEntity(player, 5); // 10 is the max distance to check
-
-        if (target instanceof Slime) {
-            Slime slime = (Slime) target;
-            double health = slime.getHealth();
-            ActionBar.sendActionBar(player, " health:§a " + health);
-        }
-
-        if (target instanceof Creeper) {
-            Creeper creeper = (Creeper) target;
-
-            if (teamCoreManager.inTerritory(player)) {
-                ActionBar.sendActionBar(player, "§3You are in a territory!");
-            }
-
-            ActionBar.sendActionBar(player, "§6Core HP: §a" + creeper.getHealth());
-        }
-    }
-
-    private Entity getTargetEntity(Player player, int range) {
-        Location eyeLocation = player.getEyeLocation();
-         Vector direction = eyeLocation.getDirection().normalize();
-
-        for (int i = 0; i < range; i++) {
-            Location checkLocation = eyeLocation.add(direction);
-            for (Entity entity : player.getNearbyEntities(range, range, range)) {
-                if (entity.getLocation().distance(checkLocation) < 1.5) {
-                    return entity;
-                }
-            }
-        }
-        return null;
-    }
-
-    @EventHandler
-    public void onDoorClicked(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            Player player = event.getPlayer();
-            Block block = blockStatsManager.getMainBlock(event.getClickedBlock());
-            Material type = block.getType();
-            boolean isKeyInHand = player.getItemInHand().isSimilar(craftManager.getItemStack(craftManager.getCrafts().get("key"), player));
-            boolean isLockInHand = player.getItemInHand().isSimilar(craftManager.getItemStack(craftManager.getCrafts().get("lock"), player));
-
-            if (lockManager.isLockableBlock(block)) {
-
-                if (lockManager.hasLock(block) && !lockManager.isInOwnerClan(player, block)) {
-                    event.setCancelled(true);
-                    player.sendMessage("§c此物已經被上鎖了!");
-                    return;
-                }
-            }
-
-            // open iron door on player right click
-            if (type == Material.IRON_DOOR_BLOCK || type == Material.IRON_DOOR) {
-                if ((!lockManager.hasLock(block)|| lockManager.isInOwnerClan(player,block)) && !isKeyInHand && !isLockInHand) {
-                    Door door = (Door) block.getState().getData();
-                    door.setOpen(!door.isOpen());
-                    block.setData(door.getData());
-                    block.getWorld().playSound(block.getLocation(), Sound.DOOR_OPEN, 1.0f, 1.0f);
-                }else {
-                    event.setCancelled(true);
-                }
-            }
-        }
-    }
-
-    @EventHandler
-    public void onSmelt(FurnaceSmeltEvent event) {
-        ItemStack item = event.getResult();
-        Craft craft = craftManager.getCraft(item);
-
-        event.setResult(craft.getItemStack());
-    }
-
-    @EventHandler
-    public void onExtractFromFurnace(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        if (event.getInventory().getType() == InventoryType.FURNACE && event.getSlotType() == InventoryType.SlotType.RESULT) {
-            ItemStack itemStack = craftManager.getItemStack(craftManager.getCraft(event.getCurrentItem()), player).clone();
-            itemStack.setAmount(event.getCurrentItem().getAmount());
-            event.setCurrentItem(itemStack);
-        }
-    }
-
-    @EventHandler
-    public void onFurnaceExtract(FurnaceExtractEvent event) {
-        event.setExpToDrop(0);
-    }
-
-    @EventHandler
-    public void onExplosion(EntityExplodeEvent event) {
-        event.setCancelled(true);
-
-        for (Block block : event.blockList()) {
-            Block mainBlock = blockStatsManager.getMainBlock(block);
-
-            if(!blockStatsManager.getBlockStatsMap().containsKey(mainBlock)) {
-                continue;
-            }
-
-            BlockStats blockStats = blockStatsManager.getBlockStats(mainBlock);
-            blockStats.setHealth(blockStats.getHealth() - 10);
-            if (blockStats.getHealth() <= 0) {
-                blockStatsManager.getBlockStatsMap().remove(mainBlock);
-                mainBlock.setType(Material.AIR);
-            }
-
-        }
-
-    }
 }
