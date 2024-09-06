@@ -19,11 +19,11 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
 @InjectableComponent
-public class RespawnMenu {
+public class DeathRespawnMenu {
     private final GuiFactory guiFactory;
     private final BedManager bedManager;
 
-    public RespawnMenu(GuiFactory guiFactory, BedManager bedManager) {
+    public DeathRespawnMenu(GuiFactory guiFactory, BedManager bedManager) {
         this.guiFactory = guiFactory;
         this.bedManager = bedManager;
     }

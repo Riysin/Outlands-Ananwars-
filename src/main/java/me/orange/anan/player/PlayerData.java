@@ -16,8 +16,6 @@ public class PlayerData {
     //stats
     private List<UUID> friendRequests = new ArrayList<>();
     private BossBar BossBar;
-    private boolean knocked = false;
-    private boolean saving = false;
     private boolean npcDied = false;
     private Skin skin = Skin.GRAY;
     private Set<String> canCraftItems = new HashSet<>();
@@ -100,22 +98,6 @@ public class PlayerData {
 
     public void setCanCraftItems(Set<String> canCraftItems) {
         this.canCraftItems = canCraftItems;
-    }
-
-    public boolean isSaving() {
-        return saving;
-    }
-
-    public void setSaving(boolean saving) {
-        this.saving = saving;
-    }
-
-    public boolean isKnocked() {
-        return knocked;
-    }
-
-    public void setKnocked(boolean knocked) {
-        this.knocked = knocked;
     }
 
     public Skin getSkin() {

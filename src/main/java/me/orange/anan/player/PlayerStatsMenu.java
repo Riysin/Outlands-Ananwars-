@@ -12,6 +12,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
+import me.orange.anan.player.death.DeathManager;
 import me.orange.anan.player.friend.FriendMenu;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -28,13 +29,15 @@ public class PlayerStatsMenu {
     private final JobManager jobManager;
     private final ClanManager clanManager;
     private final FriendMenu friendMenu;
+    private final DeathManager deathManager;
 
-    public PlayerStatsMenu(GuiFactory guiFactory, PlayerDataManager playerDataManager, JobManager jobManager, ClanManager clanManager, FriendMenu friendMenu) {
+    public PlayerStatsMenu(GuiFactory guiFactory, PlayerDataManager playerDataManager, JobManager jobManager, ClanManager clanManager, FriendMenu friendMenu, DeathManager deathManager) {
         this.guiFactory = guiFactory;
         this.playerDataManager = playerDataManager;
         this.jobManager = jobManager;
         this.clanManager = clanManager;
         this.friendMenu = friendMenu;
+        this.deathManager = deathManager;
     }
 
     public void open(Player ctx, Player player) {
@@ -86,7 +89,7 @@ public class PlayerStatsMenu {
                 .name("§cRespawn")
                 .lore("§7Click to respawn", "", "§e§lWarning:", " §cYou will lose all your items in your inventory!").build(), clicker -> {
             Bukkit.getPluginManager().callEvent(new InventoryCloseEvent(ctx.getPlayer().getOpenInventory()));
-            playerDataManager.getPlayerData(player).setKnocked(true);
+            deathManager.addDownPlayer(player);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kill " + player.getName());
         }));
 

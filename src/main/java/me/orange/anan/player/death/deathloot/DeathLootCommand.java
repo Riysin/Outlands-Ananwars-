@@ -1,4 +1,4 @@
-package me.orange.anan.player.death;
+package me.orange.anan.player.death.deathloot;
 
 import io.fairyproject.bukkit.command.event.BukkitCommandContext;
 import io.fairyproject.command.BaseCommand;

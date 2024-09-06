@@ -1,4 +1,4 @@
-package me.orange.anan.player.death;
+package me.orange.anan.player.death.deathloot;
 
 import org.bukkit.inventory.Inventory;
 
