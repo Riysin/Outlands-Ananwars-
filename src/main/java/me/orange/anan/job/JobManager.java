@@ -107,4 +107,9 @@ public class JobManager {
             Bukkit.getPluginManager().callEvent(new PlayerLevelUpEvent(Bukkit.getPlayer(uuid), job));
         }
     }
+
+    public void removePlayer(Player player, Job job) {
+        jobStatsMap.get(player.getUniqueId()).getJobLevelMap().remove(job.getID());
+        jobStatsMap.get(player.getUniqueId()).setCurrentJob(null);
+    }
 }

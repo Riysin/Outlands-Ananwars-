@@ -1,48 +1,63 @@
 package me.orange.anan.job;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
-import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
-import me.orange.anan.craft.CraftManager;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Item;
+import io.fairyproject.mc.MCPlayer;
+import io.fairyproject.mc.nametag.NameTagService;
+import me.orange.anan.events.PlayerChooseJobEvent;
+import me.orange.anan.events.PlayerLevelUpEvent;
+import me.orange.anan.job.jobTable.JobChooseMenu;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 @InjectableComponent
 @RegisterAsListener
 public class JobEventListener implements Listener {
+    private final JobChooseMenu jobChooseMenu;
     private final JobManager jobManager;
-    private final CraftManager craftManager;
+    private final NameTagService nameTagService;
 
-    public JobEventListener(JobManager jobManager, CraftManager craftManager) {
+    public JobEventListener(JobChooseMenu jobChooseMenu, JobManager jobManager, NameTagService nameTagService) {
+        this.jobChooseMenu = jobChooseMenu;
         this.jobManager = jobManager;
-        this.craftManager = craftManager;
+        this.nameTagService = nameTagService;
     }
 
     @EventHandler
-    public void onFish(PlayerFishEvent event) {
-        Player player = event.getPlayer();
-        Job job = jobManager.getJobByID("fisher");
-        event.setExpToDrop(0);
-
-        if (!jobManager.hasJob(player) || jobManager.getPlayerCurrentJob(player) != job) {
-            return;
+    public void onRightClickEnchantingTable(PlayerInteractEvent event) {
+        if (event.hasBlock() && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == XMaterial.ENCHANTING_TABLE.parseMaterial()) {
+            event.setCancelled(true);
+            jobChooseMenu.open(event.getPlayer());
         }
+    }
 
-        if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
-            ItemStack itemStack = ((Item) event.getCaught()).getItemStack();
-            int level = jobManager.getPlayerJobLevel(player, job);
+    @EventHandler
+    public void onChoose(PlayerChooseJobEvent event) {
+        Player player = event.getPlayer();
+        Job job = event.getJob();
+        int jobLevel = jobManager.getPlayerJobLevel(player, job);
+        player.sendMessage("§fYou have chosen the §6§l" + job.getName() + " §fjob!");
+        player.setLevel(0);
+        player.setLevel(jobLevel);
 
-            itemStack = job.upgradeSKill(itemStack, player, level);
-            ItemStack newItem = craftManager.getItemStack(itemStack, player);
-            newItem.setAmount(itemStack.getAmount());
+        nameTagService.update(MCPlayer.from(player));
+    }
 
-            ((Item) event.getCaught()).setItemStack(ItemBuilder.of(newItem).build());
+    @EventHandler
+    public void onUpgrade(PlayerLevelUpEvent event) {
+        Player player = event.getPlayer();
+        Job job = event.getJob();
+        int jobLevel = jobManager.getPlayerJobLevel(player, job);
+        player.sendMessage("§fYour §6§l" + job.getName() + " §fhas become level§a" + jobLevel + "§f!");
+        player.setLevel(0);
+        player.setLevel(jobLevel);
+        if(jobLevel == 35) {
+            player.sendMessage("§b§lYou have reached the maximum level of §6§l" + job.getName() + "§f!");
+            job.active(player);
         }
     }
 }

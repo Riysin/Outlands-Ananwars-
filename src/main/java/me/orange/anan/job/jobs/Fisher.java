@@ -1,9 +1,14 @@
 package me.orange.anan.job.jobs;
 
+import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import io.fairyproject.bukkit.util.items.ItemBuilder;
 import me.orange.anan.job.Job;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
 
@@ -35,12 +40,12 @@ public class Fisher implements Job {
 
     @Override
     public String getUpgradeName() {
-        return "幸運漁夫";
+        return "雙重捕魚";
     }
 
     @Override
     public String getUpgradeDescription() {
-        return "增加捕捉稀有魚類的機率。";
+        return "增加一次捕到兩條魚的機會。";
     }
 
     @Override
@@ -48,19 +53,16 @@ public class Fisher implements Job {
         return 3;
     }
 
-    @Override
-    public ItemStack upgradeSKill(ItemStack itemStack, Player player, int level) {
+    public boolean upgradeSKill(int level) {
         Random random = new Random();
         int roll = random.nextInt(100);
         int chancePerLevel = 3;
-        ItemStack clone = itemStack.clone();
 
         if (roll < level * chancePerLevel) {
-            clone.setAmount(itemStack.getAmount() * 2);
-            player.sendMessage("§a漁夫職業幫你捕捉到了雙倍的魚！");
+            return true;
         }
 
-        return clone;
+        return false;
     }
 
     @Override
@@ -70,17 +72,17 @@ public class Fisher implements Job {
 
     @Override
     public String getSkill1Description() {
-        return "能更快地捕魚。";
+        return "將手中釣竿提升一級魚餌等級。";
     }
 
-    @Override
-    public void skill1() {
-        // 實現快速捕魚的邏輯
+    public boolean skill1(Player player) {
+        ItemStack item = player.getItemInHand();
+        return item.getType().equals(Material.FISHING_ROD);
     }
 
     @Override
     public String getSkill2Name() {
-        return "雙重捕魚";
+        return "捕魚狂熱";
     }
 
     @Override
@@ -88,9 +90,12 @@ public class Fisher implements Job {
         return "有機會一次捕到兩條魚。";
     }
 
-    @Override
-    public void skill2() {
-        // 實現雙重捕魚的邏輯
+    public boolean skill2(Player player) {
+        Random random = new Random();
+        int roll = random.nextInt(100);
+        int chance = 10;
+
+        return roll < chance;
     }
 
     @Override
@@ -103,19 +108,22 @@ public class Fisher implements Job {
         return "在水中擁有水中呼吸效果。";
     }
 
-    @Override
-    public void skill3() {
-        // 實現幸運魚鉤的邏輯
+    public boolean skill3(Player player) {
+        if(player.getLocation().getBlock().getType().equals(Material.WATER)) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20 * 60 * 5, 0));
+            return true;
+        }
+        return false;
     }
 
     @Override
     public String getActiveName() {
-        return "捕魚狂熱";
+        return "漁王釣竿";
     }
 
     @Override
     public String getActiveDescription() {
-        return "暫時提升捕魚速度。";
+        return "獲得一把超強的釣竿。";
     }
 
     @Override
@@ -124,7 +132,16 @@ public class Fisher implements Job {
     }
 
     @Override
-    public void active() {
-        // 實現捕魚狂熱的邏輯
+    public void active(Player player) {
+        ItemStack item = ItemBuilder.of(XMaterial.FISHING_ROD)
+                .name("§6漁王釣竿")
+                .enchantment(XEnchantment.LURE,4)
+                .enchantment(XEnchantment.LUCK_OF_THE_SEA,3)
+                .build();
+
+        item.getItemMeta().spigot().setUnbreakable(true);
+
+        player.getInventory().addItem(item);
+        player.sendMessage("§a你獲得了一把§6漁王釣竿§a!");
     }
 }
