@@ -2,6 +2,7 @@ package me.orange.anan.npc.player;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.player.PlayerDataManager;
 import me.orange.anan.player.death.DeathRespawnMenu;
 import me.orange.anan.player.death.deathloot.DeathLootManager;
@@ -10,6 +11,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.trait.HologramTrait;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,6 +42,10 @@ public class PlayerNPCEventListener implements Listener {
         if (playerDataManager.getPlayerData(player).isNpcDied()) {
             playerDataManager.getPlayerData(player).setNpcDied(false);
             player.sendMessage("§c§lYour NPC died while you were offline. You have to respawn!.");
+            MCSchedulers.getGlobalScheduler().schedule(() ->{
+                player.setGameMode(GameMode.SPECTATOR);
+                deathRespawnMenu.open(player);
+            }, 1);
         }
 
     }
