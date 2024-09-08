@@ -5,16 +5,19 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @InjectableComponent
 public class ToolConfig extends YamlConfiguration {
+    private final CraftManager craftManager;
     private Map<String, Integer> toolMap = new HashMap<>();
 
     protected ToolConfig(Anan plugin, CraftManager craftManager) {
         super(plugin.getDataFolder().resolve("tools.yml"));
+        this.craftManager = craftManager;
         this.loadAndSave();
 
         craftManager.loadConfigFile();
@@ -29,9 +32,10 @@ public class ToolConfig extends YamlConfiguration {
         return this.toolMap;
     }
 
-    public int getToolDamage(String toolId) {
-        if(toolMap.containsKey(toolId))
-            return toolMap.get(toolId);
-        return 1;
+    public int getToolDamage(ItemStack toolItem){
+        if(toolItem == null || craftManager.getCraft(toolItem) == null){
+            return 1;
+        }
+        return toolMap.getOrDefault(craftManager.getCraft(toolItem).getID(), 1);
     }
 }

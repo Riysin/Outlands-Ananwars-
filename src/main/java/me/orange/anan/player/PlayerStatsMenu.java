@@ -65,13 +65,13 @@ public class PlayerStatsMenu {
                 .of(XMaterial.PLAYER_HEAD)
                 .skull(player.getName())
                 .name("§b§l" + player.getName())
-
+                .lore("§f Kills: §e" + playerDataManager.getPlayerData(player).getKills()
+                        , "§f Deaths: §c" + playerDataManager.getPlayerData(player).getDeaths())
                 .build()));
 
         pane.setSlot(2, 1, GuiSlot.of(ItemBuilder.of(XMaterial.IRON_SWORD)
                 .name("§eJob")
-                .lore("§f Kills: §e" + playerDataManager.getPlayerData(player).getKills()
-                        , "§f Deaths: §c" + playerDataManager.getPlayerData(player).getDeaths())
+                .lore(jobLore)
                 .build()));
 
         pane.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)

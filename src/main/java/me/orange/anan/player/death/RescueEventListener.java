@@ -111,7 +111,6 @@ public class RescueEventListener implements Listener {
         player.removePotionEffect(PotionEffectType.WITHER);
         player.removePotionEffect(PotionEffectType.WEAKNESS);
         player.getWorld().playEffect(player.getLocation(), Effect.WATERDRIP, 0);
-        player.sendTitle("§a你被救起了", "§e感謝你的隊友");
         deathManager.removeDownPlayer(player);
     }
 }

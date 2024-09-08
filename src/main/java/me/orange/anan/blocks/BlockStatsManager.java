@@ -90,8 +90,7 @@ public class BlockStatsManager {
 
     public void breakBlock(Player player, Block block, ItemStack toolItem) {
         BlockStats blockStats = getBlockStats(block);
-        String toolId = craftManager.getCraft(toolItem).getID();
-        blockStats.setHealth(blockStats.getHealth() - toolConfig.getToolDamage(toolId));
+        blockStats.setHealth(blockStats.getHealth() - toolConfig.getToolDamage(toolItem));
 
         blockBreakScheduler(block);
         Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
