@@ -180,6 +180,30 @@ public class TeamCoreManager {
         return null;
     }
 
+    public TeamCore getNearestTeamCore(Location location) {
+        TeamCore nearestTeamCore = null;
+        double nearestDistance = Double.MAX_VALUE;
+
+        for (TeamCore teamCore : teamCores) {
+            double distance = teamCore.getCoreBlock().getLocation().distance(location);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestTeamCore = teamCore;
+            }
+        }
+        return nearestTeamCore;
+    }
+
+    public boolean isNearTeamCore(Block block) {
+        for (TeamCore teamCore : teamCores) {
+            Block coreBlock = teamCore.getCoreBlock();
+            if (coreBlock.getLocation().distance(block.getLocation()) < 30 && !coreBlock.equals(block)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addConnectedTeamBlocks(TeamCore teamCore, Block block) {
         Set<Block> visitedBlocks = new HashSet<>();
         teamCore.setConnectedBlocks(exploreConnectedBlocks(block));

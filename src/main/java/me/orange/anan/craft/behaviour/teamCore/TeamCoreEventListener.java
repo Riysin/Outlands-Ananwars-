@@ -1,30 +1,22 @@
 package me.orange.anan.craft.behaviour.teamCore;
 
-import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.messages.ActionBar;
 import io.fairyproject.bukkit.events.player.EntityDamageByPlayerEvent;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
-import me.orange.anan.clan.ClanManager;
 import me.orange.anan.events.PlayerPlaceTeamCoreEvent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.material.Door;
-import org.bukkit.util.Vector;
 
 @InjectableComponent
 @RegisterAsListener
@@ -58,6 +50,13 @@ public class TeamCoreEventListener implements Listener {
         if (belowBlockStat == null || belowBlockStat.getBlockType() != BlockType.BUILDING) {
             sendErrorMessage(player);
             event.setCancelled(true);
+            return;
+        }
+
+        if(teamCoreManager.isNearTeamCore(block) && block.getType() == Material.ENDER_PORTAL_FRAME) {
+            event.setCancelled(true);
+            player.sendMessage("§c你不能在隊伍核心附近放置其他隊伍核心!");
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);
             return;
         }
 
