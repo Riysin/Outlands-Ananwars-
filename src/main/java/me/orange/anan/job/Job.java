@@ -16,10 +16,13 @@ public interface Job {
     int getChancePerLevel();
     String getSkill1Name();
     String getSkill1Description();
+    boolean skill1(Player player);
     String getSkill2Name();
     String getSkill2Description();
+    boolean skill2(Player player);
     String getSkill3Name();
     String getSkill3Description();
+    boolean skill3(Player player);
     String getActiveName();
     String getActiveDescription();
     XMaterial getActiveIcon();

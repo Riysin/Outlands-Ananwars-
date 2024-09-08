@@ -128,6 +128,10 @@ public class CraftManager {
         return fairyItemRegistry.get(craft.getID()).provideItemStack(player);
     }
 
+    public ItemStack getItemStack(String ID, Player player) {
+        return fairyItemRegistry.get(ID).provideItemStack(player);
+    }
+
     private void createFairyItem(Craft craft) {
         FairyItem.Builder builder = FairyItem.builder(craft.getID())
                 .item(craft.getItemStack());
@@ -188,7 +192,7 @@ public class CraftManager {
     }
 
     public Craft getCraft(ItemStack itemStack) {
-        AtomicReference<Craft> craft = new AtomicReference<>();
+        AtomicReference<Craft> craft = new AtomicReference<>(null);
         crafts.forEach((id, c) -> {
             if (c.getMenuIcon() == XMaterial.matchXMaterial(itemStack)) {
                 craft.set(c);
@@ -198,7 +202,7 @@ public class CraftManager {
     }
 
     public Craft getCraft(XMaterial material) {
-        AtomicReference<Craft> craft = new AtomicReference<>();
+        AtomicReference<Craft> craft = new AtomicReference<>(null);
         crafts.forEach((id, c) -> {
             if (c.getMenuIcon() == material) {
                 craft.set(c);

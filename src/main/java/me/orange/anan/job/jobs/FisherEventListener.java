@@ -5,8 +5,10 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.events.PlayerLevelUpEvent;
+import me.orange.anan.fishing.FishManager;
 import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
@@ -29,10 +31,12 @@ import java.util.Random;
 public class FisherEventListener implements Listener {
     private final JobManager jobManager;
     private final CraftManager craftManager;
+    private final FishManager fishManager;
 
-    public FisherEventListener(JobManager jobManager, CraftManager craftManager) {
+    public FisherEventListener(JobManager jobManager, CraftManager craftManager, FishManager fishManager) {
         this.jobManager = jobManager;
         this.craftManager = craftManager;
+        this.fishManager = fishManager;
     }
 
     @EventHandler
@@ -65,41 +69,17 @@ public class FisherEventListener implements Listener {
         Player player = event.getPlayer();
         Job job = jobManager.getJobByID("fisher");
         event.setExpToDrop(0);
-
-        if (!jobManager.hasJob(player) || jobManager.getPlayerCurrentJob(player) != job) {
-            return;
-        }
-
         if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
-            Fisher fisher = (Fisher) job;
-            ItemStack itemStack = ((Item) event.getCaught()).getItemStack().clone();
-            int level = jobManager.getPlayerJobLevel(player, job);
-            boolean upgrade = fisher.upgradeSKill(level);
-            boolean skill2 = fisher.skill2(player);
-            ((Item) event.getCaught()).setItemStack(getFish(player, itemStack, upgrade, skill2));
+            ItemStack fish = ((Item) event.getCaught()).getItemStack();
+
+            if (!jobManager.hasJob(player) || jobManager.getPlayerCurrentJob(player) != job) {
+                fish = fishManager.getFishingLoot(player, 1);
+            } else if (job.upgradeSKill(player.getLevel())) {
+                fish = fishManager.getFishingLoot(player, 2);
+                player.sendMessage("§a你的技能讓你釣到了兩條魚!");
+            }
+            ((Item) event.getCaught()).setItemStack(fish);
         }
-    }
-
-    private ItemStack getFish(Player player, ItemStack itemStack, boolean upgrade, boolean skill2) {
-        List<ItemStack> fishList = new ArrayList<>();
-        fishList.add(craftManager.getItemStack(craftManager.getConfigItemWithID("fish"),player));
-        fishList.add(craftManager.getItemStack(craftManager.getConfigItemWithID("salmon"),player));
-        fishList.add(craftManager.getItemStack(craftManager.getConfigItemWithID("pufferfish"),player));
-        fishList.add(craftManager.getItemStack(craftManager.getConfigItemWithID("tropicalFish"),player));
-
-        if (skill2) {
-            itemStack.setType(XMaterial.EMERALD.parseMaterial());
-            player.sendMessage("§a你的技能讓你捕到了一個寶物!");
-        }
-
-        ItemStack newItem = craftManager.getItemStack(itemStack, player);
-
-        if (upgrade) {
-            player.sendMessage("§a雙倍捕魚讓你捕到了兩倍的物品!");
-            newItem.setAmount(2);
-        }
-
-        return newItem;
     }
 
     @EventHandler
@@ -111,10 +91,8 @@ public class FisherEventListener implements Listener {
             return;
         }
         Fisher fisher = (Fisher) job;
-        if(fisher.skill3(player)) {
-            player.sendMessage("§a你的技能讓你在水中移動時不會受到阻礙!");
-            player.setVelocity(player.getLocation().getDirection().multiply(0.5));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20 * 60 * 5, 0));
+        if (fisher.skill3(player)) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20 * 10, 0));
         }
     }
 }
