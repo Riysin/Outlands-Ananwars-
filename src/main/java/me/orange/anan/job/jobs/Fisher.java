@@ -109,11 +109,8 @@ public class Fisher implements Job {
     }
 
     public boolean skill3(Player player) {
-        if(player.getLocation().getBlock().getType().equals(Material.WATER)) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20 * 60 * 5, 0));
-            return true;
-        }
-        return false;
+        Material type = player.getLocation().getBlock().getType();
+        return type.equals(Material.WATER) || type.equals(Material.STATIONARY_WATER);
     }
 
     @Override

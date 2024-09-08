@@ -38,4 +38,18 @@ public class JobCommand extends BaseCommand {
         jobManager.removePlayer(player, job);
         ctx.getPlayer().sendMessage("Job removed");
     }
+
+    @Command(value = {"list"},permissionNode = "job.admin")
+    public void list(BukkitCommandContext ctx) {
+        ctx.getPlayer().sendMessage("Jobs: ");
+        for (String id : jobManager.getJobStatsMap().get(ctx.getPlayer().getUniqueId()).getJobLevelMap().keySet()) {
+            ctx.getPlayer().sendMessage(jobManager.getJobByID(id).getName());
+        }
+    }
+
+    @Command(value = {"resign "})
+    public void resign(BukkitCommandContext ctx) {
+        jobManager.setPlayerCurrentJob(ctx.getPlayer().getUniqueId(), null);
+        ctx.getPlayer().sendMessage("You have resigned from your job");
+    }
 }
