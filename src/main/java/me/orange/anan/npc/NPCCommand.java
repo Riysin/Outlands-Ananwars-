@@ -7,6 +7,7 @@ import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.NPCResourceDieEvent;
 import me.orange.anan.events.PlayerDamageNPCResourceEvent;
+import me.orange.anan.npc.task.TaskAssignMenu;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -17,11 +18,11 @@ import org.bukkit.entity.Player;
 @Command(value = {"aNpc"}, permissionNode = "npc.admin")
 public class NPCCommand extends BaseCommand {
     private final NPCManager npcManager;
-    private final NPCTaskMenu npcTaskMenu;
+    private final TaskAssignMenu taskAssignMenu;
 
-    public NPCCommand(NPCManager npcManager, NPCTaskMenu npcTaskMenu) {
+    public NPCCommand(NPCManager npcManager, TaskAssignMenu taskAssignMenu) {
         this.npcManager = npcManager;
-        this.npcTaskMenu = npcTaskMenu;
+        this.taskAssignMenu = taskAssignMenu;
     }
 
     @Command(value = "create")
@@ -59,9 +60,15 @@ public class NPCCommand extends BaseCommand {
         }
     }
 
+    @Command(value = "tasknpc")
+    public void taskNPC(BukkitCommandContext ctx, @Arg("name") String name) {
+        npcManager.createTaskNPC(name, ctx.getPlayer().getLocation());
+        ctx.getPlayer().sendMessage("Task NPC setup.");
+    }
+
     @Command(value = "task")
-    public void task(BukkitCommandContext ctx) {
-        npcTaskMenu.open(ctx.getPlayer());
+    public void task(BukkitCommandContext ctx, @Arg("npcName") String npcName) {
+        taskAssignMenu.open(ctx.getPlayer(), npcName);
         ctx.getPlayer().sendMessage("Task menu opened.");
     }
 

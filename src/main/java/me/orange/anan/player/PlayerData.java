@@ -1,6 +1,7 @@
 package me.orange.anan.player;
 
 import io.fairyproject.mc.tablist.util.Skin;
+import me.orange.anan.npc.task.Task;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 
@@ -13,6 +14,7 @@ public class PlayerData {
     private Location lastDeathLocation;
     private boolean bossBarActive = false;
     private List<UUID> friends = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
     //stats
     private List<UUID> friendRequests = new ArrayList<>();
     private BossBar BossBar;
@@ -82,6 +84,14 @@ public class PlayerData {
 
     public void setFriends(List<UUID> friends) {
         this.friends = friends;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     public List<UUID> getFriendRequests() {

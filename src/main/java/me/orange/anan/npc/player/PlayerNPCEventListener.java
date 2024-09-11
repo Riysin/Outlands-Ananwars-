@@ -75,7 +75,7 @@ public class PlayerNPCEventListener implements Listener {
         Player player = event.getClicker();
         NPC npc = event.getNPC();
 
-        if(npc.hasTrait(HologramTrait.class) && npc.getOrAddTrait(HologramTrait.class).getLines().get(0).equals("§c[Offline]")) {
+        if(npc.hasTrait(HologramTrait.class) && npc.getTraitNullable(HologramTrait.class).getLines().contains("§c[Offline]")) {
             playerNPCManager.getTraitInventory(npc).openInventory(player);
         }
 

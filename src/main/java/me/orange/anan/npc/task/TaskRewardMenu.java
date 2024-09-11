@@ -1,0 +1,50 @@
+package me.orange.anan.npc.task;
+
+import com.cryptomorin.xseries.XMaterial;
+import io.fairyproject.bukkit.gui.Gui;
+import io.fairyproject.bukkit.gui.GuiFactory;
+import io.fairyproject.bukkit.gui.pane.NormalPane;
+import io.fairyproject.bukkit.gui.pane.Pane;
+import io.fairyproject.bukkit.gui.pane.mapping.PaneMapping;
+import io.fairyproject.bukkit.gui.slot.GuiSlot;
+import io.fairyproject.bukkit.util.items.ItemBuilder;
+import io.fairyproject.container.InjectableComponent;
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@InjectableComponent
+public class TaskRewardMenu {
+    private final GuiFactory guiFactory;
+
+    public TaskRewardMenu(GuiFactory guiFactory) {
+        this.guiFactory = guiFactory;
+    }
+
+    public void open(Player player, String npcName) {
+        Gui gui = guiFactory.create(Component.text("Task"));
+        NormalPane pane = Pane.normal(PaneMapping.rectangle(1, 1, 7, 3));
+        NormalPane outline = Pane.normal(PaneMapping.outline(9, 5));
+
+        pane.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.GOLD_BLOCK)
+                .name(Component.text("&6Reward"))
+                .lore(getRewardInfo(npcName))
+                .build()));
+
+        outline.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));
+
+        gui.addPane(pane);
+        gui.addPane(outline);
+        gui.open(player);
+    }
+
+    private List<String> getRewardInfo(String npcName) {
+        // Get reward info
+        List<String> rewardInfo = new ArrayList<>();
+        rewardInfo.add("Reward Info");
+        rewardInfo.add("Reward: ");
+        return rewardInfo;
+    }
+}

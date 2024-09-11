@@ -1,5 +1,6 @@
 package me.orange.anan.blocks.listener;
 
+import com.sk89q.worldedit.util.TreeGenerator;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.BukkitPos;
 import io.fairyproject.container.InjectableComponent;
@@ -33,7 +34,8 @@ public class ResourceEventListener implements Listener {
     public void onResourceBreak(BlockResourceBreakEvent event) {
         Block block = event.getBlock();
 
-        if (block.getType() == Material.LOG) {
+        if (block.getType() == Material.LOG || block.getType() == Material.LOG_2) {
+            TreeGenerator.TreeType treeType = getTreeType(block);
             if (treeLogs.isEmpty()) {
                 trackTree(block);
             }
@@ -41,13 +43,14 @@ public class ResourceEventListener implements Listener {
 
             if (treeLogs.isEmpty()) {
                 final Location treeLocation = block.getLocation();
-                MCSchedulers.getGlobalScheduler().schedule(()->{
+                MCSchedulers.getGlobalScheduler().schedule(() -> {
                     Location respawnLocation = getValidSpawnLocation(treeLocation, 10);
-                    if (respawnLocation != null ) {
+                    if (respawnLocation != null) {
+                        respawnLocation.getBlock().setType(Material.AIR);
                         respawnLocation.getWorld().generateTree(respawnLocation, TreeType.TREE);
                         Bukkit.broadcastMessage("Tree respawned at " + BukkitPos.toMCPos(respawnLocation));
                     }
-                },20*10);
+                }, 20 * 10);
             }
         }
     }
@@ -74,7 +77,7 @@ public class ResourceEventListener implements Listener {
 
     private Location getValidSpawnLocation(Location original, int radius) {
         Location spawnLocation;
-        for (int i = 0; i < 10; i++) { // Try up to 10 times to find a valid location
+        for (int i = 0; i < 100; i++) { // Try up to 10 times to find a valid location
             // Generate random offsets within the specified radius
             int xOffset = random.nextInt(radius * 2 + 1) - radius;
             int zOffset = random.nextInt(radius * 2 + 1) - radius;
@@ -84,10 +87,33 @@ public class ResourceEventListener implements Listener {
 
             // Check if the block below is grass or dirt
             Block baseBlock = spawnLocation.getBlock().getRelative(0, -1, 0);
-            if ((baseBlock.getType() == Material.GRASS || baseBlock.getType() == Material.DIRT || baseBlock.getType() == Material.SNOW)&& !teamCoreManager.isInTerritory(spawnLocation)){
+            if ((baseBlock.getType() == Material.GRASS || baseBlock.getType() == Material.DIRT || baseBlock.getType() == Material.SNOW) && !teamCoreManager.isInTerritory(spawnLocation)) {
                 return spawnLocation; // Found a valid location
             }
         }
         return null; // No valid location found after 10 tries
+    }
+
+    private TreeGenerator.TreeType getTreeType(Block block) {
+        Material material = block.getType();
+        int data = block.getData();
+        if (material == Material.LOG) {
+            if (data == 0) {
+                return TreeGenerator.TreeType.TREE;
+            } else if (data == 1) {
+                return TreeGenerator.TreeType.PINE;
+            } else if (data == 2) {
+                return TreeGenerator.TreeType.BIRCH;
+            } else if (data == 3) {
+                return TreeGenerator.TreeType.JUNGLE;
+            }
+        } else if (material == Material.LOG_2) {
+            if (data == 0) {
+                return TreeGenerator.TreeType.ACACIA;
+            } else if (data == 1) {
+                return TreeGenerator.TreeType.DARK_OAK;
+            }
+        }
+        return null;
     }
 }
