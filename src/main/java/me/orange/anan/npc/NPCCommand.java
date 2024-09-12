@@ -7,7 +7,8 @@ import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.NPCResourceDieEvent;
 import me.orange.anan.events.PlayerDamageNPCResourceEvent;
-import me.orange.anan.npc.task.TaskAssignMenu;
+import me.orange.anan.job.JobManager;
+import me.orange.anan.npc.task.*;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -18,11 +19,17 @@ import org.bukkit.entity.Player;
 @Command(value = {"aNpc"}, permissionNode = "npc.admin")
 public class NPCCommand extends BaseCommand {
     private final NPCManager npcManager;
+    private final JobManager jobManager;
+    private final TaskManager taskManager;
     private final TaskAssignMenu taskAssignMenu;
+    private final TaskRewardMenu taskRewardMenu;
 
-    public NPCCommand(NPCManager npcManager, TaskAssignMenu taskAssignMenu) {
+    public NPCCommand(NPCManager npcManager, JobManager jobManager, TaskManager taskManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu) {
         this.npcManager = npcManager;
+        this.jobManager = jobManager;
+        this.taskManager = taskManager;
         this.taskAssignMenu = taskAssignMenu;
+        this.taskRewardMenu = taskRewardMenu;
     }
 
     @Command(value = "create")
@@ -67,9 +74,19 @@ public class NPCCommand extends BaseCommand {
     }
 
     @Command(value = "task")
-    public void task(BukkitCommandContext ctx, @Arg("npcName") String npcName) {
-        taskAssignMenu.open(ctx.getPlayer(), npcName);
-        ctx.getPlayer().sendMessage("Task menu opened.");
+    public void task(BukkitCommandContext ctx) {
+        Player player = ctx.getPlayer();
+        String jobID = jobManager.getPlayerCurrentJob(player).getID();
+        Task task = taskManager.getPlayerTask(player, jobID);
+        if (task == null) {
+            taskAssignMenu.open(player, jobID);
+        } else if (task.getStatus() == TaskStatus.ASSIGNED) {
+            player.sendMessage("§eWhat are you waiting for? Go and finish your task!");
+        } else if (task.getStatus() == TaskStatus.COMPLETED) {
+            taskRewardMenu.open(player, task);
+        } else {
+            player.sendMessage("§fHope you are happy about your reward.");
+        }
     }
 
     @Command(value = "say")

@@ -18,47 +18,42 @@ import java.util.List;
 @InjectableComponent
 public class TaskAssignMenu {
     private final GuiFactory guiFactory;
+    private final TaskManager taskManager;
 
-    public TaskAssignMenu(GuiFactory guiFactory) {
+    public TaskAssignMenu(GuiFactory guiFactory, TaskManager taskManager) {
         this.guiFactory = guiFactory;
+        this.taskManager = taskManager;
     }
 
-    public void open(Player player, String npcName) {
+    public void open(Player player, String taskID) {
         Gui gui = guiFactory.create(Component.text("Task"));
-        NormalPane pane = Pane.normal(PaneMapping.rectangle(1, 1, 7, 3));
-        NormalPane outline = Pane.normal(PaneMapping.outline(9, 5));
+        NormalPane pane = Pane.normal(9, 3);
+        Task task = taskManager.getTask(taskID);
 
-        pane.setSlot(1,1, GuiSlot.of(ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
-                .name(Component.text("&aAccept Task"))
-                .lore("&elick to accept the task.")
+        pane.setSlot(2, 1, GuiSlot.of(ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
+                .name(Component.text("§aAccept Task"))
+                .lore("§eclick to accept the task.")
+                .build(), clicker -> {
+            taskManager.addTask(player, task.getId());
+            player.sendMessage("§aTask accepted.");
+            player.closeInventory();
+        }));
+
+        pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
+                .name(Component.text("§fTask Info"))
+                .lore(taskManager.getTaskInfo(taskManager.getTask(task.getId()).getName()))
                 .build()));
 
-        pane.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
-                .name(Component.text("&fTask Info"))
-                .lore(getTaskInfo(npcName))
-                .build()));
-
-        pane.setSlot(5, 1, GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
-                .name(Component.text("&cReject Task"))
-                .lore("&eClick to reject task.")
+        pane.setSlot(6, 1, GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
+                .name(Component.text("§cReject Task"))
+                .lore("§eClick to reject task.")
                 .build(), clicker -> {
             player.closeInventory();
         }));
 
-        outline.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));
+        pane.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));
 
         gui.addPane(pane);
-        gui.addPane(outline);
         gui.open(player);
-    }
-
-    private List<String> getTaskInfo(String npcName) {
-        // Get task info
-        List<String> taskInfo = new ArrayList<>();
-        taskInfo.add("Task Info");
-        taskInfo.add("Task: ");
-        taskInfo.add("Reward: ");
-        taskInfo.add("Time: ");
-        return taskInfo;
     }
 }

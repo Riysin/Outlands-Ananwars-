@@ -1,6 +1,8 @@
 package me.orange.anan.npc.task;
 
-public abstract class Task {
+import org.bukkit.entity.Player;
+
+public class Task {
     protected String id;
     protected String name;
     protected String description;
@@ -17,48 +19,51 @@ public abstract class Task {
         this.status = TaskStatus.UNASSIGNED;
     }
 
-    public String getID() {
+    public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getGoal() {
         return goal;
     }
 
+    public void setGoal(int goal) {
+        this.goal = goal;
+    }
+
     public int getProgress() {
         return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     public TaskStatus getStatus() {
         return status;
     }
 
-    public void startTask() {
-        if (status == TaskStatus.UNASSIGNED) {
-            status = TaskStatus.ASSIGNED;
-            System.out.println("Task started: " + name);
-        }
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
-
-    protected void updateProgress(int amount) {
-        if (status == TaskStatus.ASSIGNED) {
-            progress += amount;
-            if (progress >= goal) {
-                progress = goal;
-                status = TaskStatus.COMPLETED;
-                System.out.println("Task completed: " + name);
-            }
-        }
-    }
-
-    // Abstract method to be implemented by subclasses
-    public abstract void onTaskEvent();
 }

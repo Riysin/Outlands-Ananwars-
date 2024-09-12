@@ -12,6 +12,10 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
+import me.orange.anan.npc.task.AssignedTaskMenu;
+import me.orange.anan.npc.task.Task;
+import me.orange.anan.npc.task.TaskManager;
+import me.orange.anan.npc.task.TaskStatus;
 import me.orange.anan.player.death.DeathManager;
 import me.orange.anan.player.friend.FriendMenu;
 import net.kyori.adventure.text.Component;
@@ -21,6 +25,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @InjectableComponent
 public class PlayerStatsMenu {
@@ -30,14 +35,18 @@ public class PlayerStatsMenu {
     private final ClanManager clanManager;
     private final FriendMenu friendMenu;
     private final DeathManager deathManager;
+    private final TaskManager taskManager;
+    private final AssignedTaskMenu assignedTaskMenu;
 
-    public PlayerStatsMenu(GuiFactory guiFactory, PlayerDataManager playerDataManager, JobManager jobManager, ClanManager clanManager, FriendMenu friendMenu, DeathManager deathManager) {
+    public PlayerStatsMenu(GuiFactory guiFactory, PlayerDataManager playerDataManager, JobManager jobManager, ClanManager clanManager, FriendMenu friendMenu, DeathManager deathManager, TaskManager taskManager, AssignedTaskMenu assignedTaskMenu) {
         this.guiFactory = guiFactory;
         this.playerDataManager = playerDataManager;
         this.jobManager = jobManager;
         this.clanManager = clanManager;
         this.friendMenu = friendMenu;
         this.deathManager = deathManager;
+        this.taskManager = taskManager;
+        this.assignedTaskMenu = assignedTaskMenu;
     }
 
     public void open(Player ctx, Player player) {
@@ -69,21 +78,24 @@ public class PlayerStatsMenu {
                         , "§f Deaths: §c" + playerDataManager.getPlayerData(player).getDeaths())
                 .build()));
 
-        pane.setSlot(2, 1, GuiSlot.of(ItemBuilder.of(XMaterial.IRON_SWORD)
+        pane.setSlot(1, 1, GuiSlot.of(ItemBuilder.of(XMaterial.IRON_SWORD)
                 .name("§eJob")
                 .lore(jobLore)
                 .build()));
 
-        pane.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
+        pane.setSlot(2, 1, GuiSlot.of(ItemBuilder.of(XMaterial.DIAMOND)
                 .name("§eFriends")
                 .lore("§fFriends: §a" + playerDataManager.getFriends(player).size(), "", "§eClick to view friends")
                 .build(), friendMenu::open));
-
 
         pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.GOLDEN_HELMET).name("§eClan Info")
                 .lore("§fClan: §6" + clanName
                         , "§fPlayers: §a" + clanSize)
                 .build()));
+        pane.setSlot(5, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
+                .name("§eTasks")
+                .lore("§fTasks: §a" + (int) taskManager.getPlayerTasks(player).stream().filter(task -> task.getStatus().equals(TaskStatus.ASSIGNED)).count(), "", "§eClick to view assigned tasks")
+                .build(),clicker -> assignedTaskMenu.open(player)));
 
         pane.setSlot(6, 2, GuiSlot.of(ItemBuilder.of(XMaterial.REDSTONE_BLOCK)
                 .name("§cRespawn")

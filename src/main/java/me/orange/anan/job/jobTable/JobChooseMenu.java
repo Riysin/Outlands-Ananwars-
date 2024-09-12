@@ -12,6 +12,9 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.job.Job;
 import me.orange.anan.job.JobManager;
 import me.orange.anan.job.JobRegistry;
+import me.orange.anan.npc.task.Task;
+import me.orange.anan.npc.task.TaskManager;
+import me.orange.anan.npc.task.TaskStatus;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -20,11 +23,13 @@ public class JobChooseMenu {
     private final GuiFactory guiFactory;
     private final JobUpgradeMenu jobUpgradeMenu;
     private final JobManager jobManager;
+    private final TaskManager taskManager;
 
-    public JobChooseMenu(GuiFactory guiFactory, JobUpgradeMenu jobUpgradeMenu, JobManager jobManager) {
+    public JobChooseMenu(GuiFactory guiFactory, JobUpgradeMenu jobUpgradeMenu, JobManager jobManager, TaskManager taskManager) {
         this.guiFactory = guiFactory;
         this.jobUpgradeMenu = jobUpgradeMenu;
         this.jobManager = jobManager;
+        this.taskManager = taskManager;
     }
 
     public void open(Player player) {
@@ -39,6 +44,11 @@ public class JobChooseMenu {
                     .name("§f" + job.getName())
                     .lore("§7" + job.getDescription())
                     .build(), clicker -> {
+                Task task = taskManager.getPlayerTask(player, job.getID());
+                if(task == null || !task.getStatus().equals(TaskStatus.CLAIMED)) {
+                    player.sendMessage("§cYou haven't unlocked this job yet!");
+                    return;
+                }
                 jobManager.addPlayer(player,job);
                 jobUpgradeMenu.open(player, job);
             }));

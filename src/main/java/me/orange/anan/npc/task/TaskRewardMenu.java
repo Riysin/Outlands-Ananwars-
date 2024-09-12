@@ -23,28 +23,32 @@ public class TaskRewardMenu {
         this.guiFactory = guiFactory;
     }
 
-    public void open(Player player, String npcName) {
+    public void open(Player player, Task task) {
         Gui gui = guiFactory.create(Component.text("Task"));
-        NormalPane pane = Pane.normal(PaneMapping.rectangle(1, 1, 7, 3));
-        NormalPane outline = Pane.normal(PaneMapping.outline(9, 5));
+        NormalPane pane = Pane.normal(9,3);
 
-        pane.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.GOLD_BLOCK)
-                .name(Component.text("&6Reward"))
-                .lore(getRewardInfo(npcName))
-                .build()));
+        pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.GOLD_BLOCK)
+                .name(Component.text("§6Reward"))
+                .lore(getRewardInfo(task))
+                .build(), clicker -> {
+            player.sendMessage("§aReward claimed.");
+            player.closeInventory();
+            task.setStatus(TaskStatus.CLAIMED);
+        }));
 
-        outline.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));
+        pane.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));
 
         gui.addPane(pane);
-        gui.addPane(outline);
         gui.open(player);
     }
 
-    private List<String> getRewardInfo(String npcName) {
+    private List<String> getRewardInfo(Task task) {
         // Get reward info
         List<String> rewardInfo = new ArrayList<>();
         rewardInfo.add("Reward Info");
         rewardInfo.add("Reward: ");
+        rewardInfo.add("");
+        rewardInfo.add("&eClick to claim reward.");
         return rewardInfo;
     }
 }

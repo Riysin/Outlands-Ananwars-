@@ -4,47 +4,53 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.player.PlayerDataManager;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @InjectableComponent
 public class TaskManager {
     private final PlayerDataManager playerDataManager;
-    private final TaskAssignMenu taskAssignMenu;
-    private final TaskRewardMenu taskRewardMenu;
+    private final TaskRegistry taskRegistry;
 
-    public TaskManager(PlayerDataManager playerDataManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu) {
+    public TaskManager(PlayerDataManager playerDataManager, TaskRegistry taskRegistry) {
         this.playerDataManager = playerDataManager;
-        this.taskAssignMenu = taskAssignMenu;
-        this.taskRewardMenu = taskRewardMenu;
+        this.taskRegistry = taskRegistry;
     }
 
-    public void openTaskNpcMenu(Player player, String jobID) {
-        Task task = getTask(player, jobID);
-        if (task.getStatus() == TaskStatus.UNASSIGNED) {
-            taskAssignMenu.open(player, jobID);
-        } else if (task.getStatus() == TaskStatus.ASSIGNED) {
-            player.sendMessage("Task already assigned.");
-        } else {
-            taskRewardMenu.open(player, jobID);
-        }
-    }
-
-    public Task getTask(Player player, String jobID) {
+    public Task getPlayerTask(Player player, String jobID) {
         return playerDataManager.getPlayerData(player).getTasks().stream()
-                .filter(task -> task.getID().equals(jobID))
+                .filter(task -> task.getId().equals(jobID))
                 .findFirst()
                 .orElse(null);
     }
 
-    public List<Task> getTasks(Player player) {
+    public List<Task> getPlayerTasks(Player player) {
         return playerDataManager.getPlayerData(player).getTasks();
     }
 
+    public Task getTask(String id) {
+        return taskRegistry.getTasks().stream()
+                .filter(task -> task.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
     public void addTask(Player player, String jobID) {
-        getTasks(player).add(getTask(player, jobID));
+        Task task = getTask(jobID);
+        task.setStatus(TaskStatus.ASSIGNED);
+        getPlayerTasks(player).add(task);
     }
 
     public void removeTask(Player player, String jobID) {
-        getTasks(player).remove(getTask(player, jobID));
+        getPlayerTasks(player).remove(getPlayerTask(player, jobID));
+    }
+
+    public List<String> getTaskInfo(String taskName) {
+        // Get task info
+        List<String> taskInfo = new ArrayList<>();
+        taskInfo.add("§fTask Info");
+        taskInfo.add("§fTask:§c " + taskName);
+        taskInfo.add("§fReward: UNKNOWN?");
+        return taskInfo;
     }
 }

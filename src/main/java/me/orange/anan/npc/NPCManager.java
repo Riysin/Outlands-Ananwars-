@@ -39,7 +39,7 @@ public class NPCManager {
         npc.getOrAddTrait(Text.class).add("&eI have a task for you.");
         npc.getOrAddTrait(Text.class).add("&eWould you like to accept it?");
 
-        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task " + npc, CommandTrait.Hand.RIGHT)
+        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task", CommandTrait.Hand.RIGHT)
                 .player(true)
                 .addPerm("npc.admin"));
 
