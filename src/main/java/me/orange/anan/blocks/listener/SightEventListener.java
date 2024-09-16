@@ -62,10 +62,6 @@ public class SightEventListener implements Listener {
             ActionBar.sendActionBar(player, " health:§a " + health);
         }
 
-        if (teamCoreManager.isInTerritory(player)) {
-            ActionBar.sendActionBar(player, "§3You are in a territory!");
-        }
-
         if (target instanceof Creeper) {
             Creeper creeper = (Creeper) target;
             ActionBar.sendActionBar(player, "§6Core HP: §a" + creeper.getHealth());

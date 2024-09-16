@@ -82,6 +82,16 @@ public class PlayerData {
         return friends;
     }
 
+    public List<UUID> getOnlineFriends() {
+        List<UUID> onlineFriends = new ArrayList<>();
+        for (UUID friend : friends) {
+            if (friend != null) {
+                onlineFriends.add(friend);
+            }
+        }
+        return onlineFriends;
+    }
+
     public void setFriends(List<UUID> friends) {
         this.friends = friends;
     }

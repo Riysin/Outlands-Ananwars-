@@ -4,12 +4,15 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.sidebar.SidebarAdapter;
 import me.orange.anan.clan.ClanManager;
+import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import me.orange.anan.craft.crafting.CraftTimer;
 import me.orange.anan.craft.crafting.CraftTimerManager;
 import me.orange.anan.job.JobManager;
 import me.orange.anan.npc.task.Task;
 import me.orange.anan.npc.task.TaskManager;
 import me.orange.anan.npc.task.TaskStatus;
+import me.orange.anan.player.PlayerDataManager;
+import me.orange.anan.world.TimeManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -18,20 +21,24 @@ import java.util.List;
 
 @InjectableComponent
 public class Sidebar implements SidebarAdapter {
-    private final ClanManager clanManager;
     private final CraftTimerManager craftTimerManager;
     private final JobManager jobManager;
     private final TaskManager taskManager;
+    private final TimeManager timeManager;
+    private final PlayerDataManager playerDataManager;
+    private final TeamCoreManager teamCoreManager;
 
     private static final String SEPARATOR = "§7§m-----------------";
     private static final int MAX_TASKS_DISPLAYED = 3;
-    private static final int MAX_CRAFTS_DISPLAYED = 4;
+    private static final int MAX_CRAFTS_DISPLAYED = 3;
 
-    public Sidebar(ClanManager clanManager, CraftTimerManager craftTimerManager, JobManager jobManager, TaskManager taskManager) {
-        this.clanManager = clanManager;
+    public Sidebar(CraftTimerManager craftTimerManager, JobManager jobManager, TaskManager taskManager, TimeManager timeManager, PlayerDataManager playerDataManager, TeamCoreManager teamCoreManager) {
         this.craftTimerManager = craftTimerManager;
         this.jobManager = jobManager;
         this.taskManager = taskManager;
+        this.timeManager = timeManager;
+        this.playerDataManager = playerDataManager;
+        this.teamCoreManager = teamCoreManager;
     }
 
     @Override
@@ -44,14 +51,6 @@ public class Sidebar implements SidebarAdapter {
         Player player = mcPlayer.as(Player.class);
         List<Component> sidebar = new ArrayList<>();
 
-        String clanName = "NO_CLAN";
-        int members = 0, onlineMembers = 0;
-        if (clanManager.inClan(player)) {
-            clanName = clanManager.getPlayerClan(player.getUniqueId()).getDisplayName();
-            members = clanManager.getClanSize(player);
-            onlineMembers = clanManager.getOnlineClanSize(player);
-        }
-
         String jobName = "NO_JOB";
         int jobLevel = 0;
         if (jobManager.hasJob(player)) {
@@ -59,13 +58,15 @@ public class Sidebar implements SidebarAdapter {
             jobLevel = jobManager.getPlayerJobLevel(player, jobManager.getPlayerCurrentJob(player.getUniqueId()));
         }
 
-        sidebar.add(Component.text("§7§m-----------------"));
-        sidebar.add(Component.text("§fClan"));
-        sidebar.add(Component.text("§3» §bName§7: §f" + clanName));
-        sidebar.add(Component.text("§3» §bMembers§7: §f" + onlineMembers + "§7/§f" + members));
+        sidebar.add(Component.text("§7§m------------------"));
+        //server
+        sidebar.add(Component.text("§fPlayer"));
+        sidebar.add(Component.text("§3» §bTime§7: §f" + timeManager.getTimeState(player.getWorld())));
+        sidebar.add(Component.text("§3» §bLoc.§7: §f" + ((teamCoreManager.isInTerritory(player)) ? "§6Territory" : "§2Wilderness")));
+        sidebar.add(Component.text("§3» §bFriends§7: §f" + playerDataManager.getPlayerData(player).getOnlineFriends().size() + "/" + playerDataManager.getPlayerData(player).getFriends().size()));
         sidebar.add(Component.text(""));
 
-        sidebar.add(Component.text("§fPlayer"));
+        sidebar.add(Component.text("§fJob"));
         sidebar.add(Component.text("§3» §bJob§7: §f" + jobName));
         sidebar.add(Component.text("§3» §bLevel§7: §f" + jobLevel));
 
@@ -73,11 +74,11 @@ public class Sidebar implements SidebarAdapter {
         List<Task> tasks = taskManager.getPlayerTasks(player);
         if (!tasks.isEmpty() && tasks.stream().anyMatch(task -> task.getStatus() == TaskStatus.ASSIGNED)) {
             sidebar.add(Component.text(""));
-            sidebar.add(Component.text("§3» §bTasks§7:"));
+            sidebar.add(Component.text("§fTasks"));
             int taskCount = 0;
             for (Task task : tasks) {
                 if (task.getStatus() == TaskStatus.ASSIGNED && taskCount < MAX_TASKS_DISPLAYED) {
-                    sidebar.add(Component.text("   §f" + task.getName()));
+                    sidebar.add(Component.text("§3» §bName§7:" + task.getName()));
                     taskCount++;
                 }
             }
@@ -86,11 +87,11 @@ public class Sidebar implements SidebarAdapter {
         // Crafting Information
         if (craftTimerManager.isCrafting(player)) {
             sidebar.add(Component.text(""));
-            sidebar.add(Component.text("§3» §bCrafting§7:"));
+            sidebar.add(Component.text("§fCrafting"));
             int craftCount = 0;
             for (CraftTimer craftTimer : craftTimerManager.getPlayerCraftTimerList(player)) {
                 if (craftCount >= MAX_CRAFTS_DISPLAYED) break;
-                sidebar.add(Component.text("   §f" + craftTimer.getCraft().getName() + "x" + craftTimer.getAmount() + " - §6" + craftTimer.getTime() + "s"));
+                sidebar.add(Component.text("§3» §bItem§7:" + craftTimer.getCraft().getName() + "x" + craftTimer.getAmount() + " - §6" + craftTimer.getTime() + "s"));
                 craftCount++;
             }
         }

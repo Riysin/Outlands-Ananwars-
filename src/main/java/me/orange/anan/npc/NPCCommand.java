@@ -16,7 +16,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 @InjectableComponent
-@Command(value = {"aNpc"}, permissionNode = "npc.admin")
+@Command(value = {"anpc"}, permissionNode = "npc.admin")
 public class NPCCommand extends BaseCommand {
     private final NPCManager npcManager;
     private final TaskManager taskManager;
@@ -52,17 +52,10 @@ public class NPCCommand extends BaseCommand {
     @Command(value = "hurt")
     public void hurt(BukkitCommandContext ctx, @Arg("npcID") int id) {
         NPC npc = CitizensAPI.getNPCRegistry().getById(id);
-        ctx.getPlayer().playEffect(npc.getEntity().getLocation(), org.bukkit.Effect.STEP_SOUND, 1);
+        Player player = ctx.getPlayer();
+
         if (npc.getEntity() instanceof LivingEntity) {
-            LivingEntity entity = (LivingEntity) npc.getEntity();
-            if (entity.getHealth() > 1)
-                entity.setHealth(entity.getHealth() - 1);
-            else {
-                entity.setHealth(0);
-                npc.despawn();
-                Bukkit.getPluginManager().callEvent(new NPCResourceDieEvent(ctx.getPlayer(), npc));
-            }
-            Bukkit.getPluginManager().callEvent(new PlayerDamageNPCResourceEvent(ctx.getPlayer(), npc));
+            Bukkit.getPluginManager().callEvent(new PlayerDamageNPCResourceEvent(player, npc));
         }
     }
 

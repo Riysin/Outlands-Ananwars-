@@ -80,11 +80,10 @@ public class DeathLootManager {
         MCSchedulers.getGlobalScheduler().schedule(() -> {
             deathLootMap.remove(armorStand.getUniqueId());
             armorStand.remove();
-            deathLootMap.forEach(((uuid, deathLoot) -> {
-                if(!deathLoot.getOwner().equals(player.getUniqueId())) {
-                    deathBossBar.hideBossBar(player);
-                }
-            }));
+            if(deathLootMap.values().stream().noneMatch(deathLoot -> deathLoot.getOwner().equals(player.getUniqueId()))) {
+                deathBossBar.hideBossBar(player);
+            }
+
         }, 20 * 60);
     }
 

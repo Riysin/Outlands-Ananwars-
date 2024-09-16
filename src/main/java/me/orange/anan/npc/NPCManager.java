@@ -62,8 +62,7 @@ public class NPCManager {
 
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc hurt " + npc.getId(), CommandTrait.Hand.LEFT)
                 .player(true)
-                .addPerm("npc.admin")
-                .cooldown(0));
+                .addPerm("npc.admin"));
 
         npc.spawn(location);
 
