@@ -41,7 +41,7 @@ public class TaskAssignMenu {
 
         pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
                 .name(Component.text("§fTask Info"))
-                .lore(taskManager.getTaskInfo(taskManager.getTask(task.getId()).getName()))
+                .lore(taskManager.getTaskInfo(taskID))
                 .build()));
 
         pane.setSlot(6, 1, GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)

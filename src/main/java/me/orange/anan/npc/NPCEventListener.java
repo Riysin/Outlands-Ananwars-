@@ -37,5 +37,6 @@ public class NPCEventListener implements Listener {
 
         npc.despawn();
         npc.getStoredLocation().getWorld().getBlockAt(npc.getStoredLocation()).breakNaturally();
+        event.getPlayer().sendMessage("Resource NPC died.");
     }
 }

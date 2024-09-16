@@ -5,7 +5,6 @@ import io.fairyproject.bukkit.gui.Gui;
 import io.fairyproject.bukkit.gui.GuiFactory;
 import io.fairyproject.bukkit.gui.pane.NormalPane;
 import io.fairyproject.bukkit.gui.pane.Pane;
-import io.fairyproject.bukkit.gui.pane.mapping.PaneMapping;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
@@ -18,14 +17,16 @@ import java.util.List;
 @InjectableComponent
 public class TaskRewardMenu {
     private final GuiFactory guiFactory;
+    private final TaskManager taskManager;
 
-    public TaskRewardMenu(GuiFactory guiFactory) {
+    public TaskRewardMenu(GuiFactory guiFactory, TaskManager taskManager) {
         this.guiFactory = guiFactory;
+        this.taskManager = taskManager;
     }
 
     public void open(Player player, Task task) {
         Gui gui = guiFactory.create(Component.text("Task"));
-        NormalPane pane = Pane.normal(9,3);
+        NormalPane pane = Pane.normal(9, 3);
 
         pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.GOLD_BLOCK)
                 .name(Component.text("§6Reward"))
@@ -45,8 +46,10 @@ public class TaskRewardMenu {
     private List<String> getRewardInfo(Task task) {
         // Get reward info
         List<String> rewardInfo = new ArrayList<>();
-        rewardInfo.add("Reward Info");
-        rewardInfo.add("Reward: ");
+        rewardInfo.add("§eReward:");
+        rewardInfo.add("§a" + task.getReward());
+        rewardInfo.add("§fReward Info:");
+        rewardInfo.add("§a" + task.getRewardDescription());
         rewardInfo.add("");
         rewardInfo.add("&eClick to claim reward.");
         return rewardInfo;

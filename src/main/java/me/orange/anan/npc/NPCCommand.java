@@ -19,14 +19,12 @@ import org.bukkit.entity.Player;
 @Command(value = {"aNpc"}, permissionNode = "npc.admin")
 public class NPCCommand extends BaseCommand {
     private final NPCManager npcManager;
-    private final JobManager jobManager;
     private final TaskManager taskManager;
     private final TaskAssignMenu taskAssignMenu;
     private final TaskRewardMenu taskRewardMenu;
 
-    public NPCCommand(NPCManager npcManager, JobManager jobManager, TaskManager taskManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu) {
+    public NPCCommand(NPCManager npcManager, TaskManager taskManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu) {
         this.npcManager = npcManager;
-        this.jobManager = jobManager;
         this.taskManager = taskManager;
         this.taskAssignMenu = taskAssignMenu;
         this.taskRewardMenu = taskRewardMenu;
@@ -54,6 +52,7 @@ public class NPCCommand extends BaseCommand {
     @Command(value = "hurt")
     public void hurt(BukkitCommandContext ctx, @Arg("npcID") int id) {
         NPC npc = CitizensAPI.getNPCRegistry().getById(id);
+        ctx.getPlayer().playEffect(npc.getEntity().getLocation(), org.bukkit.Effect.STEP_SOUND, 1);
         if (npc.getEntity() instanceof LivingEntity) {
             LivingEntity entity = (LivingEntity) npc.getEntity();
             if (entity.getHealth() > 1)
@@ -68,18 +67,17 @@ public class NPCCommand extends BaseCommand {
     }
 
     @Command(value = "tasknpc")
-    public void taskNPC(BukkitCommandContext ctx, @Arg("name") String name) {
-        npcManager.createTaskNPC(name, ctx.getPlayer().getLocation());
+    public void taskNPC(BukkitCommandContext ctx, @Arg("name") String taskID) {
+        npcManager.createTaskNPC(taskID, ctx.getPlayer().getLocation());
         ctx.getPlayer().sendMessage("Task NPC setup.");
     }
 
     @Command(value = "task")
-    public void task(BukkitCommandContext ctx) {
+    public void task(BukkitCommandContext ctx, @Arg("taskID") String taskID) {
         Player player = ctx.getPlayer();
-        String jobID = jobManager.getPlayerCurrentJob(player).getID();
-        Task task = taskManager.getPlayerTask(player, jobID);
+        Task task = taskManager.getPlayerTask(player, taskID);
         if (task == null) {
-            taskAssignMenu.open(player, jobID);
+            taskAssignMenu.open(player, taskID);
         } else if (task.getStatus() == TaskStatus.ASSIGNED) {
             player.sendMessage("§eWhat are you waiting for? Go and finish your task!");
         } else if (task.getStatus() == TaskStatus.COMPLETED) {

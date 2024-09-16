@@ -70,15 +70,4 @@ public class PlayerNPCEventListener implements Listener {
         playerDataManager.getPlayerData(playerNPCManager.getNPCOfflineOwner(npc)).setNpcDied(true);
     }
 
-    @EventHandler
-    public void onClickNPC(NPCRightClickEvent event) {
-        Player player = event.getClicker();
-        NPC npc = event.getNPC();
-
-        if(npc.hasTrait(HologramTrait.class) && npc.getTraitNullable(HologramTrait.class).getLines().contains("§c[Offline]")) {
-            playerNPCManager.getTraitInventory(npc).openInventory(player);
-        }
-
-    }
-
 }

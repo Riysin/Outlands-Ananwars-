@@ -2,22 +2,28 @@ package me.orange.anan.npc.task;
 
 import org.bukkit.entity.Player;
 
-public class Task {
+public abstract class Task {
     protected String id;
     protected String name;
     protected String description;
     protected int goal;
     protected int progress;
     protected TaskStatus status;
+    protected String reward;
+    protected String rewardDescription;
 
-    public Task(String id, String name, String description, int goal) {
+    public Task(String id, String name, String description, int goal, String reward, String rewardDescription) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.goal = goal;
         this.progress = 0;
         this.status = TaskStatus.UNASSIGNED;
+        this.reward = reward;
+        this.rewardDescription = rewardDescription;
     }
+
+    public abstract void onProgress(Player player, Object data);
 
     public String getId() {
         return id;
@@ -65,5 +71,21 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public String getReward() {
+        return reward;
+    }
+
+    public void setReward(String reward) {
+        this.reward = reward;
+    }
+
+    public String getRewardDescription() {
+        return rewardDescription;
+    }
+
+    public void setRewardDescription(String rewardDescription) {
+        this.rewardDescription = rewardDescription;
     }
 }

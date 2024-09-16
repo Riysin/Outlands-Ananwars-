@@ -27,8 +27,8 @@ public class FriendMenu {
 
     public void open(Player player) {
         Gui gui = guiFactory.create(Component.text("Friends"));
-        NormalPane pane = Pane.normal(PaneMapping.rectangle(1, 1, 7, 3));
-        NormalPane border = Pane.normal(PaneMapping.outline(0, 0, 9, 5));
+        NormalPane pane = Pane.normal(9, 5);
+        NormalPane outline = Pane.normal(PaneMapping.rectangle(0,5,9,1));
 
         int slot = 0;
 
@@ -52,10 +52,14 @@ public class FriendMenu {
             });
         });
 
-        border.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.WHITE_STAINED_GLASS_PANE).name(" ").build()));
+        outline.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_DOOR).name("§cBack").build(), ctx -> {
+            Bukkit.dispatchCommand(player, "player menu " + player.getName());
+        }));
+
+        outline.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));
 
         gui.addPane(pane);
-        gui.addPane(border);
+        gui.addPane(outline);
         gui.open(player);
     }
 }

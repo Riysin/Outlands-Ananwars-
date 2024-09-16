@@ -6,6 +6,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.trait.CommandTrait;
 import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.SitTrait;
 import org.bukkit.Bukkit;
@@ -21,7 +22,10 @@ public class PlayerNPCManager {
             NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, player.getName());
             npc.getOrAddTrait(Owner.class).setOwner(player.getUniqueId());
             npc.getOrAddTrait(HologramTrait.class).addLine("§c[Offline]");
-            npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.25);
+            npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.26);
+            npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("pnpc inventory " + npc.getId(), CommandTrait.Hand.RIGHT)
+                    .player(true)
+                    .addPerm("pnpc.admin"));
             npc.setProtected(false);
         }
     }
@@ -36,7 +40,7 @@ public class PlayerNPCManager {
 
     public NPC getPlayerNPC(Player player) {
         for (NPC npc : CitizensAPI.getNPCRegistry()) {
-            if(npc.getTraitNullable(Owner.class) == null) {
+            if (npc.getTraitNullable(Owner.class) == null) {
                 continue;
             }
             if (npc.hasTrait(Owner.class) && npc.getTraitNullable(Owner.class).getOwnerId().equals(player.getUniqueId())) {
@@ -48,7 +52,7 @@ public class PlayerNPCManager {
 
     public NPC getPlayerNPC(OfflinePlayer player) {
         for (NPC npc : CitizensAPI.getNPCRegistry()) {
-            if(npc.getTraitNullable(Owner.class) == null) {
+            if (npc.getTraitNullable(Owner.class) == null) {
                 continue;
             }
             if (npc.hasTrait(Owner.class) && npc.getTraitNullable(Owner.class).getOwnerId().equals(player.getUniqueId())) {

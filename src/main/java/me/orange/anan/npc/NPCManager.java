@@ -13,6 +13,7 @@ import java.time.Duration;
 
 @InjectableComponent
 public class NPCManager {
+
     public void setUpMerchantNPC(int id) {
         NPC npc = CitizensAPI.getNPCRegistry().getById(id);
         getTemplateNPC("merchant").spawn(npc.getStoredLocation());
@@ -29,8 +30,8 @@ public class NPCManager {
         npc.spawn(location);
     }
 
-    public void createTaskNPC(String name, Location location) {
-        NPC npc = getTemplateNPC(name);
+    public void createTaskNPC(String taskID, Location location) {
+        NPC npc = getTemplateNPC(taskID);
 
         npc.getOrAddTrait(Text.class).toggleSpeechBubbles();
         npc.getOrAddTrait(Text.class).toggleTalkClose();
@@ -39,7 +40,8 @@ public class NPCManager {
         npc.getOrAddTrait(Text.class).add("&eI have a task for you.");
         npc.getOrAddTrait(Text.class).add("&eWould you like to accept it?");
 
-        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task", CommandTrait.Hand.RIGHT)
+
+        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task " + taskID, CommandTrait.Hand.RIGHT)
                 .player(true)
                 .addPerm("npc.admin"));
 
@@ -53,25 +55,29 @@ public class NPCManager {
         location.getWorld().getBlockAt(location).setTypeIdAndData(123, (byte) 0, true);
 
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.SLIME, name);
-        npc.setProtected(true);
+
         npc.getOrAddTrait(SlimeSize.class).setSize(2);
         npc.getOrAddTrait(HologramTrait.class).addLine("§e[Hit]");
         npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.3);
 
-        if (npc.getEntity() instanceof LivingEntity) {
-            ((LivingEntity) npc.getEntity()).setMaxHealth(10);
-            ((LivingEntity) npc.getEntity()).setHealth(10);
-        }
-
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc hurt " + npc.getId(), CommandTrait.Hand.LEFT)
                 .player(true)
                 .addPerm("npc.admin")
-                .cooldown(Duration.ofMillis(100)));
+                .cooldown(0));
+
         npc.spawn(location);
+
+        if(npc.getEntity() instanceof LivingEntity) {
+            ((LivingEntity) npc.getEntity()).setMaxHealth(10);
+            ((LivingEntity) npc.getEntity()).setHealth(10);
+        }
     }
 
     private NPC getTemplateNPC(String name) {
-        NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "§e[NPC] §f" + name);
+        NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
+
+        npc.getOrAddTrait(HologramTrait.class).addLine("§e[NPC] §f");
+        npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.26);
 
         npc.getOrAddTrait(LookClose.class).setPerPlayer(false);
         npc.getOrAddTrait(LookClose.class).setRealisticLooking(true);

@@ -17,9 +17,9 @@ public class TaskManager {
         this.taskRegistry = taskRegistry;
     }
 
-    public Task getPlayerTask(Player player, String jobID) {
+    public Task getPlayerTask(Player player, String taskID) {
         return playerDataManager.getPlayerData(player).getTasks().stream()
-                .filter(task -> task.getId().equals(jobID))
+                .filter(task -> task.getId().equals(taskID))
                 .findFirst()
                 .orElse(null);
     }
@@ -35,6 +35,10 @@ public class TaskManager {
                 .orElse(null);
     }
 
+    public boolean hasTaskAssigned(Task task) {
+        return task != null && task.getStatus() == TaskStatus.ASSIGNED;
+    }
+
     public void addTask(Player player, String jobID) {
         Task task = getTask(jobID);
         task.setStatus(TaskStatus.ASSIGNED);
@@ -45,12 +49,13 @@ public class TaskManager {
         getPlayerTasks(player).remove(getPlayerTask(player, jobID));
     }
 
-    public List<String> getTaskInfo(String taskName) {
+    public List<String> getTaskInfo(String taskID) {
         // Get task info
+        Task task = getTask(taskID);
         List<String> taskInfo = new ArrayList<>();
-        taskInfo.add("§fTask Info");
-        taskInfo.add("§fTask:§c " + taskName);
-        taskInfo.add("§fReward: UNKNOWN?");
+        taskInfo.add("§eTask:§f " + task.getName());
+        taskInfo.add("§eDescription: §f" + task.getDescription());
+        taskInfo.add("§eReward: §f" + task.getReward());
         return taskInfo;
     }
 }

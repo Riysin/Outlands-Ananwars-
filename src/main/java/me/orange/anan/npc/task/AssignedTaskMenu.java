@@ -10,6 +10,7 @@ import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,20 +25,25 @@ public class AssignedTaskMenu {
         this.taskManager = taskManager;
     }
 
-    public void open(Player player){
+    public void open(Player player) {
         Gui gui = guiFactory.create(Component.text("Assigned Task"));
-        NormalPane pane = Pane.normal(PaneMapping.rectangle(1,1,7,4));
-        NormalPane outline = Pane.normal(PaneMapping.outline(9,6));
+        NormalPane pane = Pane.normal(PaneMapping.rectangle(1, 1, 7, 4));
+        NormalPane outline = Pane.normal(PaneMapping.outline(9, 6));
 
         AtomicInteger slot = new AtomicInteger();
         taskManager.getPlayerTasks(player).forEach(task -> {
-            if (task.getStatus()!=TaskStatus.ASSIGNED) return;
+            if (task.getStatus() != TaskStatus.ASSIGNED) return;
             pane.setSlot(slot.get(), GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
                     .name(Component.text("§fTask Info"))
                     .lore(taskManager.getTaskInfo(task.getName()))
                     .build()));
             slot.getAndIncrement();
         });
+
+        outline.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));
+        outline.setSlot(4, 5, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_DOOR).name("§cBack").build(), ctx -> {
+            Bukkit.dispatchCommand(player, "player menu " + player.getName());
+        }));
 
         gui.addPane(outline);
         gui.addPane(pane);
