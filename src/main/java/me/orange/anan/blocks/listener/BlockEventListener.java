@@ -137,7 +137,7 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        if (isBesideNatureBlock(block)) {
+        if (blockStatsManager.isBesideNatureBlock(block)) {
             event.setCancelled(true);
             player.sendMessage("§c你不能在可挖掘的資源旁建造方塊!");
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);
@@ -170,30 +170,4 @@ public class BlockEventListener implements Listener {
             }
         }
     }
-
-    private boolean isBesideNatureBlock(Block block) {
-        // Check surrounding blocks in six directions
-        return Stream.of(
-                block.getRelative(BlockFace.UP),
-                block.getRelative(BlockFace.DOWN),
-                block.getRelative(BlockFace.NORTH),
-                block.getRelative(BlockFace.SOUTH),
-                block.getRelative(BlockFace.EAST),
-                block.getRelative(BlockFace.WEST)
-        ).anyMatch(this::isNatureBlock);
-    }
-
-    private boolean isNatureBlock(Block block) {
-        Integer id = block.getTypeId();
-        byte data = block.getData();
-
-        // Stream through nature blocks and check ID and data
-        return natureBlockConfig.getNatureBlocks().stream().anyMatch(natureBlock ->
-                id.equals(natureBlock.getBlockId()) && (natureBlock.getData() == -1 || data == natureBlock.getData())
-        );
-    }
-
-
-
-
 }

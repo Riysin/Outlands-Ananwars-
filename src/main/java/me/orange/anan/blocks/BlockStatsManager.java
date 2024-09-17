@@ -4,6 +4,7 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BlockConfigElement;
+import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.config.ToolConfig;
 import org.bukkit.Bukkit;
@@ -18,18 +19,19 @@ import org.bukkit.material.Door;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Stream;
 
 @InjectableComponent
 public class BlockStatsManager {
     private final BlockConfig blockConfig;
     private final ToolConfig toolConfig;
-    private final CraftManager craftManager;
+    private final NatureBlockConfig natureBlockConfig;
     private Map<Block, BlockStats> blockStatsMap = new HashMap<>();
 
-    public BlockStatsManager(BlockConfig blockConfig, ToolConfig toolConfig, CraftManager craftManager) {
+    public BlockStatsManager(BlockConfig blockConfig, ToolConfig toolConfig, NatureBlockConfig natureBlockConfig) {
         this.blockConfig = blockConfig;
         this.toolConfig = toolConfig;
-        this.craftManager = craftManager;
+        this.natureBlockConfig = natureBlockConfig;
 
         loadConfig();
     }
@@ -121,5 +123,38 @@ public class BlockStatsManager {
             BlockStats blockStats = getBlockStats(block);
             blockStats.setJustPlaced(false);
         }, Duration.ofSeconds(60));
+    }
+
+    public boolean isBesideNatureBlock(Block block) {
+        // Check surrounding blocks in six directions
+        return Stream.of(
+                block.getRelative(BlockFace.UP),
+                block.getRelative(BlockFace.DOWN),
+                block.getRelative(BlockFace.NORTH),
+                block.getRelative(BlockFace.SOUTH),
+                block.getRelative(BlockFace.EAST),
+                block.getRelative(BlockFace.WEST)
+        ).anyMatch(this::isNatureBlock);
+    }
+
+    private boolean isNatureBlock(Block block) {
+        Integer id = block.getTypeId();
+        byte data = block.getData();
+
+        // Stream through nature blocks and check ID and data
+        return natureBlockConfig.getNatureBlocks().stream().anyMatch(natureBlock ->
+                id.equals(natureBlock.getBlockId()) && (natureBlock.getData() == -1 || data == natureBlock.getData())
+        );
+    }
+
+    public boolean isBesideSameType(Block block, Material type) {
+        return Stream.of(
+                block.getRelative(BlockFace.UP),
+                block.getRelative(BlockFace.DOWN),
+                block.getRelative(BlockFace.NORTH),
+                block.getRelative(BlockFace.SOUTH),
+                block.getRelative(BlockFace.EAST),
+                block.getRelative(BlockFace.WEST)
+        ).anyMatch(b -> b.getType() == type);
     }
 }
