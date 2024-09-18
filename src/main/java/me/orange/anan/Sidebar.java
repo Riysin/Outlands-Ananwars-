@@ -77,7 +77,7 @@ public class Sidebar implements SidebarAdapter {
             int taskCount = 0;
             for (Task task : tasks) {
                 if (task.getStatus() == TaskStatus.ASSIGNED && taskCount < MAX_TASKS_DISPLAYED) {
-                    sidebar.add(Component.text("§3» §bName§7:" + task.getName()));
+                    sidebar.add(Component.text("§3» §bName§7: §f" + task.getName()));
                     taskCount++;
                 }
             }

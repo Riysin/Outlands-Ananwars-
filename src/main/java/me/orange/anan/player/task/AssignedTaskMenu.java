@@ -35,7 +35,7 @@ public class AssignedTaskMenu {
             if (task.getStatus() != TaskStatus.ASSIGNED) return;
             pane.setSlot(slot.get(), GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
                     .name(Component.text("§fTask Info"))
-                    .lore(taskManager.getTaskInfo(task.getName()))
+                    .lore(taskManager.getTaskInfo(task.getId()))
                     .build()));
             slot.getAndIncrement();
         });

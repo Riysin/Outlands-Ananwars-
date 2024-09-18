@@ -4,10 +4,12 @@ import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.npc.NPCManager;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @InjectableComponent
@@ -45,28 +47,37 @@ public class ResourceManager {
                 || type.equals(XMaterial.IRON_ORE.parseMaterial())
                 || type.equals(XMaterial.GOLD_ORE.parseMaterial())) {
             resource.setType(ResourceType.ORE);
-        } else {
+        } else if (type.equals(XMaterial.REDSTONE_LAMP.parseMaterial())) {
             resource.setType(ResourceType.LOOT);
+        } else {
+            return;
         }
         resource.setMaterial(XMaterial.matchXMaterial(type));
         resource.setLocation(block.getLocation());
         resources.add(resource);
     }
 
-    public void respawnOre() {
-        for (Resource resource : resources) {
+    public void respawnOre(World world) {
+        // Use an iterator to avoid ConcurrentModificationException
+        Iterator<Resource> iterator = resources.iterator();
+        while (iterator.hasNext()) {
+            Resource resource = iterator.next();
             if (resource.getType().equals(ResourceType.ORE)) {
-                resource.getLocation().getBlock().setType(resource.getMaterial().parseMaterial());
-                resources.remove(resource);
+                world.getBlockAt(resource.getLocation()).setType(resource.getMaterial().parseMaterial());
+                iterator.remove(); // Safely remove the resource
             }
         }
     }
 
-    public void respawnLoot() {
-        for (Resource resource : resources) {
+    public void respawnLoot(World world) {
+        // Use an iterator to avoid ConcurrentModificationException
+        Iterator<Resource> iterator = resources.iterator();
+        while (iterator.hasNext()) {
+            Resource resource = iterator.next();
             if (resource.getType().equals(ResourceType.LOOT)) {
-                npcManager.createLootNPC("Resource", resource.getLocation());
-                resources.remove(resource);
+                resource.getLocation().setWorld(world);
+                npcManager.createLootNPC("Loot", resource.getLocation());
+                iterator.remove(); // Safely remove the resource
             }
         }
     }

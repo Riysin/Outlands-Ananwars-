@@ -47,13 +47,4 @@ public class NPCEventListener implements Listener {
         player.playEffect(player.getLocation(), Effect.ZOMBIE_CHEW_WOODEN_DOOR, 1);
         Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
     }
-
-    @EventHandler
-    public void onResourceDie(NPCResourceDieEvent event) {
-        NPC npc = event.getNpc();
-        ((LivingEntity) npc.getEntity()).setHealth(0);
-        npc.despawn();
-        npc.getStoredLocation().getWorld().getBlockAt(npc.getStoredLocation()).breakNaturally();
-        event.getPlayer().playEffect(event.getPlayer().getLocation(), Effect.ZOMBIE_DESTROY_DOOR, 1);
-    }
 }

@@ -27,9 +27,11 @@ public class TimeManager {
             for (World world : Bukkit.getWorlds()) {
                 long time = world.getTime();
                 boolean isDayTime = time <= 14000 || time >= 23000;
-                if(time == 14000) {
-                    Bukkit.getPluginManager().callEvent(new DayToNightEvent());
+
+                if (isDay.containsKey(world) && isDay.get(world) && !isDayTime) {
+                    Bukkit.getPluginManager().callEvent(new DayToNightEvent(world));
                 }
+
                 isDay.put(world, isDayTime);
             }
         }, 0, 10);
@@ -37,7 +39,7 @@ public class TimeManager {
         MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
-                    if(isDay.get(player.getWorld())) continue;
+                    if (isDay.get(player.getWorld())) continue;
                     if (player.equals(otherPlayer)) continue;
 
                     double distance = player.getLocation().distance(otherPlayer.getLocation());

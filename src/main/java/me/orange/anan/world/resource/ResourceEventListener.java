@@ -1,6 +1,11 @@
 package me.orange.anan.world.resource;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.MaxChangedBlocksException;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.util.TreeGenerator;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.BukkitPos;
@@ -9,11 +14,13 @@ import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import me.orange.anan.events.BlockResourceBreakEvent;
 import me.orange.anan.events.DayToNightEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.TreeType;
+import me.orange.anan.events.NPCResourceDieEvent;
+import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -26,7 +33,7 @@ import java.util.Set;
 public class ResourceEventListener implements Listener {
     private final TeamCoreManager teamCoreManager;
     private final ResourceManager resourceManager;
-    private Set<Location> treeLogs = new HashSet<>();
+    private final Set<Location> treeLogs = new HashSet<>();
     private final Random random = new Random();
 
     public ResourceEventListener(TeamCoreManager teamCoreManager, ResourceManager resourceManager) {
@@ -35,9 +42,24 @@ public class ResourceEventListener implements Listener {
     }
 
     @EventHandler
+    public void onResourceDie(NPCResourceDieEvent event) {
+        NPC npc = event.getNpc();
+        Player player = event.getPlayer();
+        Block block = npc.getStoredLocation().getBlock();
+
+        ((LivingEntity) npc.getEntity()).setHealth(0);
+        npc.despawn();
+        block.breakNaturally();
+        player.playEffect(player.getLocation(), Effect.ZOMBIE_DESTROY_DOOR, 1);
+        resourceManager.addResource(block);
+    }
+
+    @EventHandler
     public void onDayToNight(DayToNightEvent event) {
-        resourceManager.respawnOre();
-        resourceManager.respawnLoot();
+        World world = event.getWorld();
+        Bukkit.broadcastMessage("It's night time! Respawning resources...");
+        resourceManager.respawnOre(world);
+        resourceManager.respawnLoot(world);
     }
 
     @EventHandler
@@ -45,27 +67,20 @@ public class ResourceEventListener implements Listener {
         Block block = event.getBlock();
         resourceManager.addResource(block);
 
-        if (block.getType() == Material.LOG || block.getType() == Material.LOG_2) {
-            Resource resource = resourceManager.getResourceFromLocation(block);
-            TreeGenerator.TreeType treeType = getTreeType(block);
+        if (isLog(block.getType())) {
             if (treeLogs.isEmpty()) {
                 trackTree(block);
             }
             treeLogs.remove(block.getLocation());
 
             if (treeLogs.isEmpty()) {
-                final Location treeLocation = block.getLocation();
-                MCSchedulers.getGlobalScheduler().schedule(() -> {
-                    Location respawnLocation = getValidSpawnLocation(treeLocation, 10);
-                    if (respawnLocation != null) {
-                        respawnLocation.getBlock().setType(Material.AIR);
-                        respawnLocation.getWorld().generateTree(respawnLocation, TreeType.TREE);
-                        Bukkit.broadcastMessage("Tree respawned at " + BukkitPos.toMCPos(respawnLocation));
-                        resourceManager.getResources().remove(resource);
-                    }
-                }, 20 * 10);
+                scheduleTreeRespawn(block.getLocation(), getTreeType(block));
             }
         }
+    }
+
+    private boolean isLog(Material material) {
+        return material == Material.LOG || material == Material.LOG_2;
     }
 
     private void trackTree(Block baseBlock) {
@@ -74,58 +89,75 @@ public class ResourceEventListener implements Listener {
     }
 
     private void findAllConnectedLogs(Block block) {
-        if (block.getType() == Material.LOG && !treeLogs.contains(block.getLocation())) {
-            // Add the block to the set of logs
+        if (isLog(block.getType()) && !treeLogs.contains(block.getLocation())) {
             treeLogs.add(block.getLocation());
 
-            // Check all adjacent blocks (6 directions: up, down, north, south, east, west)
-            findAllConnectedLogs(block.getRelative(0, 1, 0));  // Up
-            findAllConnectedLogs(block.getRelative(0, -1, 0)); // Down
-            findAllConnectedLogs(block.getRelative(1, 0, 0));  // East
-            findAllConnectedLogs(block.getRelative(-1, 0, 0)); // West
-            findAllConnectedLogs(block.getRelative(0, 0, 1));  // South
-            findAllConnectedLogs(block.getRelative(0, 0, -1)); // North
+            // Recursively find all connected logs in 6 directions
+            for (BlockFace face : BlockFace.values()) {
+                findAllConnectedLogs(block.getRelative(face));
+            }
+        }
+    }
+
+    private void scheduleTreeRespawn(Location treeLocation, TreeGenerator.TreeType treeType) {
+        MCSchedulers.getGlobalScheduler().schedule(() -> {
+            Location respawnLocation = getValidSpawnLocation(treeLocation, 10);
+            if (respawnLocation != null) {
+                respawnTreeAtLocation(respawnLocation, treeType);
+            }
+        }, 20 * 10);
+    }
+
+    private void respawnTreeAtLocation(Location location, TreeGenerator.TreeType treeType) {
+        location.getBlock().setType(Material.AIR);
+        Vector vector = new Vector(location.getX(), location.getY(), location.getZ());
+        try {
+            EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitUtil.getLocalWorld(location.getWorld()), 10000);
+            treeType.generate(editSession, vector);
+            Bukkit.broadcastMessage("Tree respawned at " + BukkitPos.toMCPos(location));
+        } catch (MaxChangedBlocksException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private Location getValidSpawnLocation(Location original, int radius) {
-        Location spawnLocation;
-        for (int i = 0; i < 100; i++) { // Try up to 10 times to find a valid location
-            // Generate random offsets within the specified radius
-            int xOffset = random.nextInt(radius * 2 + 1) - radius;
-            int zOffset = random.nextInt(radius * 2 + 1) - radius;
-
-            spawnLocation = original.clone().add(xOffset, 0, zOffset);
+        for (int i = 0; i < 100; i++) { // Try up to 100 times to find a valid location
+            Location spawnLocation = original.clone().add(randomOffset(radius), 0, randomOffset(radius));
             spawnLocation.setY(spawnLocation.getWorld().getHighestBlockYAt(spawnLocation));
 
-            // Check if the block below is grass or dirt
             Block baseBlock = spawnLocation.getBlock().getRelative(0, -1, 0);
-            if ((baseBlock.getType() == Material.GRASS || baseBlock.getType() == Material.DIRT || baseBlock.getType() == Material.SNOW) && !teamCoreManager.isInTerritory(spawnLocation)) {
-                return spawnLocation; // Found a valid location
+            if (isValidSpawnLocation(baseBlock)) {
+                return spawnLocation;
             }
         }
-        return null; // No valid location found after 10 tries
+        return null;
+    }
+
+    private int randomOffset(int radius) {
+        return random.nextInt(radius * 2 + 1) - radius;
+    }
+
+    private boolean isValidSpawnLocation(Block block) {
+        return (block.getType() == Material.GRASS || block.getType() == Material.DIRT || block.getType() == Material.SNOW)
+                && !teamCoreManager.isInTerritory(block.getLocation());
     }
 
     private TreeGenerator.TreeType getTreeType(Block block) {
         Material material = block.getType();
         int data = block.getData();
         if (material == Material.LOG) {
-            if (data == 0) {
-                return TreeGenerator.TreeType.TREE;
-            } else if (data == 1) {
-                return TreeGenerator.TreeType.PINE;
-            } else if (data == 2) {
-                return TreeGenerator.TreeType.BIRCH;
-            } else if (data == 3) {
-                return TreeGenerator.TreeType.JUNGLE;
+            switch (data) {
+                case 0:
+                    return TreeGenerator.TreeType.TREE;
+                case 1:
+                    return TreeGenerator.TreeType.REDWOOD;
+                case 2:
+                    return TreeGenerator.TreeType.BIRCH;
+                case 3:
+                    return TreeGenerator.TreeType.JUNGLE;
             }
         } else if (material == Material.LOG_2) {
-            if (data == 0) {
-                return TreeGenerator.TreeType.ACACIA;
-            } else if (data == 1) {
-                return TreeGenerator.TreeType.DARK_OAK;
-            }
+            return data == 0 ? TreeGenerator.TreeType.ACACIA : TreeGenerator.TreeType.DARK_OAK;
         }
         return null;
     }

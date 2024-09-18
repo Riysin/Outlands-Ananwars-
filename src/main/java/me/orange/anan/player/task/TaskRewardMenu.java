@@ -52,8 +52,9 @@ public class TaskRewardMenu {
         List<String> rewardInfo = new ArrayList<>();
         rewardInfo.add("§eReward:");
         rewardInfo.add("§a" + task.getReward());
+        rewardInfo.add("");
         rewardInfo.add("§fReward Info:");
-        rewardInfo.add("§a" + task.getRewardDescription());
+        rewardInfo.add("§7" + task.getRewardDescription());
         rewardInfo.add("");
         rewardInfo.add("&eClick to claim reward.");
         return rewardInfo;
