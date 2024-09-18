@@ -2,10 +2,14 @@ package me.orange.anan.player;
 
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.tablist.util.Skin;
+import me.orange.anan.player.config.TaskElement;
 import me.orange.anan.player.job.Job;
 import me.orange.anan.player.config.FriendElement;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.config.PlayerConfigElement;
+import me.orange.anan.player.task.Task;
+import me.orange.anan.player.task.TaskManager;
+import me.orange.anan.player.task.TaskRegistry;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -16,10 +20,12 @@ import java.util.List;
 @InjectableComponent
 public class PlayerDataManager {
     private final PlayerConfig playerConfig;
+    private final TaskRegistry taskRegistry;
     private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
 
-    public PlayerDataManager(PlayerConfig playerConfig) {
+    public PlayerDataManager(PlayerConfig playerConfig, TaskRegistry taskRegistry) {
         this.playerConfig = playerConfig;
+        this.taskRegistry = taskRegistry;
 
         loadConfig();
     }
@@ -33,6 +39,12 @@ public class PlayerDataManager {
             playerData.setBossBarActive(playerConfigElement.isBossBarActive());
             playerConfigElement.getFriendList().forEach(friendElement -> {
                 playerData.getFriends().add(friendElement.getUuid());
+            });
+            playerConfigElement.getTaskElementMap().forEach((taskID, taskElement) -> {
+                Task task = taskRegistry.getTask(taskID);
+                task.setStatus(taskElement.getStatus());
+                task.setProgress(taskElement.getProgress());
+                playerData.getTasks().add(task);
             });
 
             playerDataMap.put(UUID.fromString(uuid), playerData);
@@ -51,6 +63,12 @@ public class PlayerDataManager {
                 FriendElement friendElement = new FriendElement();
                 friendElement.setUuid(friend);
                 element.getFriendList().add(friendElement);
+            });
+            playerData.getTasks().forEach(task -> {
+                TaskElement taskElement = new TaskElement();
+                taskElement.setStatus(task.getStatus());
+                taskElement.setProgress(task.getProgress());
+                element.getTaskElementMap().put(task.getId(),taskElement);
             });
 
         });

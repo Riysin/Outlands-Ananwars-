@@ -3,6 +3,8 @@ package me.orange.anan.world;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.container.PostInitialize;
 import io.fairyproject.mc.scheduler.MCSchedulers;
+import me.orange.anan.events.DayToNightEvent;
+import me.orange.anan.world.resource.ResourceManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -25,6 +27,9 @@ public class TimeManager {
             for (World world : Bukkit.getWorlds()) {
                 long time = world.getTime();
                 boolean isDayTime = time <= 14000 || time >= 23000;
+                if(time == 14000) {
+                    Bukkit.getPluginManager().callEvent(new DayToNightEvent());
+                }
                 isDay.put(world, isDayTime);
             }
         }, 0, 10);

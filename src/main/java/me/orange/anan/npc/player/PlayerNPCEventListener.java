@@ -2,16 +2,12 @@ package me.orange.anan.npc.player;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.player.PlayerDataManager;
-import me.orange.anan.player.death.DeathRespawnMenu;
 import me.orange.anan.player.death.deathloot.DeathLootManager;
 import net.citizensnpcs.api.event.NPCDeathEvent;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Inventory;
 import net.citizensnpcs.trait.HologramTrait;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,13 +20,11 @@ public class PlayerNPCEventListener implements Listener {
     private final PlayerNPCManager playerNPCManager;
     private final DeathLootManager deathLootManager;
     private final PlayerDataManager playerDataManager;
-    private final DeathRespawnMenu deathRespawnMenu;
 
-    public PlayerNPCEventListener(PlayerNPCManager playerNPCManager, DeathLootManager deathLootManager, PlayerDataManager playerDataManager, DeathRespawnMenu deathRespawnMenu) {
+    public PlayerNPCEventListener(PlayerNPCManager playerNPCManager, DeathLootManager deathLootManager, PlayerDataManager playerDataManager) {
         this.playerNPCManager = playerNPCManager;
         this.deathLootManager = deathLootManager;
         this.playerDataManager = playerDataManager;
-        this.deathRespawnMenu = deathRespawnMenu;
     }
 
     @EventHandler
@@ -38,16 +32,6 @@ public class PlayerNPCEventListener implements Listener {
         Player player = event.getPlayer();
         playerNPCManager.setUpNPC(player);
         playerNPCManager.despawnNPC(player);
-
-        if (playerDataManager.getPlayerData(player).isNpcDied()) {
-            playerDataManager.getPlayerData(player).setNpcDied(false);
-            player.sendMessage("§c§lYour NPC died while you were offline. You have to respawn!.");
-            MCSchedulers.getGlobalScheduler().schedule(() ->{
-                player.setGameMode(GameMode.SPECTATOR);
-                deathRespawnMenu.open(player);
-            }, 1);
-        }
-
     }
 
     @EventHandler

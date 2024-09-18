@@ -25,6 +25,8 @@ public class PlayerConfigElement {
     private Map<String,JobElement> jobLevelMap = new HashMap<>();
     @ElementType(FriendElement.class)
     private List<FriendElement> friendList = new ArrayList<>();
+    @ElementType(TaskElement.class)
+    private Map<String, TaskElement> taskElementMap = new HashMap<>();
 
     public String getName() {
         return name;
@@ -105,5 +107,13 @@ public class PlayerConfigElement {
 
     public void setFriendList(List<FriendElement> friendList) {
         this.friendList = friendList;
+    }
+
+    public Map<String, TaskElement> getTaskElementMap() {
+        return taskElementMap;
+    }
+
+    public void setTaskElementMap(Map<String, TaskElement> taskElementMap) {
+        this.taskElementMap = taskElementMap;
     }
 }

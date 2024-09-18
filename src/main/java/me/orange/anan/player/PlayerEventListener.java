@@ -4,12 +4,15 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
+import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.crafting.CraftTimerManager;
+import me.orange.anan.player.death.DeathRespawnMenu;
 import me.orange.anan.player.job.JobManager;
 import me.orange.anan.player.job.JobStats;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,14 +30,16 @@ public class PlayerEventListener implements Listener {
     private final JobManager jobManager;
     private final CraftManager craftManager;
     private final ClanManager clanManager;
+    private final DeathRespawnMenu deathRespawnMenu;
 
-    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService, JobManager jobManager, CraftManager craftManager, ClanManager clanManager) {
+    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService, JobManager jobManager, CraftManager craftManager, ClanManager clanManager, DeathRespawnMenu deathRespawnMenu) {
         this.playerDataManager = playerDataManager;
         this.craftTimerManager = craftTimerManager;
         this.nameTagService = nameTagService;
         this.jobManager = jobManager;
         this.craftManager = craftManager;
         this.clanManager = clanManager;
+        this.deathRespawnMenu = deathRespawnMenu;
     }
 
     @EventHandler
@@ -48,6 +53,16 @@ public class PlayerEventListener implements Listener {
                 Bukkit.getPlayer(friend).sendMessage("§fYour friend §6" + player.getName() + " §fis now online!");
             }
         });
+
+        if (playerDataManager.getPlayerData(player).isNpcDied()) {
+            playerDataManager.getPlayerData(player).setNpcDied(false);
+            player.sendMessage("§c§lYour NPC died while you were offline. You have to respawn!.");
+            MCSchedulers.getGlobalScheduler().schedule(() ->{
+                player.setGameMode(GameMode.SPECTATOR);
+                deathRespawnMenu.open(player);
+            }, 1);
+        }
+
 
         Bukkit.getOnlinePlayers().forEach(player1 -> {
             nameTagService.update(MCPlayer.from(player1));

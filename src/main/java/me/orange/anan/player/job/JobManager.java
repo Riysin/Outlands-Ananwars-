@@ -85,6 +85,10 @@ public class JobManager {
         return jobStatsMap.get(player.getUniqueId()).getCurrentJob() != null;
     }
 
+    public Map<String, Integer> getPlayerJobLevelMap(Player player) {
+        return jobStatsMap.get(player.getUniqueId()).getJobLevelMap();
+    }
+
     public int getPlayerJobLevel(Player player, Job job) {
         return jobStatsMap.get(player.getUniqueId()).getJobLevelMap().get(job.getID());
     }

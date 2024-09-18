@@ -1,4 +1,4 @@
-package me.orange.anan.world;
+package me.orange.anan.world.resource;
 
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStatsManager;

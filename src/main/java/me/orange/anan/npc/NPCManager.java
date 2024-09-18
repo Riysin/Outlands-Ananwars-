@@ -48,7 +48,7 @@ public class NPCManager {
         npc.spawn(location);
     }
 
-    public void createResourceNPC(String name, Location location) {
+    public void createLootNPC(String name, Location location) {
         location.setX(location.getBlockX() + 0.5);
         location.setZ(location.getBlockZ() + 0.5);
         location.setYaw(0);

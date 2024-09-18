@@ -18,6 +18,13 @@ public class TaskRegistry {
         return tasks;
     }
 
+    public Task getTask(String id) {
+        return tasks.stream()
+                .filter(task -> task.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
     public void registerTask(Task task) {
         tasks.add(task);
     }

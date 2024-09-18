@@ -41,6 +41,10 @@ public class FisherEventListener implements Listener {
             ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
             ItemStack previousItem = player.getInventory().getItem(event.getPreviousSlot());
 
+            if(!job.skill1(player)) {
+                return;
+            }
+
             if (newItem != null && newItem.getType() == Material.FISHING_ROD) {
                 int currentLureLevel = newItem.getEnchantmentLevel(Enchantment.LURE);
                 newItem.addUnsafeEnchantment(Enchantment.LURE, currentLureLevel + 1);

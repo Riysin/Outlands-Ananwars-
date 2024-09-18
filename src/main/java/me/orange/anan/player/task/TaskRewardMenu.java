@@ -8,6 +8,7 @@ import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.player.job.JobManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -18,10 +19,12 @@ import java.util.List;
 public class TaskRewardMenu {
     private final GuiFactory guiFactory;
     private final TaskManager taskManager;
+    private final JobManager jobManager;
 
-    public TaskRewardMenu(GuiFactory guiFactory, TaskManager taskManager) {
+    public TaskRewardMenu(GuiFactory guiFactory, TaskManager taskManager, JobManager jobManager) {
         this.guiFactory = guiFactory;
         this.taskManager = taskManager;
+        this.jobManager = jobManager;
     }
 
     public void open(Player player, Task task) {
@@ -35,6 +38,7 @@ public class TaskRewardMenu {
             player.sendMessage("§aReward claimed.");
             player.closeInventory();
             task.setStatus(TaskStatus.CLAIMED);
+            jobManager.addPlayer(player, jobManager.getJobByID(task.getId()));
         }));
 
         pane.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));

@@ -44,8 +44,7 @@ public class JobChooseMenu {
                     .name("§f" + job.getName())
                     .lore("§7" + job.getDescription())
                     .build(), clicker -> {
-                Task task = taskManager.getPlayerTask(player, job.getID());
-                if(task == null || !task.getStatus().equals(TaskStatus.CLAIMED)) {
+                if(jobManager.getPlayerJobLevelMap(player).get(job) == null){
                     player.sendMessage("§cYou haven't unlocked this job yet!");
                     return;
                 }

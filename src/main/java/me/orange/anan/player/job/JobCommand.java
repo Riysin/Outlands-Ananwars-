@@ -18,6 +18,16 @@ public class JobCommand extends BaseCommand {
         this.jobManager = jobManager;
     }
 
+    @Command("add")
+    public void addJob(BukkitCommandContext ctx, @Arg("job") Job job) {
+        Player player = ctx.getPlayer();
+        if(!jobManager.getJobStatsMap().containsKey(player.getUniqueId())){
+            jobManager.getJobStatsMap().put(player.getUniqueId(), new JobStats());
+        }
+        jobManager.getPlayerJobLevelMap(player).put(job.getID(), 0);
+        player.sendMessage("Job added");
+    }
+
     @Command(value = {"set"},permissionNode = "job.admin")
     public void setJob(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("job") Job job) {
         jobManager.addPlayer(player, job);

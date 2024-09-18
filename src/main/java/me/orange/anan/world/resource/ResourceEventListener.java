@@ -1,5 +1,6 @@
-package me.orange.anan.blocks.listener;
+package me.orange.anan.world.resource;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.sk89q.worldedit.util.TreeGenerator;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.util.BukkitPos;
@@ -7,6 +8,7 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import me.orange.anan.events.BlockResourceBreakEvent;
+import me.orange.anan.events.DayToNightEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,18 +25,28 @@ import java.util.Set;
 @RegisterAsListener
 public class ResourceEventListener implements Listener {
     private final TeamCoreManager teamCoreManager;
+    private final ResourceManager resourceManager;
     private Set<Location> treeLogs = new HashSet<>();
     private final Random random = new Random();
 
-    public ResourceEventListener(TeamCoreManager teamCoreManager) {
+    public ResourceEventListener(TeamCoreManager teamCoreManager, ResourceManager resourceManager) {
         this.teamCoreManager = teamCoreManager;
+        this.resourceManager = resourceManager;
+    }
+
+    @EventHandler
+    public void onDayToNight(DayToNightEvent event) {
+        resourceManager.respawnOre();
+        resourceManager.respawnLoot();
     }
 
     @EventHandler
     public void onResourceBreak(BlockResourceBreakEvent event) {
         Block block = event.getBlock();
+        resourceManager.addResource(block);
 
         if (block.getType() == Material.LOG || block.getType() == Material.LOG_2) {
+            Resource resource = resourceManager.getResourceFromLocation(block);
             TreeGenerator.TreeType treeType = getTreeType(block);
             if (treeLogs.isEmpty()) {
                 trackTree(block);
@@ -49,6 +61,7 @@ public class ResourceEventListener implements Listener {
                         respawnLocation.getBlock().setType(Material.AIR);
                         respawnLocation.getWorld().generateTree(respawnLocation, TreeType.TREE);
                         Bukkit.broadcastMessage("Tree respawned at " + BukkitPos.toMCPos(respawnLocation));
+                        resourceManager.getResources().remove(resource);
                     }
                 }, 20 * 10);
             }

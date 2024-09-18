@@ -41,9 +41,9 @@ public class NPCCommand extends BaseCommand {
         ctx.getPlayer().sendMessage("Merchant Setup.");
     }
 
-    @Command(value = "resource")
+    @Command(value = "loot")
     public void resource(BukkitCommandContext ctx) {
-        npcManager.createResourceNPC("Resource", ctx.getPlayer().getLocation());
+        npcManager.createLootNPC("Resource", ctx.getPlayer().getLocation());
         ctx.getPlayer().sendMessage("Resource NPC setup.");
     }
 
