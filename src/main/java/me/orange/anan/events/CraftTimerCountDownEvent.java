@@ -14,6 +14,7 @@ public class CraftTimerCountDownEvent extends Event {
         this.player = player;
         this.craftTimer = craftTimer;
     }
+
     public Player getPlayer(){
         return this.player;
     }
