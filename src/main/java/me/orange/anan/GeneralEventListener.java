@@ -4,7 +4,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
-import me.orange.anan.world.OreClusterPopulator;
+import me.orange.anan.world.resource.OreClusterPopulator;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

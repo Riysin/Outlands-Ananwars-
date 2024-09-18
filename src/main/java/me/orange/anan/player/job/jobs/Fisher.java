@@ -1,14 +1,12 @@
-package me.orange.anan.job.jobs;
+package me.orange.anan.player.job.jobs;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
-import me.orange.anan.job.Job;
+import me.orange.anan.player.job.Job;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
 

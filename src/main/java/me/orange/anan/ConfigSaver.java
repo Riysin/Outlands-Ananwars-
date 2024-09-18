@@ -7,7 +7,7 @@ import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.craft.behaviour.lock.LockManager;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
-import me.orange.anan.job.JobManager;
+import me.orange.anan.player.job.JobManager;
 import me.orange.anan.player.PlayerDataManager;
 import me.orange.anan.player.bed.BedManager;
 

@@ -1,4 +1,4 @@
-package me.orange.anan.npc.task;
+package me.orange.anan.player.task;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;

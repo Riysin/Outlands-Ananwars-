@@ -1,4 +1,4 @@
-package me.orange.anan.job;
+package me.orange.anan.player.job;
 
 import io.fairyproject.bukkit.command.event.BukkitCommandContext;
 import io.fairyproject.command.BaseCommand;

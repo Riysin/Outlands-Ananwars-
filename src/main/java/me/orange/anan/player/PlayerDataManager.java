@@ -2,7 +2,7 @@ package me.orange.anan.player;
 
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.tablist.util.Skin;
-import me.orange.anan.job.Job;
+import me.orange.anan.player.job.Job;
 import me.orange.anan.player.config.FriendElement;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.config.PlayerConfigElement;

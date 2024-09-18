@@ -1,6 +1,6 @@
 package me.orange.anan.events;
 
-import me.orange.anan.npc.task.Task;
+import me.orange.anan.player.task.Task;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

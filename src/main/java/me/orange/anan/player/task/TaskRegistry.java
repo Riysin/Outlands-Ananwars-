@@ -1,7 +1,7 @@
-package me.orange.anan.npc.task;
+package me.orange.anan.player.task;
 
 import io.fairyproject.container.InjectableComponent;
-import me.orange.anan.npc.task.tasks.FisherTask;
+import me.orange.anan.player.task.tasks.FisherTask;
 
 import java.util.ArrayList;
 import java.util.List;

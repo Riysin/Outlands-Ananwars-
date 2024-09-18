@@ -10,12 +10,11 @@ import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.ClanManager;
-import me.orange.anan.job.Job;
-import me.orange.anan.job.JobManager;
-import me.orange.anan.npc.task.AssignedTaskMenu;
-import me.orange.anan.npc.task.Task;
-import me.orange.anan.npc.task.TaskManager;
-import me.orange.anan.npc.task.TaskStatus;
+import me.orange.anan.player.job.Job;
+import me.orange.anan.player.job.JobManager;
+import me.orange.anan.player.task.AssignedTaskMenu;
+import me.orange.anan.player.task.TaskManager;
+import me.orange.anan.player.task.TaskStatus;
 import me.orange.anan.player.death.DeathManager;
 import me.orange.anan.player.friend.FriendMenu;
 import net.kyori.adventure.text.Component;
@@ -25,7 +24,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @InjectableComponent
 public class PlayerStatsMenu {

@@ -1,6 +1,6 @@
 package me.orange.anan.events;
 
-import me.orange.anan.job.Job;
+import me.orange.anan.player.job.Job;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

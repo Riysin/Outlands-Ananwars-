@@ -1,4 +1,4 @@
-package me.orange.anan.npc.task;
+package me.orange.anan.player.task;
 
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.player.PlayerDataManager;

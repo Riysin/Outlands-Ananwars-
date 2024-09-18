@@ -1,4 +1,4 @@
-package me.orange.anan.job.jobTable;
+package me.orange.anan.player.job.jobTable;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;
@@ -9,12 +9,12 @@ import io.fairyproject.bukkit.gui.pane.mapping.PaneMapping;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
-import me.orange.anan.job.Job;
-import me.orange.anan.job.JobManager;
-import me.orange.anan.job.JobRegistry;
-import me.orange.anan.npc.task.Task;
-import me.orange.anan.npc.task.TaskManager;
-import me.orange.anan.npc.task.TaskStatus;
+import me.orange.anan.player.job.Job;
+import me.orange.anan.player.job.JobManager;
+import me.orange.anan.player.job.JobRegistry;
+import me.orange.anan.player.task.Task;
+import me.orange.anan.player.task.TaskManager;
+import me.orange.anan.player.task.TaskStatus;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 

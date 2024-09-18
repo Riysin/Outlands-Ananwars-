@@ -1,4 +1,4 @@
-package me.orange.anan.job;
+package me.orange.anan.player.job;
 
 import io.fairyproject.command.CommandContext;
 import io.fairyproject.command.exception.ArgTransformException;

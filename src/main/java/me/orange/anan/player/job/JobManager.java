@@ -1,4 +1,4 @@
-package me.orange.anan.job;
+package me.orange.anan.player.job;
 
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.PlayerChooseJobEvent;

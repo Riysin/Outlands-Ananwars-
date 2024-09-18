@@ -1,4 +1,4 @@
-package me.orange.anan.job;
+package me.orange.anan.player.job;
 
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.Player;

@@ -1,7 +1,7 @@
-package me.orange.anan.npc.task.tasks;
+package me.orange.anan.player.task.tasks;
 
 import me.orange.anan.events.TaskCompleteEvent;
-import me.orange.anan.npc.task.Task;
+import me.orange.anan.player.task.Task;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

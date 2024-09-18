@@ -1,14 +1,11 @@
-package me.orange.anan.job.jobs;
+package me.orange.anan.player.job.jobs;
 
-import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.CraftManager;
-import me.orange.anan.events.PlayerLevelUpEvent;
 import me.orange.anan.fishing.FishManager;
-import me.orange.anan.job.Job;
-import me.orange.anan.job.JobManager;
-import org.bukkit.Bukkit;
+import me.orange.anan.player.job.Job;
+import me.orange.anan.player.job.JobManager;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
@@ -21,10 +18,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 @InjectableComponent
 @RegisterAsListener

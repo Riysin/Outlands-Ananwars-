@@ -5,17 +5,13 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTag;
 import io.fairyproject.mc.nametag.NameTagAdapter;
-import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import me.orange.anan.clan.Clan;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.clan.NametagVisibility;
-import me.orange.anan.job.Job;
-import me.orange.anan.job.JobManager;
+import me.orange.anan.player.job.JobManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 @InjectableComponent
 public class PlayerNameTag extends NameTagAdapter {

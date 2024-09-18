@@ -1,7 +1,7 @@
 package me.orange.anan.player;
 
 import io.fairyproject.mc.tablist.util.Skin;
-import me.orange.anan.npc.task.Task;
+import me.orange.anan.player.task.Task;
 import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 

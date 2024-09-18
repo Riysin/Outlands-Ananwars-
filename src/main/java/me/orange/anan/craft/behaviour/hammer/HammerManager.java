@@ -173,5 +173,4 @@ public class HammerManager {
             player.sendMessage("§c方塊已達到最大耐久度!");
 
     }
-
 }

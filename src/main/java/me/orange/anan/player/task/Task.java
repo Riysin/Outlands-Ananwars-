@@ -1,4 +1,4 @@
-package me.orange.anan.npc.task;
+package me.orange.anan.player.task;
 
 import org.bukkit.entity.Player;
 

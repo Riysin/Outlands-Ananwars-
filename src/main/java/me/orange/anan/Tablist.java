@@ -2,15 +2,14 @@ package me.orange.anan;
 
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
-import io.fairyproject.mc.MCWorld;
 import io.fairyproject.mc.tablist.TabColumn;
 import io.fairyproject.mc.tablist.TablistAdapter;
 import io.fairyproject.mc.tablist.util.Skin;
 import io.fairyproject.mc.tablist.util.TabSlot;
 import me.orange.anan.clan.Clan;
 import me.orange.anan.clan.ClanManager;
-import me.orange.anan.job.Job;
-import me.orange.anan.job.JobManager;
+import me.orange.anan.player.job.Job;
+import me.orange.anan.player.job.JobManager;
 import me.orange.anan.player.PlayerDataManager;
 import me.orange.anan.world.TimeManager;
 import net.kyori.adventure.text.Component;

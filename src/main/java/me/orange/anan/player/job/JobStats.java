@@ -1,4 +1,4 @@
-package me.orange.anan.job;
+package me.orange.anan.player.job;
 
 import java.util.HashMap;
 import java.util.Map;

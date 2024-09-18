@@ -1,4 +1,4 @@
-package me.orange.anan.npc.task;
+package me.orange.anan.player.task;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;

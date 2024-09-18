@@ -1,4 +1,4 @@
-package me.orange.anan.job;
+package me.orange.anan.player.job;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
@@ -7,7 +7,7 @@ import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
 import me.orange.anan.events.PlayerChooseJobEvent;
 import me.orange.anan.events.PlayerLevelUpEvent;
-import me.orange.anan.job.jobTable.JobChooseMenu;
+import me.orange.anan.player.job.jobTable.JobChooseMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
