@@ -10,6 +10,7 @@ import me.orange.anan.player.task.*;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -51,9 +52,10 @@ public class NPCCommand extends BaseCommand {
     public void hurt(BukkitCommandContext ctx, @Arg("npcID") int id) {
         NPC npc = CitizensAPI.getNPCRegistry().getById(id);
         Player player = ctx.getPlayer();
+        Block block = npc.getStoredLocation().getBlock();
 
         if (npc.getEntity() instanceof LivingEntity) {
-            Bukkit.getPluginManager().callEvent(new PlayerDamageNPCResourceEvent(player, npc));
+            Bukkit.getPluginManager().callEvent(new PlayerDamageNPCResourceEvent(player, npc, block));
         }
     }
 

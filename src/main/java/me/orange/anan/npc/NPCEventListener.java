@@ -11,6 +11,7 @@ import net.citizensnpcs.api.event.CitizensEnableEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,16 +36,18 @@ public class NPCEventListener implements Listener {
     public void onResourceDamaged(PlayerDamageNPCResourceEvent event) {
         Player player = event.getPlayer();
         NPC npc = event.getNpc();
+        Block block = event.getBlock();
+
         LivingEntity entity = (LivingEntity) npc.getEntity();
         int toolDamage = toolConfig.getToolDamage(player.getItemInHand());
 
         if (entity.getHealth() <= toolDamage) {
-            Bukkit.getPluginManager().callEvent(new NPCResourceDieEvent(player, npc));
+            Bukkit.getPluginManager().callEvent(new NPCResourceDieEvent(player, npc, block));
             return;
         }
 
         entity.damage(toolDamage);
-        player.playEffect(player.getLocation(), Effect.ZOMBIE_CHEW_WOODEN_DOOR, 1);
+        player.getWorld().playEffect(player.getLocation(), Effect.ZOMBIE_CHEW_WOODEN_DOOR, 1);
         Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
     }
 }

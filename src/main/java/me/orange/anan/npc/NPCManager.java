@@ -8,6 +8,8 @@ import net.citizensnpcs.trait.text.Text;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.time.Duration;
 
@@ -40,7 +42,6 @@ public class NPCManager {
         npc.getOrAddTrait(Text.class).add("&eI have a task for you.");
         npc.getOrAddTrait(Text.class).add("&eWould you like to accept it?");
 
-
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task " + taskID, CommandTrait.Hand.RIGHT)
                 .player(true)
                 .addPerm("npc.admin"));
@@ -55,11 +56,11 @@ public class NPCManager {
         location.getWorld().getBlockAt(location).setTypeIdAndData(123, (byte) 0, true);
 
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.SLIME, name);
-
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.getOrAddTrait(SlimeSize.class).setSize(2);
         npc.getOrAddTrait(HologramTrait.class).addLine("§e[Hit]");
-        npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.3);
 
+        npc.getOrAddTrait(CommandTrait.class).setHideErrorMessages(true);
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc hurt " + npc.getId(), CommandTrait.Hand.LEFT)
                 .player(true)
                 .addPerm("npc.admin"));
@@ -69,6 +70,7 @@ public class NPCManager {
         if(npc.getEntity() instanceof LivingEntity) {
             ((LivingEntity) npc.getEntity()).setMaxHealth(10);
             ((LivingEntity) npc.getEntity()).setHealth(10);
+            ((LivingEntity) npc.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
         }
     }
 

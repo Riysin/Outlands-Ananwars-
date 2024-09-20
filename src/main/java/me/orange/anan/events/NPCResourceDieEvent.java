@@ -1,5 +1,6 @@
 package me.orange.anan.events;
 
+import org.bukkit.block.Block;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -9,10 +10,12 @@ public class NPCResourceDieEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
     private final NPC npc;
+    private final Block block;
 
-    public NPCResourceDieEvent(Player player, NPC npc) {
+    public NPCResourceDieEvent(Player player, NPC npc, Block block) {
         this.player = player;
         this.npc = npc;
+        this.block = block;
     }
     public Player getPlayer(){
         return this.player;
@@ -20,6 +23,10 @@ public class NPCResourceDieEvent extends Event {
 
     public NPC getNpc() {
         return npc;
+    }
+
+    public Block getBlock() {
+        return block;
     }
 
     @Override

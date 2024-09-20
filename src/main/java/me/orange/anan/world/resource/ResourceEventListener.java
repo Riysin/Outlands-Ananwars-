@@ -25,6 +25,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -45,19 +46,20 @@ public class ResourceEventListener implements Listener {
     public void onResourceDie(NPCResourceDieEvent event) {
         NPC npc = event.getNpc();
         Player player = event.getPlayer();
-        Block block = npc.getStoredLocation().getBlock();
+        Block block = event.getBlock();
+
+        player.getWorld().playEffect(player.getLocation(), Effect.ZOMBIE_DESTROY_DOOR, 1);
+        resourceManager.addResource(block);
 
         ((LivingEntity) npc.getEntity()).setHealth(0);
         npc.despawn();
+        npc.destroy();
         block.breakNaturally();
-        player.playEffect(player.getLocation(), Effect.ZOMBIE_DESTROY_DOOR, 1);
-        resourceManager.addResource(block);
     }
 
     @EventHandler
     public void onDayToNight(DayToNightEvent event) {
         World world = event.getWorld();
-        Bukkit.broadcastMessage("It's night time! Respawning resources...");
         resourceManager.respawnOre(world);
         resourceManager.respawnLoot(world);
     }
