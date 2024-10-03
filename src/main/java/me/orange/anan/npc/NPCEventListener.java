@@ -1,6 +1,5 @@
 package me.orange.anan.npc;
 
-import com.cryptomorin.xseries.messages.ActionBar;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.log.Log;
@@ -17,14 +16,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 
 @InjectableComponent
 @RegisterAsListener
 public class NPCEventListener implements Listener {
     private final ToolConfig toolConfig;
+    private final NPCLootManager npcLootManager;
 
-    public NPCEventListener(ToolConfig toolConfig) {
+    public NPCEventListener(ToolConfig toolConfig, NPCLootManager npcLootManager) {
         this.toolConfig = toolConfig;
+        this.npcLootManager = npcLootManager;
     }
 
     @EventHandler
@@ -49,5 +51,14 @@ public class NPCEventListener implements Listener {
         entity.damage(toolDamage);
         player.getWorld().playEffect(player.getLocation(), Effect.ZOMBIE_CHEW_WOODEN_DOOR, 1);
         Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
+    }
+
+    @EventHandler
+    public void onResourceDie(NPCResourceDieEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
+        ItemStack loot = npcLootManager.getLoot(player, block);
+        player.getWorld().dropItem(block.getLocation(), loot);
     }
 }

@@ -7,7 +7,7 @@ plugins {
     id("java-library")
 
     //Fairy framework plugin
-    id("io.fairyproject") version "0.7.8b7-SNAPSHOT"
+    id("io.fairyproject") version "0.7.9b3-SNAPSHOT"
 
     // Dependency management plugin
     id("io.spring.dependency-management") version "1.1.6"
@@ -92,6 +92,7 @@ repositories {
     maven(url = uri("https://jitpack.io"))
     maven(url = uri("https://maven.enginehub.org/repo/"))
     maven(url = uri("https://maven.sk89q.com/repo/"))
+    maven(url = uri("https://masecla.dev/nexus/repository/mt-plugins-public/"))
 }
 
 // Dependencies
@@ -105,6 +106,7 @@ dependencies {
     compileOnly("com.github.NEZNAMY:TAB-API:4.1.8")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-legacy:6.2")
+    compileOnly("TeamMT:VillagerGUIApi.api:1.3.0")
 }
 
 tasks.withType(ShadowJar::class.java) {

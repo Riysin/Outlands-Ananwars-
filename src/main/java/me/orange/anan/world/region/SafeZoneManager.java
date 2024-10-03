@@ -1,10 +1,8 @@
-package me.orange.anan.region;
+package me.orange.anan.world.region;
 
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldguard.bukkit.RegionContainer;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -15,7 +13,7 @@ import java.util.List;
 
 @InjectableComponent
 public class SafeZoneManager {
-    public void createSageZone(){
+    public void createSafeZone(){
         RegionContainer container = WorldGuardPlugin.inst().getRegionContainer();
         RegionManager regions = container.get(WorldGuardPlugin.inst().getServer().getWorld("world"));
 

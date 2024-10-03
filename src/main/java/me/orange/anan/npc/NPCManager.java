@@ -8,26 +8,18 @@ import net.citizensnpcs.trait.text.Text;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.time.Duration;
-
 @InjectableComponent
 public class NPCManager {
-
-    public void setUpMerchantNPC(int id) {
-        NPC npc = CitizensAPI.getNPCRegistry().getById(id);
-        getTemplateNPC("merchant").spawn(npc.getStoredLocation());
-    }
-
     public void createNPC(String name, Location location) {
         NPC npc = getTemplateNPC(name);
 
         npc.getOrAddTrait(Text.class).add("&eHello, I'm an NPC!");
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc say", CommandTrait.Hand.RIGHT)
-                .player(true)
-                .addPerm("npc.admin"));
+                .player(true));
 
         npc.spawn(location);
     }
@@ -43,10 +35,19 @@ public class NPCManager {
         npc.getOrAddTrait(Text.class).add("&eWould you like to accept it?");
 
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task " + taskID, CommandTrait.Hand.RIGHT)
-                .player(true)
-                .addPerm("npc.admin"));
+                .player(true));
 
         npc.spawn(location);
+    }
+
+    public void createMerchantNPC(Player player, String merchantID) {
+        NPC npc = getTemplateNPC(Character.toUpperCase(merchantID.charAt(0)) + merchantID.substring(1));
+
+        npc.getOrAddTrait(Text.class).add("&eHello, I have a lot of items for sale!");
+        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc shop " + merchantID, CommandTrait.Hand.RIGHT)
+                .player(true));
+
+        npc.spawn(player.getLocation());
     }
 
     public void createLootNPC(String name, Location location) {
@@ -62,12 +63,11 @@ public class NPCManager {
 
         npc.getOrAddTrait(CommandTrait.class).setHideErrorMessages(true);
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc hurt " + npc.getId(), CommandTrait.Hand.LEFT)
-                .player(true)
-                .addPerm("npc.admin"));
+                .player(true));
 
         npc.spawn(location);
 
-        if(npc.getEntity() instanceof LivingEntity) {
+        if (npc.getEntity() instanceof LivingEntity) {
             ((LivingEntity) npc.getEntity()).setMaxHealth(10);
             ((LivingEntity) npc.getEntity()).setHealth(10);
             ((LivingEntity) npc.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
