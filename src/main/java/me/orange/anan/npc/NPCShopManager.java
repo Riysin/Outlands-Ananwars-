@@ -28,7 +28,7 @@ public class NPCShopManager {
         this.trades.put("fisher", fisherTrades);
     }
 
-    private Map<String, List<VillagerTrade>> getTrades() {
+    public Map<String, List<VillagerTrade>> getTrades() {
         return trades;
     }
 

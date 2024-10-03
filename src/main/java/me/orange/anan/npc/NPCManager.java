@@ -14,6 +14,12 @@ import org.bukkit.potion.PotionEffectType;
 
 @InjectableComponent
 public class NPCManager {
+    private final NPCShopManager npcShopManager;
+
+    public NPCManager(NPCShopManager npcShopManager) {
+        this.npcShopManager = npcShopManager;
+    }
+
     public void createNPC(String name, Location location) {
         NPC npc = getTemplateNPC(name);
 
@@ -41,6 +47,10 @@ public class NPCManager {
     }
 
     public void createMerchantNPC(Player player, String merchantID) {
+        if (npcShopManager.getTrades().get(merchantID) == null) {
+            player.sendMessage("This merchant does not exist.");
+            return;
+        }
         NPC npc = getTemplateNPC(Character.toUpperCase(merchantID.charAt(0)) + merchantID.substring(1));
 
         npc.getOrAddTrait(Text.class).add("&eHello, I have a lot of items for sale!");

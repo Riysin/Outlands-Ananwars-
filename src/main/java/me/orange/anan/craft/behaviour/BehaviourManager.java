@@ -1,6 +1,7 @@
 package me.orange.anan.craft.behaviour;
 
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.craft.behaviour.adminWand.AdminWandBehaviour;
 import me.orange.anan.craft.behaviour.hammer.HammerBehaviour;
 import me.orange.anan.craft.behaviour.key.KeyBehaviour;
 import me.orange.anan.craft.behaviour.lock.LockBehaviour;
@@ -17,8 +18,10 @@ public class BehaviourManager {
             HammerBehaviour hammerBehaviour,
             TeamCoreBehaviour teamCoreBehaviour,
             KeyBehaviour keyBehaviour,
-            LockBehaviour lockBehaviour
+            LockBehaviour lockBehaviour,
+            AdminWandBehaviour adminWandBehaviour
     ) {
+        registerCraftBehaviour(adminWandBehaviour);
         registerCraftBehaviour(hammerBehaviour);
         registerCraftBehaviour(teamCoreBehaviour);
         registerCraftBehaviour(keyBehaviour);
