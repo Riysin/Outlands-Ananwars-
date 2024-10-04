@@ -116,7 +116,6 @@ public class ResourceEventListener implements Listener {
         try {
             EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitUtil.getLocalWorld(location.getWorld()), 10000);
             treeType.generate(editSession, vector);
-            Bukkit.broadcastMessage("Tree respawned at " + BukkitPos.toMCPos(location));
         } catch (MaxChangedBlocksException e) {
             throw new RuntimeException(e);
         }

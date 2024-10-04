@@ -170,4 +170,12 @@ public class ClanManager {
             manager.enableArmorStands(tabPlayer);
         }
     }
+
+    public void removeHologram(Player player){
+        TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+        if(TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager){
+            UnlimitedNameTagManager manager = (UnlimitedNameTagManager) TabAPI.getInstance().getNameTagManager();
+            manager.setLine(tabPlayer,"myCustomLine", "");
+        }
+    }
 }

@@ -32,7 +32,10 @@ public class ClanEventListener implements Listener {
 
     @EventHandler
     public void onLeftTeam(PlayerLeftClanEvent event) {
-        event.getPlayers().forEach(player -> nameTagService.update(MCPlayer.from(player)));
+        event.getPlayers().forEach(player -> {
+            nameTagService.update(MCPlayer.from(player));
+            clanManager.removeHologram(player);
+        });
     }
 
     @EventHandler
@@ -43,7 +46,7 @@ public class ClanEventListener implements Listener {
         if (clanManager.getPlayerClan(player) != null && clanManager.getPlayerClan(damager) != null) {
             if (clanManager.sameClan(player, damager)) {
                 event.setCancelled(true);
-                damager.sendMessage("§cYou are in the same clan");
+                damager.sendMessage("§cYou are in the same clan!");
             }
         }
     }

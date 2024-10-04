@@ -141,6 +141,10 @@ public class TeamCoreManager {
         return null;
     }
 
+    public boolean isCoreCreeper(Entity entity) {
+        return entity instanceof Creeper && getTeamCore((Creeper) entity) != null;
+    }
+
     public boolean isInTeamCoreClan(TeamCore teamCore, Player player) {
         return clanManager.sameClan(player, teamCore.getOfflinePlacePlayer());
     }

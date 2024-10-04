@@ -52,6 +52,10 @@ public class DeathEventListener implements Listener {
             return;
         }
 
+        Player killer = player.getKiller();
+        event.setDeathMessage(killer == null ?
+                "§c" + player.getName() + "意外死亡了" :
+                "§c" + player.getName() + "被" + killer.getName() + "擊殺了");
         Bukkit.getPluginManager().callEvent(new PlayerDeadEvent(player));
     }
 
@@ -73,11 +77,6 @@ public class DeathEventListener implements Listener {
     @EventHandler
     public void playerDead(PlayerDeadEvent event) {
         Player player = event.getEntity();
-
-        Player killer = player.getKiller();
-        event.setDeathMessage(killer == null ?
-                "§c" + player.getName() + "意外死亡了" :
-                "§c" + player.getName() + "被" + killer.getName() + "擊殺了");
 
         deathManager.removeDownPlayer(player);
         deathManager.stopRescueByRescued(player);

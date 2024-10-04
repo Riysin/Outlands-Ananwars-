@@ -6,6 +6,8 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
+import me.orange.anan.craft.CraftManager;
+import me.orange.anan.craft.CraftType;
 import me.orange.anan.events.PlayerPlaceTeamCoreEvent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -15,8 +17,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 @InjectableComponent
 @RegisterAsListener
@@ -30,10 +35,12 @@ public class TeamCoreEventListener implements Listener {
 
     private final TeamCoreManager teamCoreManager;
     private final BlockStatsManager blockStatsManager;
+    private final CraftManager craftManager;
 
-    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager) {
+    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager, CraftManager craftManager) {
         this.teamCoreManager = teamCoreManager;
         this.blockStatsManager = blockStatsManager;
+        this.craftManager = craftManager;
     }
 
     @EventHandler
@@ -53,7 +60,7 @@ public class TeamCoreEventListener implements Listener {
             return;
         }
 
-        if(teamCoreManager.isNearTeamCore(block) && block.getType() == Material.ENDER_PORTAL_FRAME) {
+        if (teamCoreManager.isNearTeamCore(block) && block.getType() == Material.ENDER_PORTAL_FRAME) {
             event.setCancelled(true);
             player.sendMessage("§c你不能在隊伍核心附近放置其他隊伍核心!");
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);
@@ -95,7 +102,8 @@ public class TeamCoreEventListener implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (event.getEntity() instanceof Creeper) {
+        if (teamCoreManager.isCoreCreeper(event.getEntity())) {
+            event.getDrops().clear();
             Creeper creeper = (Creeper) event.getEntity();
             TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
             if (teamCore != null) {
@@ -107,18 +115,33 @@ public class TeamCoreEventListener implements Listener {
     @EventHandler
     public void onRightClickCreeper(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        if (event.getRightClicked() instanceof Creeper) {
+        if (teamCoreManager.isCoreCreeper(event.getRightClicked())) {
             Creeper creeper = (Creeper) event.getRightClicked();
             TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
             if (teamCore != null)
-                if (player.isSneaking())
+                if (player.isSneaking()) {
                     player.openInventory(teamCore.getInventory());
+                }
         }
     }
 
     @EventHandler
+    public void onTeamInventoryOpen(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        Inventory inventory = event.getInventory();
+        if (teamCoreManager.getTeamCore(player) != null && teamCoreManager.getTeamCore(player).getInventory().equals(inventory)) {
+            ItemStack itemStack = event.getCurrentItem();
+            if (itemStack != null && craftManager.getCraft(itemStack).getType() != CraftType.RESOURCE) {
+                player.sendMessage("§c你不能將非資源物品放入隊伍核心!");
+                event.setCancelled(true);
+            }
+        }
+
+    }
+
+    @EventHandler
     public void onCreeperHurt(EntityDamageByPlayerEvent event) {
-        if (event.getEntity() instanceof Creeper) {
+        if (teamCoreManager.isCoreCreeper(event.getEntity())) {
             Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(event.getDamager(), event.getDamager().getLocation(), event.getDamager().getLocation()));
         }
     }
