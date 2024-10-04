@@ -4,6 +4,8 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.log.Log;
 import org.bukkit.*;
 
+import java.io.File;
+
 @InjectableComponent
 public class WorldManager {
     public void bukkitCreateWorld(String worldName) {
@@ -21,7 +23,6 @@ public class WorldManager {
         world.setGameRuleValue("doDaylightCycle", "true");
         world.setGameRuleValue("doFireTick", "false");
         world.setGameRuleValue("doTileDrops", "false");
-        world.setGameRuleValue("doEntityDrops", "false");
         world.setGameRuleValue("doMobLoot", "false");
         world.setTime(7000);
         world.setDifficulty(Difficulty.EASY);
@@ -38,5 +39,36 @@ public class WorldManager {
 
     public void bukkitRemoveWorld(String worldName){
         Bukkit.broadcastMessage(ChatColor.YELLOW + "正在刪除世界(" + worldName + "), 請稍後...");
+        World world = Bukkit.getWorld(worldName);
+
+        if (world != null) {
+            boolean unloaded = Bukkit.unloadWorld(world, false); // 'false' = don't save changes
+            if (!unloaded) {
+                Bukkit.broadcastMessage("Failed to unload world " + worldName);
+                return;
+            }
+        }
+
+        File worldFolder = new File(Bukkit.getWorldContainer(), worldName);
+        if (worldFolder.exists()) {
+            deleteWorldFolder(worldFolder);
+            Bukkit.broadcastMessage(ChatColor.GREEN + worldName + " 刪除完成!");
+        } else {
+            Bukkit.broadcastMessage("World folder not found: " + worldFolder.getPath());
+        }
+    }
+
+    private void deleteWorldFolder(File path) {
+        File[] files = path.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteWorldFolder(file); // Recursively delete subfolders
+                } else {
+                    file.delete(); // Delete file
+                }
+            }
+        }
+        path.delete(); // Finally, delete the folder itself
     }
 }

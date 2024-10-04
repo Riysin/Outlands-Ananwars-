@@ -36,7 +36,7 @@ public class WorldCommand extends BaseCommand {
 
     @Command("delete")
     public void deleteWorld(BukkitCommandContext ctx, @Arg("world") String world) {
-        ctx.getPlayer().sendMessage("未製作");
+        worldManager.bukkitRemoveWorld(world);
     }
 
     @Command("populate")
