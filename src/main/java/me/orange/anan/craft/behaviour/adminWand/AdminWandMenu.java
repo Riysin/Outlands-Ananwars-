@@ -37,6 +37,12 @@ public class AdminWandMenu {
             adminWandManager.setAction(player, AdminWandAction.NPC_FISHER);
             clicker.closeInventory();
         }));
+        pane.setSlot(2, GuiSlot.of(ItemBuilder.of(XMaterial.FISHING_ROD)
+                .name("Place Fisher")
+                .build(),clicker->{
+            adminWandManager.setAction(player, AdminWandAction.SAFEZONE_FISHER);
+            clicker.closeInventory();
+        }));
 
         gui.addPane(pane);
         gui.open(player);

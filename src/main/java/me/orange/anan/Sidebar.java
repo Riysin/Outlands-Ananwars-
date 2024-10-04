@@ -12,6 +12,7 @@ import me.orange.anan.player.task.TaskManager;
 import me.orange.anan.player.task.TaskStatus;
 import me.orange.anan.player.PlayerDataManager;
 import me.orange.anan.world.TimeManager;
+import me.orange.anan.world.region.SafeZoneManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -26,18 +27,20 @@ public class Sidebar implements SidebarAdapter {
     private final TimeManager timeManager;
     private final PlayerDataManager playerDataManager;
     private final TeamCoreManager teamCoreManager;
+    private final SafeZoneManager safeZoneManager;
 
     private static final String SEPARATOR = "§7§m-----------------";
     private static final int MAX_TASKS_DISPLAYED = 3;
     private static final int MAX_CRAFTS_DISPLAYED = 3;
 
-    public Sidebar(CraftTimerManager craftTimerManager, JobManager jobManager, TaskManager taskManager, TimeManager timeManager, PlayerDataManager playerDataManager, TeamCoreManager teamCoreManager) {
+    public Sidebar(CraftTimerManager craftTimerManager, JobManager jobManager, TaskManager taskManager, TimeManager timeManager, PlayerDataManager playerDataManager, TeamCoreManager teamCoreManager, SafeZoneManager safeZoneManager) {
         this.craftTimerManager = craftTimerManager;
         this.jobManager = jobManager;
         this.taskManager = taskManager;
         this.timeManager = timeManager;
         this.playerDataManager = playerDataManager;
         this.teamCoreManager = teamCoreManager;
+        this.safeZoneManager = safeZoneManager;
     }
 
     @Override
@@ -57,11 +60,16 @@ public class Sidebar implements SidebarAdapter {
             jobLevel = jobManager.getPlayerJobLevel(player, jobManager.getPlayerCurrentJob(player.getUniqueId()));
         }
 
+        String location = teamCoreManager.isInTerritory(player) ? "§3Territory" : "§2Wilderness";
+        if(safeZoneManager.isInSafeZone(player)) {
+            location = "§6SafeZone";
+        }
+
         sidebar.add(Component.text("§7§m------------------"));
         //server
         sidebar.add(Component.text("§fPlayer"));
         sidebar.add(Component.text("§3» §bTime§7: §f" + timeManager.getTimeState(player.getWorld())));
-        sidebar.add(Component.text("§3» §bLoc.§7: §f" + ((teamCoreManager.isInTerritory(player)) ? "§6Territory" : "§2Wilderness")));
+        sidebar.add(Component.text("§3» §bLoc.§7: §f" + location));
         sidebar.add(Component.text("§3» §bFriends§7: §f" + playerDataManager.getPlayerData(player).getOnlineFriends().size() + "/" + playerDataManager.getPlayerData(player).getFriends().size()));
         sidebar.add(Component.text(""));
 

@@ -10,8 +10,11 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.registry.WorldData;
+import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.RegionContainer;
+import com.sk89q.worldguard.bukkit.RegionQuery;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -33,22 +36,37 @@ import java.util.List;
 public class SafeZoneManager {
     private int zoneCounter = 0;
 
+    public boolean isInSafeZone(Player player) {
+        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+        RegionContainer container = WorldGuardPlugin.inst().getRegionContainer();
+        RegionQuery query = container.createQuery();
+        ApplicableRegionSet set = query.getApplicableRegions(player.getLocation());
+
+        return set.queryValue(localPlayer, DefaultFlag.PVP) != null;
+    }
+
     private void configureSafeZone(String regionName) {
         RegionManager regions = getRegionManager();
         ProtectedRegion region = regions.getRegion(regionName);
 
         if (region != null) {
-            region.setFlag(DefaultFlag.PVP, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.MOB_SPAWNING, StateFlag.State.DENY);
+            // Deny various actions in the region
             region.setFlag(DefaultFlag.BLOCK_BREAK, StateFlag.State.DENY);
             region.setFlag(DefaultFlag.BLOCK_PLACE, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.CHEST_ACCESS, StateFlag.State.DENY);
             region.setFlag(DefaultFlag.DAMAGE_ANIMALS, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.ENDER_BUILD, StateFlag.State.DENY);
             region.setFlag(DefaultFlag.ENTITY_ITEM_FRAME_DESTROY, StateFlag.State.DENY);
             region.setFlag(DefaultFlag.ENTITY_PAINTING_DESTROY, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.MOB_SPAWNING, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.MOB_DAMAGE, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.PVP, StateFlag.State.DENY);
             region.setFlag(DefaultFlag.PLACE_VEHICLE, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.CHEST_ACCESS, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.GREET_MESSAGE, "You are in a safe zone");
-            region.setFlag(DefaultFlag.FAREWELL_MESSAGE, "You are leaving the safe zone");
+            region.setFlag(DefaultFlag.GREET_MESSAGE, "§eYou are in a safe zone");
+            region.setFlag(DefaultFlag.FAREWELL_MESSAGE, "§eYou are leaving the safe zone");
+
+            // Allow entry into the region
+            region.setFlag(DefaultFlag.ENTRY, StateFlag.State.ALLOW);
         }
     }
 
@@ -68,7 +86,7 @@ public class SafeZoneManager {
 
             player.sendMessage("Schematic pasted successfully and safe zone created!");
         } catch (IOException e) {
-            player.sendMessage("Error pasting schematic: " + e.getMessage());
+            player.sendMessage("§cError pasting schematic: " + e.getMessage());
             Log.error(e);
         }
     }

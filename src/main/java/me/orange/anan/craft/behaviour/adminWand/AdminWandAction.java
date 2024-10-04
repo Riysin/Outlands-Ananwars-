@@ -2,8 +2,9 @@ package me.orange.anan.craft.behaviour.adminWand;
 
 public enum AdminWandAction {
     NONE(""),
+    LOOT("anpc loot"),
     NPC_FISHER("anpc merchant fisher"),
-    LOOT("anpc loot");
+    SAFEZONE_FISHER("safezone paste fisher");
 
     private String command;
 
