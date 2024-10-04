@@ -21,7 +21,6 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.log.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -65,10 +64,7 @@ public class SafeZoneManager {
             pasteClipboardToWorld(clipboard, player);
 
             List<BlockVector2D> points = generatePoints(getVector(player.getLocation()), calculateRadius(clipboard));
-            createPolygonalSafeZone(points, getVector(player.getLocation()));
-            points.forEach(vector2D ->{
-                player.getWorld().getBlockAt(vector2D.getBlockX(), player.getLocation().getBlockY(), vector2D.getBlockZ()).setType(Material.BRICK);
-            });
+            createPolygonalSafeZone(points);
 
             player.sendMessage("Schematic pasted successfully and safe zone created!");
         } catch (IOException e) {
@@ -91,10 +87,10 @@ public class SafeZoneManager {
     private double calculateRadius(Clipboard clipboard) {
         int width = clipboard.getDimensions().getBlockX();
         int length = clipboard.getDimensions().getBlockZ();
-        return Math.max(width, length) / 2.0;  // Use half of the largest dimension as the radius
+        return Math.max(width, length) / 2.0 + 50;  // Use half of the largest dimension as the radius
     }
 
-    private void createPolygonalSafeZone(List<BlockVector2D> points, Vector location) {
+    private void createPolygonalSafeZone(List<BlockVector2D> points) {
         RegionManager regions = getRegionManager();
         ProtectedRegion region = new ProtectedPolygonalRegion("safe_zone_" + zoneCounter++, points, 0, 300);
         regions.addRegion(region);
