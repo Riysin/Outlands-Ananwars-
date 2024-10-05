@@ -131,7 +131,7 @@ public class TeamCoreEventListener implements Listener {
         Inventory inventory = event.getInventory();
         if (teamCoreManager.getTeamCore(player) != null && teamCoreManager.getTeamCore(player).getInventory().equals(inventory)) {
             ItemStack itemStack = event.getCurrentItem();
-            if (itemStack != null && craftManager.getCraft(itemStack).getType() != CraftType.RESOURCE) {
+            if (itemStack != null && craftManager.getCraft(itemStack) != null && craftManager.getCraft(itemStack).getType() != CraftType.RESOURCE) {
                 player.sendMessage("§c你不能將非資源物品放入隊伍核心!");
                 event.setCancelled(true);
             }

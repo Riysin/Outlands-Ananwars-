@@ -193,11 +193,11 @@ public class Tablist implements TablistAdapter {
 
     @Override
     public @Nullable Component getHeader(MCPlayer player) {
-        return Component.text("\n§b§lProject Rust §r§f┃ " + Bukkit.getOnlinePlayers().size() + " / 134\n");
+        return Component.text("\n§b§lOut§f§lLands §r§f┃ §a" + Bukkit.getOnlinePlayers().size() + " §f/ 134\n");
     }
 
     @Override
     public @Nullable Component getFooter(MCPlayer player) {
-        return Component.text("\n§7Made by PvpForOrange\n");
+        return Component.text("\n§7AnanWars!!\n");
     }
 }

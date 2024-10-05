@@ -45,7 +45,7 @@ public class Sidebar implements SidebarAdapter {
 
     @Override
     public Component getTitle(MCPlayer player) {
-        return Component.text("§b§lAnan");
+        return Component.text("§b§lOutlands");
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Sidebar implements SidebarAdapter {
 
         // Server Info
         sidebar.add(Component.text(""));
-        sidebar.add(Component.text("§f134tc.ddns.net"));
+        sidebar.add(Component.text("§foutlands.ddns.net"));
         sidebar.add(Component.text(SEPARATOR));
 
         return sidebar;

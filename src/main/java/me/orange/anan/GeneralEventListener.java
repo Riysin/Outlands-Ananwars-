@@ -25,7 +25,7 @@ public class GeneralEventListener implements Listener {
 
     @EventHandler
     public void ServerListPingEvent(ServerListPingEvent event) {
-        event.setMotd("§b§lAnan§f§lWars §r§7| §e§lby §6§l@PvpForOrange\n      §f❥ §b§l§n1.8 Available!");
+        event.setMotd("§b§lOut§f§lLands §r§7| §e§lAnanWars!\n      §f❥ §6§l§n1.8 Available!");
         event.setMaxPlayers(134);
     }
 

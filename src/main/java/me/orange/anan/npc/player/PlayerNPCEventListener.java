@@ -46,17 +46,17 @@ public class PlayerNPCEventListener implements Listener {
         playerNPCManager.spawnNPC(player);
     }
 
-    @EventHandler
-    public void onPlayerDamameEvent(PlayerDamageByPlayerEvent event) {
-        if (event.getPlayer().hasMetadata("NPC")) {
-            NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getPlayer());
-            OfflinePlayer npcOwner = playerNPCManager.getNPCOfflineOwner(npc);
-            if (clanManager.sameClan(event.getDamager(), npcOwner)) {
-                event.getDamager().sendMessage("§cYou are in the same clan!");
-                event.setCancelled(true);
-            }
-        }
-    }
+//    @EventHandler
+//    public void onPlayerDamameEvent(PlayerDamageByPlayerEvent event) {
+//        if (event.getPlayer().hasMetadata("NPC")) {
+//            NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getPlayer());
+//            OfflinePlayer npcOwner = playerNPCManager.getNPCOfflineOwner(npc);
+//            if (clanManager.sameClan(event.getDamager(), npcOwner)) {
+//                event.getDamager().sendMessage("§cYou are in the same clan!");
+//                event.setCancelled(true);
+//            }
+//        }
+//    }
 
     @EventHandler
     public void onNPCDeath(NPCDeathEvent event) {

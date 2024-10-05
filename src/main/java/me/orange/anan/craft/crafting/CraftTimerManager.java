@@ -78,7 +78,7 @@ public class CraftTimerManager {
                 craftingCountDown(player, craftTimer);
             } else {
                 removeCraftTimer(craftTimer);
-                player.sendMessage("crafting finished");
+                player.sendMessage("§a你的 " + craft.getName() + " 完成製作了!");
                 Bukkit.getPluginManager().callEvent(new CraftTimerCountDownEvent(player, craftTimer));
                 craftingCountDown(player, getPlayerFirstCraftTimer(player));
             }

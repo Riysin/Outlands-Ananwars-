@@ -38,18 +38,6 @@ public class PlayerNPCManager {
         return Bukkit.getOfflinePlayer(npc.getTraitNullable(Owner.class).getOwnerId());
     }
 
-    public NPC getPlayerNPC(Player player) {
-        for (NPC npc : CitizensAPI.getNPCRegistry()) {
-            if (npc.getTraitNullable(Owner.class) == null) {
-                continue;
-            }
-            if (npc.hasTrait(Owner.class) && npc.getTraitNullable(Owner.class).getOwnerId().equals(player.getUniqueId())) {
-                return npc;
-            }
-        }
-        return null;
-    }
-
     public NPC getPlayerNPC(OfflinePlayer player) {
         for (NPC npc : CitizensAPI.getNPCRegistry()) {
             if (npc.getTraitNullable(Owner.class) == null) {

@@ -66,8 +66,8 @@ public class FriendCommand extends BaseCommand {
     }
 
     @Command(value = {"deny"})
-    public void denyInvitation(BukkitCommandContext ctx, @Arg("name") Player player) {
-        Player invitor = ctx.getPlayer();
+    public void denyInvitation(BukkitCommandContext ctx, @Arg("name") Player invitor) {
+        Player player = ctx.getPlayer();
         if (!playerDataManager.hasInvitation(invitor, player)) {
             invitor.sendMessage("§cYou don't have a pending invitation from " + player.getName());
             return;

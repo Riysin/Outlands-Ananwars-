@@ -121,12 +121,12 @@ public class PlayerDataManager {
         getPlayerData(friend).getFriends().remove(player.getUniqueId());
     }
 
-    public void addFriendRequest(Player player, OfflinePlayer friend) {
-        getPlayerData(player).getFriendRequests().add(friend.getUniqueId());
+    public void addFriendRequest(Player invitor, OfflinePlayer friend) {
+        getPlayerData(invitor).getFriendRequests().add(friend.getUniqueId());
     }
 
-    public boolean hasInvitation(Player player, OfflinePlayer friend) {
-        return getPlayerData(player).getFriendRequests().contains(friend.getUniqueId());
+    public boolean hasInvitation(Player invitor, OfflinePlayer friend) {
+        return getPlayerData(invitor).getFriendRequests().contains(friend.getUniqueId());
     }
 
     public void acceptFriendRequest(Player player, OfflinePlayer friend) {
