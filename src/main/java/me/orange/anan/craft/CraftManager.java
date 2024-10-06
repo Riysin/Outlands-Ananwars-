@@ -1,20 +1,17 @@
 package me.orange.anan.craft;
 
 import com.cryptomorin.xseries.XMaterial;
-import io.fairyproject.bukkit.listener.ListenerRegistry;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
 import io.fairyproject.bukkit.util.items.FairyItem;
 import io.fairyproject.bukkit.util.items.FairyItemRegistry;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
-import io.fairyproject.bukkit.util.items.behaviour.ItemBehaviour;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.behaviour.BehaviourManager;
 import me.orange.anan.craft.behaviour.CraftBehaviour;
 import me.orange.anan.craft.config.CraftConfig;
 import me.orange.anan.craft.config.CraftElement;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -161,8 +158,9 @@ public class CraftManager {
         int playerAmount = countPlayerItemAmount(player, itemStack);
         if (playerAmount < amountToRemove) {
             throw new IllegalArgumentException("Player does not have enough items to remove");
-        }else {
+        } else {
             player.getInventory().removeItem(ItemBuilder.of(itemStack).amount(amountToRemove).build());
+            player.updateInventory();
         }
     }
 
@@ -205,6 +203,16 @@ public class CraftManager {
         AtomicReference<Craft> craft = new AtomicReference<>(null);
         crafts.forEach((id, c) -> {
             if (c.getMenuIcon() == material) {
+                craft.set(c);
+            }
+        });
+        return craft.get();
+    }
+
+    public Craft getCraft(Block block) {
+        AtomicReference<Craft> craft = new AtomicReference<>(null);
+        crafts.forEach((id, c) -> {
+            if (c.getMenuIcon().parseMaterial() == block.getType() && c.getMenuIcon().getData() == block.getData()) {
                 craft.set(c);
             }
         });

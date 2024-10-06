@@ -79,8 +79,7 @@ public class HammerManager {
     }
 
     private void handleUpgrade(Player player, Block block, BlockStats blockStats, HammerAction hammerAction) {
-        Map<Block, BlockStats> blockStatsMap = blockStatsManager.getBlockStatsMap();
-        String configItemID = getConfigItemID(hammerAction);
+        String newBuild = getConfigItemID(hammerAction);
         int newLevel = getUpgradeLevel(hammerAction);
 
         if (blockStats.getBlockType() != BlockType.BUILDING) {
@@ -88,30 +87,30 @@ public class HammerManager {
             return;
         }
 
-        if (configItemID != null && newLevel > getCurrentBlockLevel(block)) {
-            Map<String, Craft> crafts = craftManager.getCrafts();
-            List<ItemStack> recipes = craftManager.getRecipesFromIDs(crafts.get(configItemID).getRecipe(), player);
+        if (newBuild == null && newLevel < getCurrentBlockLevel(block)) {
+            player.sendMessage("§c無法升級成你選擇的建材!");
+            return;
+        }
 
-            for (ItemStack recipe : recipes) {
-                if (craftManager.hasEnough(player, recipe)) {
-                    int maxHealth = buildConfig.getBuildBlocks().get(configItemID);
-                    int healthLost = maxHealth - blockStats.getHealth();
+        Map<String, Craft> crafts = craftManager.getCrafts();
+        List<ItemStack> recipes = craftManager.getRecipesFromIDs(crafts.get(newBuild).getRecipe(), player);
 
-                    craftManager.removeItemsFromInventory(player, recipe, 1);
-                    player.updateInventory();
+        for (ItemStack recipe : recipes) {
+            if (craftManager.hasEnough(player, recipe)) {
+                String currentBuild = craftManager.getCraft(block).getID();
+                int maxHealth = buildConfig.getBuildBlocks().get(newBuild);
+                int healthLost = buildConfig.getBuildBlocks().get(currentBuild) - blockStats.getHealth();
+                blockStats.setHealth(maxHealth - healthLost);
 
-                    blockStatsMap.remove(block);
-                    ItemStack configItemWithID = craftManager.getConfigItemWithID(configItemID);
-                    block.setType(configItemWithID.getType());
-                    block.setData(configItemWithID.getData().getData(), true);
-                    BlockStats newBlockStat = blockStatsManager.placeBlock(player, block, maxHealth);
-                    newBlockStat.setHealth(maxHealth - healthLost);
-                    return; // Exit after a successful upgrade
-                } else
-                    player.sendMessage("§c材料不足!");
-            }
-        } else
-            player.sendMessage("§c無法升級為此建材!");
+                ItemStack newBuildItem = craftManager.getConfigItemWithID(newBuild);
+                block.setType(newBuildItem.getType());
+                block.setData(newBuildItem.getData().getData(), true);
+
+                craftManager.removeItemsFromInventory(player, recipe, 1);
+                return;
+            } else
+                player.sendMessage("§c材料不足!");
+        }
     }
 
     private String getConfigItemID(HammerAction hammerAction) {

@@ -9,7 +9,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 
 @InjectableComponent
-@Command(value = {"pnpc", "pn"}, permissionNode = "pnpc.admin")
+@Command(value = {"pnpc", "pn"})
 public class PlayerNPCCommand extends BaseCommand {
     private final PlayerNPCManager playerNPCManager;
 

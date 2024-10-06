@@ -73,8 +73,8 @@ public class FriendCommand extends BaseCommand {
             return;
         }
         playerDataManager.denyFriendRequest(invitor, player);
-        invitor.sendMessage("§cYou have denied the friend request from " + player.getName());
-        player.sendMessage("§c" + invitor.getName() + " has denied your friend request");
+        invitor.sendMessage("§cYou have denied the friend request from " + invitor.getName());
+        player.sendMessage("§c" + player.getName() + " has denied your friend request");
     }
 
     @Command(value = {"remove"})
