@@ -47,7 +47,7 @@ public class PlayerNPCEventListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDamameEvent(PlayerDamageByPlayerEvent event) {
+    public void onPlayerDamageEvent(PlayerDamageByPlayerEvent event) {
         if (event.getPlayer().hasMetadata("NPC")) {
             NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getPlayer());
             OfflinePlayer npcOwner = playerNPCManager.getNPCOfflineOwner(npc);
