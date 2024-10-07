@@ -6,9 +6,13 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
+import me.orange.anan.clan.ClanManager;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
+import me.orange.anan.craft.behaviour.lock.LockManager;
 import me.orange.anan.events.PlayerPlaceTeamCoreEvent;
+import me.orange.anan.events.TeamCoreLockEvent;
+import me.orange.anan.events.TeamCoreUnlockEvent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creeper;
@@ -36,11 +40,15 @@ public class TeamCoreEventListener implements Listener {
     private final TeamCoreManager teamCoreManager;
     private final BlockStatsManager blockStatsManager;
     private final CraftManager craftManager;
+    private final LockManager lockManager;
+    private final ClanManager clanManager;
 
-    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager, CraftManager craftManager) {
+    public TeamCoreEventListener(TeamCoreManager teamCoreManager, BlockStatsManager blockStatsManager, CraftManager craftManager, LockManager lockManager, ClanManager clanManager) {
         this.teamCoreManager = teamCoreManager;
         this.blockStatsManager = blockStatsManager;
         this.craftManager = craftManager;
+        this.lockManager = lockManager;
+        this.clanManager = clanManager;
     }
 
     @EventHandler
@@ -115,18 +123,39 @@ public class TeamCoreEventListener implements Listener {
     @EventHandler
     public void onRightClickCreeper(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        if (teamCoreManager.isCoreCreeper(event.getRightClicked())) {
-            Creeper creeper = (Creeper) event.getRightClicked();
-            TeamCore teamCore = teamCoreManager.getTeamCore(creeper);
-            if (teamCore != null)
-                if (player.isSneaking()) {
-                    player.openInventory(teamCore.getInventory());
-                }
+
+        if (!teamCoreManager.isCoreCreeper(event.getRightClicked())) return;
+
+        TeamCore teamCore = teamCoreManager.getTeamCore((Creeper) event.getRightClicked());
+
+        if (player.getItemInHand().isSimilar(craftManager.getItemStack("lock", player))) {
+            if (!lockManager.hasLock(teamCore))
+                Bukkit.getPluginManager().callEvent(new TeamCoreLockEvent(player, teamCoreManager.getTeamCore(player)));
+            else
+                player.sendMessage("§c此隊伍核心已經被上鎖!");
+
+            return;
+        }
+        if (player.getItemInHand().isSimilar(craftManager.getItemStack("key", player))) {
+            if (lockManager.hasLock(teamCore))
+                Bukkit.getPluginManager().callEvent(new TeamCoreUnlockEvent(player, teamCoreManager.getTeamCore(player)));
+            else
+                player.sendMessage("§c此隊伍核心沒有被上鎖!");
+            return;
+        }
+
+        if (player.isSneaking()) {
+            if (lockManager.hasLock(teamCore) && !clanManager.sameClan(player, lockManager.getLock(teamCore).getOfflineOwner())) {
+                player.sendMessage("§c此隊伍核心已經被上鎖!");
+                return;
+            }
+            player.openInventory(teamCore.getInventory());
         }
     }
 
+
     @EventHandler
-    public void onTeamInventoryOpen(InventoryClickEvent event) {
+    public void onTeamInventoryClicked(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         Inventory inventory = event.getInventory();
         if (teamCoreManager.getTeamCore(player) != null && teamCoreManager.getTeamCore(player).getInventory().equals(inventory)) {
@@ -146,3 +175,4 @@ public class TeamCoreEventListener implements Listener {
         }
     }
 }
+

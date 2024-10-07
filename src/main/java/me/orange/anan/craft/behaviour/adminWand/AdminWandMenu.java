@@ -22,29 +22,38 @@ public class AdminWandMenu {
     }
 
     public void open(Player player) {
-        Gui gui = guiFactory.create(Component.text("Admin Wand Menu"));
-        NormalPane pane = Pane.normal(9,6);
+        Gui gui = guiFactory.create(Component.text("§fAdmin Wand Menu"));
+        NormalPane pane = Pane.normal(9, 6);
 
-        pane.setSlot(0, GuiSlot.of(ItemBuilder.of(XMaterial.NOTE_BLOCK)
-                .name("Place loot")
-                .build(),clicker->{
-            adminWandManager.setAction(player, AdminWandAction.LOOT);
-            clicker.closeInventory();
-        }));
-        pane.setSlot(1, GuiSlot.of(ItemBuilder.of(XMaterial.VILLAGER_SPAWN_EGG)
-                .name("Place NPC")
-                .build(),clicker->{
-            adminWandManager.setAction(player, AdminWandAction.NPC_FISHER);
-            clicker.closeInventory();
-        }));
-        pane.setSlot(2, GuiSlot.of(ItemBuilder.of(XMaterial.FISHING_ROD)
-                .name("Place Fisher")
-                .build(),clicker->{
-            adminWandManager.setAction(player, AdminWandAction.SAFEZONE_FISHER);
-            clicker.closeInventory();
-        }));
+        int i = 0;
+
+        for (AdminWandAction action : AdminWandAction.values()) {
+            pane.setSlot(i, GuiSlot.of(ItemBuilder.of(getMaterial(action))
+                    .name("§e" + action.toString())
+                    .lore("§6Command:", "§7/"+action.getCommand())
+                    .build(), event -> {
+                adminWandManager.setAction(player, action);
+                player.closeInventory();
+            }));
+            i++;
+        }
+
 
         gui.addPane(pane);
         gui.open(player);
+    }
+
+    private XMaterial getMaterial(AdminWandAction action) {
+        if (action.toString().contains("LOOT")) {
+            return XMaterial.CHEST;
+        } else if (action.toString().contains("MERCHANT")) {
+            return XMaterial.EMERALD;
+        } else if (action.toString().contains("TASKNPC")) {
+            return XMaterial.BOOK;
+        } else if (action.toString().contains("SAFEZONE")) {
+            return XMaterial.OAK_LOG;
+        } else {
+            return XMaterial.BARRIER;
+        }
     }
 }

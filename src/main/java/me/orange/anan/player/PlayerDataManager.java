@@ -50,13 +50,13 @@ public class PlayerDataManager {
     }
 
     public void saveConfig() {
+        playerConfig.getPlayerElementMap().clear();
         playerDataMap.forEach((uuid, playerData) -> {
             PlayerConfigElement element = playerConfig.getPlayerElementMap().get(uuid.toString());
             element.setKills(playerData.getKills());
             element.setDeaths(playerData.getDeaths());
             element.setLastDeathLocation(playerData.getLastDeathLocation());
             element.setBossBarActive(playerData.isBossBarActive());
-            element.getFriendList().clear();
             playerData.getFriends().forEach(friend -> {
                 FriendElement friendElement = new FriendElement();
                 friendElement.setUuid(friend);

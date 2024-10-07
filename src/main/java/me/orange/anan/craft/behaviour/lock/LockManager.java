@@ -2,14 +2,12 @@ package me.orange.anan.craft.behaviour.lock;
 
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.ClanManager;
+import me.orange.anan.craft.behaviour.teamCore.TeamCore;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @InjectableComponent
 public class LockManager {
@@ -52,6 +50,10 @@ public class LockManager {
         this.locks = locks;
     }
 
+    public Lock getLock(TeamCore teamCore) {
+        return locks.stream().filter(lock -> lock.getLocation().equals(teamCore.getCoreBlock().getLocation())).findFirst().orElse(null);
+    }
+
     public void lockBlock(Player player, Block block) {
         Lock lock = new Lock();
         lock.setOwner(player.getUniqueId());
@@ -59,19 +61,34 @@ public class LockManager {
         locks.add(lock);
     }
 
+    public void lockTeamCore(Player player, TeamCore teamCore) {
+        Lock lock = new Lock();
+        lock.setOwner(player.getUniqueId());
+        lock.setLocation(teamCore.getCoreBlock().getLocation());
+        locks.add(lock);
+    }
+
     public void unlockBlock(Block block) {
         locks.removeIf(lock -> lock.getLocation().equals(block.getLocation()));
+    }
+
+    public void unlockTeamCore(TeamCore teamCore) {
+        locks.removeIf(lock -> lock.getLocation().equals(teamCore.getCoreBlock().getLocation()));
     }
 
     public boolean hasLock(Block block) {
         return locks.stream().anyMatch(lock -> lock.getLocation().equals(block.getLocation()));
     }
 
+    public boolean hasLock(TeamCore teamCore) {
+        return locks.stream().anyMatch(lock -> lock.getLocation().equals(teamCore.getCoreBlock().getLocation()));
+    }
+
     public boolean isInOwnerClan(Player player, Block block) {
         return locks.stream().anyMatch(lock -> lock.getLocation().equals(block.getLocation()) && clanManager.sameClan(player, lock.getOfflineOwner()));
     }
 
-    private static final Set<Material> LOCKABLE_MATERIALS = EnumSet.of(
+    private final Set<Material> LOCKABLE_MATERIALS = EnumSet.of(
             Material.FENCE_GATE,
             Material.TRAP_DOOR,
             Material.WOODEN_DOOR,
@@ -81,6 +98,18 @@ public class LockManager {
     );
 
     public boolean isLockableBlock(Block block) {
+        return LOCKABLE_MATERIALS.contains(block.getType());
+    }
+
+    private final Set<Material> UNLOCKABLE_MATERIALS = EnumSet.of(
+            Material.FENCE_GATE,
+            Material.TRAP_DOOR,
+            Material.WOODEN_DOOR,
+            Material.IRON_DOOR_BLOCK,
+            Material.IRON_DOOR
+    );
+
+    public boolean isUnlockableBlock(Block block) {
         return LOCKABLE_MATERIALS.contains(block.getType());
     }
 }

@@ -4,9 +4,11 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.craft.behaviour.lock.LockManager;
+import me.orange.anan.craft.behaviour.teamCore.TeamCore;
 import me.orange.anan.events.PlayerRightClickKeyEvent;
+import me.orange.anan.events.TeamCoreUnlockEvent;
 import org.bukkit.Effect;
-import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,21 +30,36 @@ public class KeyEventListener implements Listener {
         Block block = blockStatsManager.getMainBlock(event.getBlock());
         Player player = event.getPlayer();
 
-        if (lockManager.isLockableBlock(block)) {
+        if (lockManager.isUnlockableBlock(block)) {
             if(lockManager.hasLock(block)) {
                 lockManager.unlockBlock(block);
 
-                int amount = player.getItemInHand().getAmount() - 1;
-                if (amount == 0)
-                    player.setItemInHand(null);
-                else
-                    player.getItemInHand().setAmount(amount);
+                removeItem(player);
 
-                player.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
-                player.sendMessage("§aYou have unlocked the door");
+                player.getWorld().playSound(block.getLocation(), Sound.ANVIL_BREAK, 1.0f, 1.0f);
+                player.sendMessage("§a你成功解鎖了此物");
                 return;
             }
-            player.sendMessage("§cThis door is not locked");
+            player.sendMessage("§c此物已經沒有被上鎖");
         }
+    }
+
+    @EventHandler
+    public void onUnlockTeamCore(TeamCoreUnlockEvent event) {
+        Player player = event.getPlayer();
+        TeamCore teamCore = event.getTeamCore();
+
+        lockManager.unlockTeamCore(teamCore);
+        removeItem(player);
+        player.getWorld().playSound(teamCore.getCoreCreeper().getLocation(), Sound.CHEST_CLOSE, 1.0f, 1.0f);
+        player.sendMessage("§a你成功解鎖了你的隊伍核心");
+    }
+
+    private void removeItem(Player player) {
+        int amount = player.getItemInHand().getAmount() - 1;
+        if (amount == 0)
+            player.setItemInHand(null);
+        else
+            player.getItemInHand().setAmount(amount);
     }
 }
