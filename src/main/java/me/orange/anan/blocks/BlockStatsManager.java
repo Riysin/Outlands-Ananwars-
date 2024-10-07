@@ -11,8 +11,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.DoubleChestInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Bed;
 import org.bukkit.material.Door;
@@ -86,7 +89,23 @@ public class BlockStatsManager {
             if (door.isTopHalf()) {
                 return block.getRelative(BlockFace.DOWN);
             }
+        } else if (type == Material.CHEST || type == Material.TRAPPED_CHEST) {
+            Chest chest = (Chest) block.getState();
+            Inventory inventory = chest.getInventory();
+
+            // Check if it's a double chest
+            if (inventory instanceof DoubleChestInventory) {
+                DoubleChestInventory doubleChestInventory = (DoubleChestInventory) inventory;
+
+                // Get the left side (main block) of the double chest
+                Chest leftChest = (Chest) doubleChestInventory.getLeftSide().getHolder();
+
+                if (leftChest != null) {
+                    return leftChest.getBlock();
+                }
+            }
         }
+
         return block;
     }
 

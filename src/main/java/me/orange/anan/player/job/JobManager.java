@@ -81,8 +81,12 @@ public class JobManager {
         return jobRegistry.getJobs().stream().filter(job -> job.getID().equals(jobID)).findFirst().orElse(null);
     }
 
-    public boolean hasJob(Player player) {
+    public boolean hasCurrentJob(Player player) {
         return jobStatsMap.get(player.getUniqueId()).getCurrentJob() != null;
+    }
+
+    public boolean hasJob(Player player, Job job) {
+        return jobStatsMap.get(player.getUniqueId()).getJobLevelMap().containsKey(job.getID());
     }
 
     public Map<String, Integer> getPlayerJobLevelMap(Player player) {

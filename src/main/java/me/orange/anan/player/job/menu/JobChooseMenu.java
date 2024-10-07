@@ -1,4 +1,4 @@
-package me.orange.anan.player.job.jobTable;
+package me.orange.anan.player.job.menu;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;
@@ -12,11 +12,12 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.player.job.Job;
 import me.orange.anan.player.job.JobManager;
 import me.orange.anan.player.job.JobRegistry;
-import me.orange.anan.player.task.Task;
 import me.orange.anan.player.task.TaskManager;
-import me.orange.anan.player.task.TaskStatus;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @InjectableComponent
 public class JobChooseMenu {
@@ -34,28 +35,28 @@ public class JobChooseMenu {
 
     public void open(Player player) {
         Gui gui = guiFactory.create(Component.text("Job Choose Menu"));
-        NormalPane pane = Pane.normal(PaneMapping.rectangle(1,1,7,4));
+        NormalPane pane = Pane.normal(PaneMapping.rectangle(1, 1, 7, 4));
 
         //for Job in JobRegister
         JobRegistry jobRegistry = new JobRegistry();
-        int slot =1;
+        int slot = 1;
         for (Job job : jobRegistry.getJobs()) {
             pane.setSlot(slot, slot / 7 + 1, GuiSlot.of(ItemBuilder.of(job.getIcon())
-                    .name("§f" + job.getName())
-                    .lore("§7" + job.getDescription())
+                    .name("§e" + job.getName())
+                    .lore(getLore(player, job))
                     .build(), clicker -> {
-                if(jobManager.getPlayerJobLevelMap(player).get(job.getID()) == null){
+                if (jobManager.getPlayerJobLevelMap(player).get(job.getID()) == null) {
                     player.sendMessage("§cYou haven't unlocked this job yet!");
                     return;
                 }
-                jobManager.addPlayer(player,job);
+                jobManager.addPlayer(player, job);
                 jobUpgradeMenu.open(player, job);
             }));
             slot++;
         }
 
-        pane.setSlot(5,2,GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER).name("§cResign").lore("§eClick to have no job!").build(), clicker -> {
-            jobManager.setPlayerCurrentJob(player.getUniqueId(),null);
+        pane.setSlot(5, 2, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER).name("§cResign").lore("§eClick to have no job!").build(), clicker -> {
+            jobManager.setPlayerCurrentJob(player.getUniqueId(), null);
             player.closeInventory();
         }));
 
@@ -68,5 +69,18 @@ public class JobChooseMenu {
         gui.open(player);
     }
 
+    private List<String> getLore(Player player, Job job) {
+        List<String> lore = new ArrayList<>();
+        lore.add("§7" + job.getDescription());
+        lore.add("");
 
+        if (jobManager.hasJob(player, job)) {
+            lore.add("§6Level: §7" + jobManager.getPlayerJobLevel(player, job));
+            lore.add("§7Click to choose this job!");
+        } else {
+            lore.add("§cYou haven't unlocked this job yet!");
+        }
+
+        return lore;
+    }
 }

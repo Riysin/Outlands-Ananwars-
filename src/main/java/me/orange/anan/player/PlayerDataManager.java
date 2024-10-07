@@ -66,7 +66,7 @@ public class PlayerDataManager {
                 TaskElement taskElement = new TaskElement();
                 taskElement.setStatus(task.getStatus());
                 taskElement.setProgress(task.getProgress());
-                element.getTaskElementMap().put(task.getId(),taskElement);
+                element.getTaskElementMap().put(task.getId(), taskElement);
             });
 
         });
@@ -145,23 +145,19 @@ public class PlayerDataManager {
         lore.add("");
         lore.add("§6" + job.getSkill1Name());
         lore.add("§7" + job.getSkill1Description());
-        if (level >= 10) lore.add("§aUnlocked");
-        else lore.add("§cLocked");
+        lore.add(level >= 10 ? "§aUnlocked" : "§cLocked");
         lore.add("");
         lore.add("§6" + job.getSkill2Name());
         lore.add("§7" + job.getSkill2Description());
-        if (level >= 20) lore.add("§aUnlocked");
-        else lore.add("§cLocked");
+        lore.add(level >= 20 ? "§aUnlocked" : "§cLocked");
         lore.add("");
         lore.add("§6" + job.getSkill3Name());
         lore.add("§7" + job.getSkill3Description());
-        if (level >= 30) lore.add("§aUnlocked");
-        else lore.add("§cLocked");
+        lore.add(level >= 30 ? "§aUnlocked" : "§cLocked");
         lore.add("");
         lore.add("§6" + job.getActiveName());
         lore.add("§7" + job.getActiveDescription());
-        if (level == 35) lore.add("§aUnlocked");
-        else lore.add("§cLocked");
+        lore.add(level >= 40 ? "§aUnlocked" : "§cLocked");
 
         return lore;
     }

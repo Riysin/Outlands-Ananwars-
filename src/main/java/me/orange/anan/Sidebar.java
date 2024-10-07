@@ -55,7 +55,7 @@ public class Sidebar implements SidebarAdapter {
 
         String jobName = "NO_JOB";
         int jobLevel = 0;
-        if (jobManager.hasJob(player)) {
+        if (jobManager.hasCurrentJob(player)) {
             jobName = jobManager.getPlayerCurrentJob(player.getUniqueId()).getName();
             jobLevel = jobManager.getPlayerJobLevel(player, jobManager.getPlayerCurrentJob(player.getUniqueId()));
         }

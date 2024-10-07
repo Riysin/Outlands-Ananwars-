@@ -7,7 +7,7 @@ import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
 import me.orange.anan.events.PlayerChooseJobEvent;
 import me.orange.anan.events.PlayerLevelUpEvent;
-import me.orange.anan.player.job.jobTable.JobChooseMenu;
+import me.orange.anan.player.job.menu.JobChooseMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -52,11 +52,11 @@ public class JobEventListener implements Listener {
         Player player = event.getPlayer();
         Job job = event.getJob();
         int jobLevel = jobManager.getPlayerJobLevel(player, job);
-        player.sendMessage("§fYour §6§l" + job.getName() + " §fhas become level§a" + jobLevel + "§f!");
+        player.sendMessage("§eYour §6§l" + job.getName() + " §r§ehas become level §a" + jobLevel + "§e!");
         player.setLevel(0);
         player.setLevel(jobLevel);
         if(jobLevel == 35) {
-            player.sendMessage("§b§lYou have reached the maximum level of §6§l" + job.getName() + "§f!");
+            player.sendMessage("§eYou have reached the maximum level of §6§l" + job.getName() + "§r§e!");
             job.active(player);
         }
     }

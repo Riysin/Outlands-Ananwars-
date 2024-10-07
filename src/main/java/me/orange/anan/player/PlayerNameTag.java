@@ -33,7 +33,7 @@ public class PlayerNameTag extends NameTagAdapter {
         NameTag noJob = new NameTag(Component.empty(), Component.empty(), TextColor.color(255, 255, 255), WrapperPlayServerTeams.NameTagVisibility.ALWAYS);
 
         //output
-        if (jobManager.hasJob(bukkitTarget)) {
+        if (jobManager.hasCurrentJob(bukkitTarget)) {
             String jobSuffix = jobManager.getPlayerCurrentJob(bukkitTarget).getSuffix();
 
             Component prefix = Component.text("");

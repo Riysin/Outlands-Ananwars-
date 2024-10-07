@@ -1,4 +1,4 @@
-package me.orange.anan.player.job.jobTable;
+package me.orange.anan.player.job.menu;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;
@@ -55,7 +55,7 @@ public class JobUpgradeMenu {
                 }
                 if (scrollAmount.get() == 0) {
                     pane.setSlot(0, GuiSlot.of(ItemBuilder.of(job.getIcon())
-                            .name("§f" + job.getName())
+                            .name("§6" + job.getName())
                             .lore("§7" + job.getDescription())
                             .build()));
                 }
@@ -190,8 +190,21 @@ public class JobUpgradeMenu {
         List<String> lore = new ArrayList<>();
         lore.add("§6" + job.getUpgradeName());
         lore.add("§7" + job.getUpgradeDescription());
+        lore.add("§eChance: §a" + job.getChancePerLevel() * level + "§f%");
         lore.add("");
-        if (level == 35) {
+        if (level == 10) {
+            lore.add("§6" + job.getSkill1Name());
+            lore.add("§7" + job.getSkill1Description());
+            lore.add("");
+        } else if (level == 20) {
+            lore.add("§6" + job.getSkill2Name());
+            lore.add("§7" + job.getSkill2Description());
+            lore.add("");
+        } else if (level == 30) {
+            lore.add("§6" + job.getSkill3Name());
+            lore.add("§7" + job.getSkill3Description());
+            lore.add("");
+        } else if (level == 35) {
             lore.add("§6" + job.getActiveName());
             lore.add("§7" + job.getActiveDescription());
             lore.add("");
@@ -202,6 +215,8 @@ public class JobUpgradeMenu {
             lore.add("§aUnlocked");
         } else {
             lore.add("§cLocked");
+            lore.add("");
+            lore.add("§e§lClick to upgrade");
         }
         return lore;
     }
