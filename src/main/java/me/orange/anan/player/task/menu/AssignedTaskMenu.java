@@ -1,4 +1,4 @@
-package me.orange.anan.player.task;
+package me.orange.anan.player.task.menu;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;
@@ -9,6 +9,8 @@ import io.fairyproject.bukkit.gui.pane.mapping.PaneMapping;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.player.task.TaskManager;
+import me.orange.anan.player.task.TaskStatus;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -34,8 +36,8 @@ public class AssignedTaskMenu {
         taskManager.getPlayerTasks(player).forEach(task -> {
             if (task.getStatus() != TaskStatus.ASSIGNED) return;
             pane.setSlot(slot.get(), GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
-                    .name(Component.text("§fTask Info"))
-                    .lore(taskManager.getTaskInfo(task.getId()))
+                    .name(Component.text("§eTask Info"))
+                    .lore(taskManager.getTaskInfo(player, task.getId()))
                     .build()));
             slot.getAndIncrement();
         });

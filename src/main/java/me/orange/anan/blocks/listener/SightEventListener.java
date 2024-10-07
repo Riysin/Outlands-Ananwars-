@@ -47,13 +47,6 @@ public class SightEventListener implements Listener {
         Block targetBlock = player.getTargetBlock(materials, 4);
         Block mainBlock = blockStatsManager.getMainBlock(targetBlock);
 
-        if (mainBlock != null) {
-            BlockStats blockStats = blockStatsManager.getBlockStats(mainBlock);
-            if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
-                ActionBar.sendActionBar(player, " health:§a " + blockStats.getHealth());
-            }
-        }
-
         Entity target = getTargetEntity(player, 5); // 10 is the max distance to check
 
         if (target instanceof Slime) {
@@ -65,6 +58,13 @@ public class SightEventListener implements Listener {
         if (target instanceof Creeper) {
             Creeper creeper = (Creeper) target;
             ActionBar.sendActionBar(player, "§6Core HP: §a" + creeper.getHealth());
+        }
+
+        if (mainBlock != null) {
+            BlockStats blockStats = blockStatsManager.getBlockStats(mainBlock);
+            if (blockStats != null && blockStats.getBlockType() == BlockType.BUILDING) {
+                ActionBar.sendActionBar(player, " health:§a " + blockStats.getHealth());
+            }
         }
     }
 

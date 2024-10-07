@@ -12,7 +12,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.clan.ClanManager;
 import me.orange.anan.player.job.Job;
 import me.orange.anan.player.job.JobManager;
-import me.orange.anan.player.task.AssignedTaskMenu;
+import me.orange.anan.player.task.menu.AssignedTaskMenu;
 import me.orange.anan.player.task.TaskManager;
 import me.orange.anan.player.task.TaskStatus;
 import me.orange.anan.player.death.DeathManager;

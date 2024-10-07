@@ -20,12 +20,10 @@ import java.util.List;
 @InjectableComponent
 public class PlayerDataManager {
     private final PlayerConfig playerConfig;
-    private final TaskRegistry taskRegistry;
     private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
 
-    public PlayerDataManager(PlayerConfig playerConfig, TaskRegistry taskRegistry) {
+    public PlayerDataManager(PlayerConfig playerConfig) {
         this.playerConfig = playerConfig;
-        this.taskRegistry = taskRegistry;
 
         loadConfig();
     }
@@ -41,7 +39,7 @@ public class PlayerDataManager {
                 playerData.getFriends().add(friendElement.getUuid());
             });
             playerConfigElement.getTaskElementMap().forEach((taskID, taskElement) -> {
-                Task task = taskRegistry.getTask(taskID);
+                Task task = TaskRegistry.create(taskID);
                 task.setStatus(taskElement.getStatus());
                 task.setProgress(taskElement.getProgress());
                 playerData.getTasks().add(task);

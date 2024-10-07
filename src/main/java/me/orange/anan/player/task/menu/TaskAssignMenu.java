@@ -1,4 +1,4 @@
-package me.orange.anan.player.task;
+package me.orange.anan.player.task.menu;
 
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.gui.Gui;
@@ -8,6 +8,8 @@ import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.player.task.Task;
+import me.orange.anan.player.task.TaskManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
@@ -24,26 +26,26 @@ public class TaskAssignMenu {
     public void open(Player player, String taskID) {
         Gui gui = guiFactory.create(Component.text("Task"));
         NormalPane pane = Pane.normal(9, 3);
-        Task task = taskManager.getTask(taskID);
 
         pane.setSlot(2, 1, GuiSlot.of(ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
                 .name(Component.text("§aAccept Task"))
                 .lore("§eclick to accept the task.")
                 .build(), clicker -> {
-            taskManager.addTask(player, task.getId());
+            taskManager.addTask(player, taskID);
             player.sendMessage("§aTask accepted.");
             player.closeInventory();
         }));
 
         pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
-                .name(Component.text("§fTask Info"))
-                .lore(taskManager.getTaskInfo(taskID))
+                .name(Component.text("§eTask Info"))
+                .lore(taskManager.getTaskInfo(player, taskID))
                 .build()));
 
         pane.setSlot(6, 1, GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
                 .name(Component.text("§cReject Task"))
                 .lore("§eClick to reject task.")
                 .build(), clicker -> {
+            player.sendMessage("§cTask rejected.");
             player.closeInventory();
         }));
 

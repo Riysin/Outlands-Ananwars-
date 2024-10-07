@@ -12,6 +12,9 @@ public abstract class Task {
     protected String reward;
     protected String rewardDescription;
 
+    public Task() {
+    }
+
     public Task(String id, String name, String description, int goal, String reward, String rewardDescription) {
         this.id = id;
         this.name = name;
@@ -24,6 +27,8 @@ public abstract class Task {
     }
 
     public abstract void onProgress(Player player, Object data);
+
+    public abstract Task cloneTask();
 
     public String getId() {
         return id;

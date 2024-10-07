@@ -10,11 +10,13 @@ import java.util.List;
 @InjectableComponent
 public class TaskManager {
     private final PlayerDataManager playerDataManager;
-    private final TaskRegistry taskRegistry;
 
-    public TaskManager(PlayerDataManager playerDataManager, TaskRegistry taskRegistry) {
+    public TaskManager(PlayerDataManager playerDataManager) {
         this.playerDataManager = playerDataManager;
-        this.taskRegistry = taskRegistry;
+    }
+
+    public List<Task> getPlayerTasks(Player player) {
+        return playerDataManager.getPlayerData(player).getTasks();
     }
 
     public Task getPlayerTask(Player player, String taskID) {
@@ -24,23 +26,12 @@ public class TaskManager {
                 .orElse(null);
     }
 
-    public List<Task> getPlayerTasks(Player player) {
-        return playerDataManager.getPlayerData(player).getTasks();
-    }
-
-    public Task getTask(String id) {
-        return taskRegistry.getTasks().stream()
-                .filter(task -> task.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
     public boolean hasTaskAssigned(Task task) {
         return task != null && task.getStatus() == TaskStatus.ASSIGNED;
     }
 
     public void addTask(Player player, String jobID) {
-        Task task = getTask(jobID);
+        Task task = TaskRegistry.create(jobID);
         task.setStatus(TaskStatus.ASSIGNED);
         getPlayerTasks(player).add(task);
     }
@@ -49,15 +40,20 @@ public class TaskManager {
         getPlayerTasks(player).remove(getPlayerTask(player, jobID));
     }
 
-    public List<String> getTaskInfo(String taskID) {
+    public List<String> getTaskInfo(Player player, String taskID) {
         // Get task info
-        Task task = getTask(taskID);
+        Task task = TaskRegistry.create(taskID);
+        if (getPlayerTask(player, taskID) != null) {
+            task = getPlayerTask(player, taskID);
+        }
         List<String> taskInfo = new ArrayList<>();
-        taskInfo.add("§eTask:§f " + task.getName());
-        taskInfo.add("§eDescription: §f" + task.getDescription());
-        taskInfo.add("§eProgress: §f" + task.getProgress());
-        taskInfo.add("§eStatus: §f" + task.getStatus());
-        taskInfo.add("§eReward: §f" + task.getReward());
+        taskInfo.add("§6" + task.getName() + ":");
+        taskInfo.add("§7" + task.getDescription());
+        taskInfo.add("");
+        taskInfo.add("§6Progress: §f" + task.getProgress());
+        taskInfo.add("§6Status: " + task.getStatus().getString());
+        taskInfo.add("");
+        taskInfo.add("§6Reward: §a" + task.getReward());
         return taskInfo;
     }
 }

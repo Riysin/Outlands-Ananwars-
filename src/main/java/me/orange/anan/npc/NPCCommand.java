@@ -7,6 +7,8 @@ import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.PlayerDamageNPCResourceEvent;
 import me.orange.anan.player.task.*;
+import me.orange.anan.player.task.menu.TaskAssignMenu;
+import me.orange.anan.player.task.menu.TaskRewardMenu;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;

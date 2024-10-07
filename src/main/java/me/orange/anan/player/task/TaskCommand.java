@@ -24,7 +24,7 @@ public class TaskCommand extends BaseCommand {
 
     @Command("info")
     public void taskInfo(BukkitCommandContext ctx, @Arg("task") String task) {
-        ctx.getPlayer().sendMessage(taskManager.getTaskInfo(task).toArray(new String[0]));
+        ctx.getPlayer().sendMessage(taskManager.getTaskInfo(ctx.getPlayer(), task).toArray(new String[0]));
     }
 
     @Command("list")

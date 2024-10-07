@@ -98,14 +98,14 @@ public class Sidebar implements SidebarAdapter {
             int craftCount = 0;
             for (CraftTimer craftTimer : craftTimerManager.getPlayerCraftTimerList(player)) {
                 if (craftCount >= MAX_CRAFTS_DISPLAYED) break;
-                sidebar.add(Component.text("§3» §bItem§7:" + craftTimer.getCraft().getName() + "x" + craftTimer.getAmount() + " - §6" + craftTimer.getTime() + "s"));
+                sidebar.add(Component.text("§3» §bItem§7: §f" + craftTimer.getCraft().getName() + "x" + craftTimer.getAmount() + " - §6" + craftTimer.getTime() + "s"));
                 craftCount++;
             }
         }
 
         // Server Info
         sidebar.add(Component.text(""));
-        sidebar.add(Component.text("§foutlands.ddns.net"));
+        sidebar.add(Component.text("§fOutlands.ddns.net"));
         sidebar.add(Component.text(SEPARATOR));
 
         return sidebar;
