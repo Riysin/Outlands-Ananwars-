@@ -78,8 +78,8 @@ public class BedManager {
         bedList.add(bed);
     }
 
-    public void removeBed(Player player, Location location) {
-        bedList.removeIf(bed -> bed.getOwner().equals(player.getUniqueId()) && bed.getLocation().equals(location));
+    public void removeBed(Location location) {
+        bedList.removeIf(bed -> bed.getLocation().equals(location));
     }
 
 

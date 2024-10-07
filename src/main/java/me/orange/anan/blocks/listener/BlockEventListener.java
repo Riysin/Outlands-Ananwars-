@@ -70,6 +70,8 @@ public class BlockEventListener implements Listener {
         Block block = blockStatsManager.getMainBlock(event.getBlock());
         BlockStats blockStats = blockStatsManager.getBlockStats(block);
 
+        event.setExpToDrop(0);
+
         //Managing the health of the block
         if (blockStats.getBlockType() == BlockType.BUILDING) {
             blockStatsManager.breakBlock(player, block, player.getItemInHand());

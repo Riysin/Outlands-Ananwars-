@@ -32,7 +32,7 @@ public class BedMenu implements Listener {
         NormalPane pane = Pane.normal(9, 3);
 
         pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.RED_BED)
-                .name("§f" + bed.getBedName())
+                .name(bed.getBedName())
                 .lore("§eClick to rename bed")
                 .build(), clicker -> {
             openAnvilGUI(player, bed);
@@ -53,7 +53,7 @@ public class BedMenu implements Listener {
                     stateSnapshot.getPlayer().sendMessage("§aBed renamed to " + stateSnapshot.getText());
                     return Arrays.asList(AnvilGUI.ResponseAction.close());
                 })
-                .text("§fName")
+                .text("Name")
                 .preventClose()
                 .plugin(BukkitPlugin.INSTANCE)
                 .open(player);

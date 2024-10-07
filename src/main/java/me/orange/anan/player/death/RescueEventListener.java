@@ -11,6 +11,7 @@ import me.orange.anan.events.PlayerRescueEvent;
 import me.orange.anan.events.PlayerRevivedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,7 +40,7 @@ public class RescueEventListener implements Listener {
             Player rescuedPlayer = (Player) event.getRightClicked();
 
             if (clanManager.sameClan(rescuer, rescuedPlayer) && deathManager.isDown(rescuedPlayer)) {
-                if (deathManager.isRescuing(rescuer)){
+                if (deathManager.isRescuing(rescuer)) {
                     event.setCancelled(true);
                     deathManager.stopRescueByRescuer(rescuer);
                     return;
@@ -63,6 +64,8 @@ public class RescueEventListener implements Listener {
                 Titles.sendTitle(rescuer, 0, 20, 10, "", "§esaving canceled");
                 Titles.sendTitle(rescuedPlayer, 0, 20, 10, "", "§esaving canceled");
                 deathManager.stopRescueByRescuer(rescuer);
+                rescuer.playSound(rescuer.getLocation(), Sound.NOTE_BASS_DRUM, 1, 1);
+                rescuedPlayer.playSound(rescuedPlayer.getLocation(), Sound.NOTE_BASS_DRUM, 1, 1);
                 return TaskResponse.failure("event is cancelled");
             }
 
@@ -70,6 +73,9 @@ public class RescueEventListener implements Listener {
             String progressBar = createProgressBar(progress);
             Titles.sendTitle(rescuer, 0, 20, 10, "", progressBar);
             Titles.sendTitle(rescuedPlayer, 0, 20, 10, "", progressBar);
+            rescuedPlayer.getWorld().playEffect(rescuer.getLocation(), Effect.HEART, 0);
+            if ((progressCounter.get() % 20) == 0)
+                rescuedPlayer.getWorld().playSound(rescuedPlayer.getLocation(), Sound.NOTE_STICKS, 1, 1);
             progressCounter.getAndIncrement();
 
             return TaskResponse.continueTask();
@@ -106,11 +112,12 @@ public class RescueEventListener implements Listener {
         Player player = event.getPlayer();
 
         player.setSneaking(false);
+        player.removePotionEffect(PotionEffectType.BLINDNESS);
         player.removePotionEffect(PotionEffectType.SLOW);
         player.removePotionEffect(PotionEffectType.JUMP);
         player.removePotionEffect(PotionEffectType.WITHER);
         player.removePotionEffect(PotionEffectType.WEAKNESS);
-        player.getWorld().playEffect(player.getLocation(), Effect.WATERDRIP, 0);
+        player.getWorld().playSound(player.getLocation(), Sound.NOTE_PIANO, 1, 1);
         deathManager.removeDownPlayer(player);
     }
 }

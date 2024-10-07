@@ -55,6 +55,8 @@ public class TaskManager {
         List<String> taskInfo = new ArrayList<>();
         taskInfo.add("§eTask:§f " + task.getName());
         taskInfo.add("§eDescription: §f" + task.getDescription());
+        taskInfo.add("§eProgress: §f" + task.getProgress());
+        taskInfo.add("§eStatus: §f" + task.getStatus());
         taskInfo.add("§eReward: §f" + task.getReward());
         return taskInfo;
     }

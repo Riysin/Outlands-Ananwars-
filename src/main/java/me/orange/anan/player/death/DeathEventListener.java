@@ -10,12 +10,16 @@ import me.orange.anan.player.PlayerDataManager;
 import me.orange.anan.player.death.deathloot.DeathLootManager;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -65,6 +69,7 @@ public class DeathEventListener implements Listener {
 
         player.setHealth(10);
         player.setSneaking(true);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 999999, 5, true, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999, 250));
         player.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 999999, 0));
@@ -88,6 +93,7 @@ public class DeathEventListener implements Listener {
         Bukkit.getPluginManager().callEvent(new PlayerRevivedEvent(player));
         player.setHealth(20);
         player.setGameMode(GameMode.SPECTATOR);
+        player.getInventory().clear();
         deathRespawnMenu.open(player);
         deathBossBar.showBossBar(player);
 
@@ -99,7 +105,7 @@ public class DeathEventListener implements Listener {
         Location from = event.getFrom();
         Location to = event.getTo();
 
-        if (deathManager.isDown(player)  && from.getY() < to.getY()) {
+        if (deathManager.isDown(player) && from.getY() < to.getY()) {
             player.setVelocity(new Vector(0, 0, 0));
         }
 
@@ -109,7 +115,6 @@ public class DeathEventListener implements Listener {
 
         deathBossBar.updateBossBar(player);
     }
-
 
     @EventHandler
     public void onRightClickArmorStand(PlayerInteractAtEntityEvent event) {
@@ -126,6 +131,34 @@ public class DeathEventListener implements Listener {
     @EventHandler
     public void onHitArmorStand(EntityDamageByPlayerEvent event) {
         if (event.getEntity() instanceof ArmorStand) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        if (deathManager.isDown(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onEntityShootBow(EntityShootBowEvent event) {
+        Arrow arrow = (Arrow) event.getProjectile();
+
+        if (arrow.getShooter() instanceof Player) {
+            Player player = (Player) arrow.getShooter();
+            if (deathManager.isDown(player)) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (deathManager.isDown(player)) {
             event.setCancelled(true);
         }
     }

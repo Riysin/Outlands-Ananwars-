@@ -40,9 +40,9 @@ public class BedEventListener implements Listener {
     @EventHandler
     public void onBedBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if(event.getBlock().getType() == XMaterial.RED_BED.parseMaterial()) {
-            Block bed = event.getBlock();
-            bedManager.removeBed(player, bed.getLocation());
+        Block block = blockStatsManager.getMainBlock(event.getBlock());
+        if (block.getType() == Material.BED_BLOCK && blockStatsManager.getBlockStats(block).getHealth() < 1) {
+            bedManager.removeBed(block.getLocation());
         }
     }
 
