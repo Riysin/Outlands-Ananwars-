@@ -5,7 +5,6 @@ import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BlockConfigElement;
 import me.orange.anan.blocks.config.NatureBlockConfig;
-import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.config.ToolConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

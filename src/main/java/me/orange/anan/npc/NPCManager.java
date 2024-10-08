@@ -1,10 +1,12 @@
 package me.orange.anan.npc;
 
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.log.Log;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.*;
 import net.citizensnpcs.trait.text.Text;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -67,7 +69,6 @@ public class NPCManager {
         location.getWorld().getBlockAt(location).setTypeIdAndData(123, (byte) 0, true);
 
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.SLIME, name);
-        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.getOrAddTrait(SlimeSize.class).setSize(2);
         npc.getOrAddTrait(HologramTrait.class).addLine("§e[Hit]");
 
@@ -77,10 +78,16 @@ public class NPCManager {
 
         npc.spawn(location);
 
+        setUpLootNPC(npc); // need to set up the NPC after spawning for the LivingEntity to be available
+    }
+
+    public void setUpLootNPC(NPC npc) {
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         if (npc.getEntity() instanceof LivingEntity) {
-            ((LivingEntity) npc.getEntity()).setMaxHealth(10);
-            ((LivingEntity) npc.getEntity()).setHealth(10);
-            ((LivingEntity) npc.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
+            LivingEntity entity = ((LivingEntity) npc.getEntity());
+            entity.setMaxHealth(20);
+            entity.setHealth(20);
+            entity.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
         }
     }
 

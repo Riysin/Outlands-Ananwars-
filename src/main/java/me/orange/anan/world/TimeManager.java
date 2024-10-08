@@ -3,8 +3,8 @@ package me.orange.anan.world;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.container.PostInitialize;
 import io.fairyproject.mc.scheduler.MCSchedulers;
+import me.orange.anan.clan.ClanManager;
 import me.orange.anan.events.DayToNightEvent;
-import me.orange.anan.world.resource.ResourceManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -16,6 +16,11 @@ import java.util.Map;
 public class TimeManager {
     private Map<World, Boolean> isDay = new HashMap<>();
     private static final double HIDE_DISTANCE = 10.0;
+    private final ClanManager clanManager;
+
+    public TimeManager(ClanManager clanManager) {
+        this.clanManager = clanManager;
+    }
 
     public String getTimeState(World world) {
         return isDay.getOrDefault(world, true) ? "Day §6✹" : "Night §b☾";
@@ -43,7 +48,7 @@ public class TimeManager {
                     if (player.equals(otherPlayer)) continue;
 
                     double distance = player.getLocation().distance(otherPlayer.getLocation());
-                    if (distance > HIDE_DISTANCE && otherPlayer.getWorld().getBlockAt(otherPlayer.getLocation()).getLightLevel() <= 5) {
+                    if (distance > HIDE_DISTANCE && otherPlayer.getWorld().getBlockAt(otherPlayer.getLocation()).getLightLevel() <= 5 && !clanManager.sameClan(player, otherPlayer)) {
                         player.hidePlayer(otherPlayer);
                     } else {
                         player.showPlayer(otherPlayer);

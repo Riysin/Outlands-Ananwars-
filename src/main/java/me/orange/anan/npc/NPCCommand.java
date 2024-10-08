@@ -54,8 +54,8 @@ public class NPCCommand extends BaseCommand {
 
     @Command(value = "loot", permissionNode = "npc.admin")
     public void resource(BukkitCommandContext ctx) {
-        npcManager.createLootNPC("Resource", ctx.getPlayer().getLocation());
-        ctx.getPlayer().sendMessage("Resource NPC setup.");
+        npcManager.createLootNPC("Loot", ctx.getPlayer().getLocation());
+        ctx.getPlayer().sendMessage("Loot Spawned.");
     }
 
     @Command(value = "hurt")

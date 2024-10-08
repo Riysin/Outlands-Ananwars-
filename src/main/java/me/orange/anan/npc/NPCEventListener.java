@@ -3,14 +3,18 @@ package me.orange.anan.npc;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.log.Log;
+import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.craft.config.ToolConfig;
 import me.orange.anan.events.NPCResourceDieEvent;
 import me.orange.anan.events.PlayerDamageNPCResourceEvent;
 import net.citizensnpcs.api.event.CitizensEnableEvent;
+import net.citizensnpcs.api.event.NPCSpawnEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,10 +27,12 @@ import org.bukkit.inventory.ItemStack;
 public class NPCEventListener implements Listener {
     private final ToolConfig toolConfig;
     private final NPCLootManager npcLootManager;
+    private final NPCManager npcManager;
 
-    public NPCEventListener(ToolConfig toolConfig, NPCLootManager npcLootManager) {
+    public NPCEventListener(ToolConfig toolConfig, NPCLootManager npcLootManager, NPCManager npcManager) {
         this.toolConfig = toolConfig;
         this.npcLootManager = npcLootManager;
+        this.npcManager = npcManager;
     }
 
     @EventHandler
@@ -60,5 +66,12 @@ public class NPCEventListener implements Listener {
 
         ItemStack loot = npcLootManager.getLoot(player, block);
         player.getWorld().dropItem(block.getLocation(), loot);
+    }
+
+    @EventHandler
+    public void onNPCSpawn(NPCSpawnEvent event) {
+        NPC npc = event.getNPC();
+        if (npc.getEntity().getType().equals(EntityType.SLIME))
+            MCSchedulers.getGlobalScheduler().schedule(() -> npcManager.setUpLootNPC(npc), 1);
     }
 }

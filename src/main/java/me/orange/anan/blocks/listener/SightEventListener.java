@@ -55,7 +55,7 @@ public class SightEventListener implements Listener {
             ActionBar.sendActionBar(player, " health:§a " + health);
         }
 
-        if (target instanceof Creeper) {
+        if (teamCoreManager.isCoreCreeper(target)) {
             Creeper creeper = (Creeper) target;
             ActionBar.sendActionBar(player, "§6Core HP: §a" + creeper.getHealth());
         }

@@ -10,6 +10,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.behaviour.BehaviourManager;
 import me.orange.anan.craft.behaviour.CraftBehaviour;
 import me.orange.anan.craft.config.CraftConfig;
+import me.orange.anan.craft.config.CraftConfigElement;
 import me.orange.anan.craft.config.CraftElement;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -20,8 +21,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @InjectableComponent
 public class CraftManager {
-
     private final Map<String, Craft> crafts = new LinkedHashMap<>();
+    private Map<String, Integer> toolDamage = new HashMap<>();
     private final CraftConfig config;
     private final BehaviourManager behaviourManager;
     private final FairyItemRegistry fairyItemRegistry;
@@ -39,7 +40,7 @@ public class CraftManager {
 
     public void loadConfigFile() {
         config.loadAndSave();
-        config.getCraftTypes().forEach(element ->
+        config.getConfigElements().forEach(element ->
                 element.getCrafts().forEach(craftElement -> {
                     Craft craft = new Craft();
                     craft.setType(element.getCraftType());
@@ -66,24 +67,51 @@ public class CraftManager {
     }
 
     public ItemStack getConfigItemWithID(String ID) {
-        return config.getCraftTypes().stream()
+        return config.getConfigElements().stream()
                 .flatMap(element -> element.getCrafts().stream())
                 .filter(craftElement -> craftElement.getId().equals(ID))
                 .findFirst()
                 .map(craftElement -> ItemBuilder.of(craftElement.getMaterial())
                         .name(craftElement.getDisplayName())
-                        .lore(craftElement.getLore())
+                        .lore(getLores(craftElement))
                         .tag(NBTKey.create("craft"), craftElement.getId())
                         .build())
                 .orElse(null);
     }
 
+    private CraftType getCraftType(String ID) {
+        return config.getConfigElements().stream()
+                .filter(element -> element.getCrafts().stream().anyMatch(craftElement -> craftElement.getId().equals(ID)))
+                .findFirst()
+                .map(CraftConfigElement::getCraftType)
+                .orElse(null);
+    }
+
+    private List<String> getLores(CraftElement craft) {
+        List<String> lores = new ArrayList<>();
+        lores.add("§8" + getCraftType(craft.getId()));
+        lores.add("");
+        lores.addAll(craft.getLore());
+        if(getCraftType(craft.getId()) == CraftType.TOOL) {
+            lores.add("§7傷害: §6"+ getToolDamage(craft.getId()));
+        }
+        return lores;
+    }
+
     public CraftElement getCraftElementWithID(String ID) {
-        return config.getCraftTypes().stream()
+        return config.getConfigElements().stream()
                 .flatMap(element -> element.getCrafts().stream())
                 .filter(craft -> craft.getId().equals(ID))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public int getToolDamage(String ID) {
+        return toolDamage.get(ID);
+    }
+
+    public void setToolDamage(Map<String, Integer> toolDamage) {
+        this.toolDamage = toolDamage;
     }
 
     public boolean canCraft(Player player, Craft craft) {

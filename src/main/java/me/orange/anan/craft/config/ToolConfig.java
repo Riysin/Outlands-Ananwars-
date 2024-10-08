@@ -25,6 +25,7 @@ public class ToolConfig extends YamlConfiguration {
             if(craft.getType() == CraftType.TOOL && !toolMap.containsKey(s))
                 toolMap.put(s, 1);
         });
+        craftManager.setToolDamage(toolMap);
         this.save();
     }
 

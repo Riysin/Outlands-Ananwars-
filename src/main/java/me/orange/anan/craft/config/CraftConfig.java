@@ -6,20 +6,19 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
 import me.orange.anan.craft.CraftType;
 
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @InjectableComponent
 public class CraftConfig extends YamlConfiguration {
     @ElementType(CraftConfigElement.class)
-    List<CraftConfigElement> craftTypes = new ArrayList<>();
+    List<CraftConfigElement> elementsList = new ArrayList<>();
 
     public CraftConfig(Anan plugin) {
         super(plugin.getDataFolder().resolve("crafts.yml"));
         this.loadAndSave();
 
-        Set<CraftType> types = craftTypes.stream()
+        Set<CraftType> types = elementsList.stream()
                 .map(CraftConfigElement::getCraftType)
                 .collect(Collectors.toSet());
 
@@ -29,13 +28,13 @@ public class CraftConfig extends YamlConfiguration {
             types.add(value); // 仅添加到types，不再需要重复遍历
             CraftConfigElement configElement = new CraftConfigElement();
             configElement.setCraftType(value);
-            craftTypes.add(configElement);
+            elementsList.add(configElement);
         }
 
         this.save();
     }
 
-    public List<CraftConfigElement> getCraftTypes() {
-        return craftTypes;
+    public List<CraftConfigElement> getConfigElements() {
+        return elementsList;
     }
 }

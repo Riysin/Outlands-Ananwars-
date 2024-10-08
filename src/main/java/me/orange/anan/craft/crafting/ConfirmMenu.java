@@ -38,7 +38,7 @@ public class ConfirmMenu {
 
     public void open(Player player, Craft craft) {
         Gui gui = guiFactory.create(Component.text("§f§l確認介面"));
-        NormalPane pane = Pane.normal(9, 4);
+        NormalPane pane = Pane.normal(9, 3);
         List<String> loreLines = new ArrayList<>();
         AtomicInteger count = new AtomicInteger(1);
         int maxAmount = craftManager.getCanCraftAmount(player, craft);
@@ -103,39 +103,38 @@ public class ConfirmMenu {
             loreLines.add("");
             loreLines.addAll(craft.getLore());
             loreLines.add("");
-            loreLines.add("§f製作: §l§a" + count + "§f個");
             loreLines.add("§e所需材料:");
 
             //setup recipe lore
             for (ItemStack itemStack : craftManager.getRecipesFromIDs(craft.getRecipe(), player)) {
                 String itemName = itemStack.getItemMeta().getDisplayName();
                 int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
-                loreLines.add("§e" + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() * count.get() + ")");
+                boolean hasEnough = craftManager.hasEnough(player, itemStack);
+                loreLines.add((hasEnough ? "§a   " : "§c   ") + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
             }
+
+            loreLines.add("");
+            loreLines.add("§e§l點擊以製作" + count + "§e個");
 
             pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
                     .clearLore()
                     .lore(loreLines)
                     .amount(count.get())
-                    .build()
-            ));
+                    .build(), player1 -> {
+                player1.closeInventory();
+                if (craft.getTime() != 0)
+                    craftTimerManager.addCraftTimer(player1, craft, count.get());
+                else {
+                    player1.getInventory().addItem(ItemBuilder.of(craftManager.getItemStack(craft, player1)).amount(count.get()).build());
+                }
+
+                for (ItemStack item : craftManager.getRecipesFromIDs(craft.getRecipe(), player1)) {
+                    craftManager.removeItemsFromInventory(player1, item, count.get());
+                }
+            }));
         });
 
-        pane.setSlot(3, 3, GuiSlot.of(ItemBuilder.of(XMaterial.GREEN_STAINED_GLASS_PANE)
-                .name("§7確認")
-                .build(), player1 -> {
-            player1.closeInventory();
-            if (craft.getTime() != 0)
-                craftTimerManager.addCraftTimer(player1, craft, count.get());
-            else {
-                player1.getInventory().addItem(ItemBuilder.of(craftManager.getItemStack(craft, player1)).amount(count.get()).build());
-            }
-
-            for (ItemStack item : craftManager.getRecipesFromIDs(craft.getRecipe(), player1)) {
-                craftManager.removeItemsFromInventory(player1, item, count.get());
-            }
-        }));
-        pane.setSlot(5, 3, GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
+        pane.setSlot(4, 2, GuiSlot.of(ItemBuilder.of(XMaterial.RED_STAINED_GLASS_PANE)
                 .name("§7返回")
                 .build(), player1 -> {
             pane.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));

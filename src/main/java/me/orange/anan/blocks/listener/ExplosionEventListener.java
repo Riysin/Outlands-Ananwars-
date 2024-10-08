@@ -6,8 +6,12 @@ import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 @InjectableComponent
@@ -17,6 +21,17 @@ public class ExplosionEventListener implements Listener {
 
     public ExplosionEventListener(BlockStatsManager blockStatsManager) {
         this.blockStatsManager = blockStatsManager;
+    }
+
+    @EventHandler
+    public void onTNTPlaced(BlockPlaceEvent event) {
+        Block block = event.getBlock();
+        if (block.getType() == Material.TNT) {
+            event.setCancelled(true);
+            Entity tnt = block.getWorld().spawnEntity(block.getLocation(), EntityType.PRIMED_TNT);
+            TNTPrimed tntPrimed = (TNTPrimed) tnt;
+            tntPrimed.setFuseTicks(80);
+        }
     }
 
     @EventHandler
@@ -31,13 +46,12 @@ public class ExplosionEventListener implements Listener {
             }
 
             BlockStats blockStats = blockStatsManager.getBlockStats(mainBlock);
-            blockStats.setHealth(blockStats.getHealth() - 10);
+            blockStats.setHealth(blockStats.getHealth() - 100);
             if (blockStats.getHealth() <= 0) {
                 blockStatsManager.getBlockStatsMap().remove(mainBlock);
                 mainBlock.setType(Material.AIR);
             }
 
         }
-
     }
 }
