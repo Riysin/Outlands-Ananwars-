@@ -45,6 +45,7 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        player.getOpenInventory().getTopInventory().clear();
         playerDataManager.setUpPlayer(event);
         jobManager.getJobStatsMap().putIfAbsent(player.getUniqueId(), new JobStats());
 

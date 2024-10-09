@@ -18,7 +18,7 @@ public class CraftEventListener implements Listener {
     public void craftItem(PrepareItemCraftEvent event) {
         Material itemType = event.getRecipe().getResult().getType();
         event.getViewers().forEach(player -> {
-            player.sendMessage("§cyou can't use this crafting system");
+            player.sendMessage("§cYou cannot use the crafting system!");
             event.getInventory().setResult(ItemBuilder.of(XMaterial.AIR).build());
         });
     }

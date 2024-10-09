@@ -1,12 +1,10 @@
 package me.orange.anan.npc;
 
 import io.fairyproject.container.InjectableComponent;
-import io.fairyproject.log.Log;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.*;
 import net.citizensnpcs.trait.text.Text;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -16,12 +14,6 @@ import org.bukkit.potion.PotionEffectType;
 
 @InjectableComponent
 public class NPCManager {
-    private final NPCShopManager npcShopManager;
-
-    public NPCManager(NPCShopManager npcShopManager) {
-        this.npcShopManager = npcShopManager;
-    }
-
     public void createNPC(Player player, OutlandsNPC outlandsNPC){
         if(outlandsNPC.getType() == NPCType.TASK){
             createTaskNPC(player, outlandsNPC);
@@ -42,7 +34,9 @@ public class NPCManager {
         npc.getOrAddTrait(Text.class).add("&eHello, I'm a task NPC!");
         npc.getOrAddTrait(Text.class).add("&eI have a task for you.");
         npc.getOrAddTrait(Text.class).add("&eWould you like to accept it?");
+        npc.getOrAddTrait(HologramTrait.class).addLine("§e[Quest] §f");
 
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(outlandsNPC.getID(), outlandsNPC.getSkin().skinSignature, outlandsNPC.getSkin().skinValue);
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task " + outlandsNPC.getID(), CommandTrait.Hand.RIGHT)
                 .player(true));
 
@@ -50,13 +44,12 @@ public class NPCManager {
     }
 
     public void createMerchantNPC(Player player, OutlandsNPC outlandsNPC) {
-        if (npcShopManager.getTrades().get(outlandsNPC.getID()) == null) {
-            player.sendMessage("This merchant does not exist.");
-            return;
-        }
         NPC npc = getTemplateNPC(outlandsNPC.getName());
 
+        npc.getOrAddTrait(HologramTrait.class).addLine("§e[Merchant] §f");
+        npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.26);
         npc.getOrAddTrait(Text.class).add("&eHello, I have a lot of items for sale!");
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(outlandsNPC.getID(), outlandsNPC.getSkin().skinSignature, outlandsNPC.getSkin().skinValue);
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc shop " + outlandsNPC.getID(), CommandTrait.Hand.RIGHT)
                 .player(true));
 
@@ -72,9 +65,8 @@ public class NPCManager {
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.SLIME, "loot");
         npc.getOrAddTrait(SlimeSize.class).setSize(2);
         npc.getOrAddTrait(HologramTrait.class).addLine("§e[Hit]");
-
         npc.getOrAddTrait(CommandTrait.class).setHideErrorMessages(true);
-        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc hurt " + npc.getMinecraftUniqueId(), CommandTrait.Hand.LEFT)
+        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc hurt " + npc.getId(), CommandTrait.Hand.LEFT)
                 .player(true));
 
         npc.spawn(location);
@@ -94,9 +86,6 @@ public class NPCManager {
 
     private NPC getTemplateNPC(String name) {
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
-
-        npc.getOrAddTrait(HologramTrait.class).addLine("§e[NPC] §f");
-        npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.26);
 
         npc.getOrAddTrait(LookClose.class).setPerPlayer(false);
         npc.getOrAddTrait(LookClose.class).setRealisticLooking(true);

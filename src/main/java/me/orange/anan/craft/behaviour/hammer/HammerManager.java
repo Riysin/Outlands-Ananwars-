@@ -84,11 +84,13 @@ public class HammerManager {
         int newLevel = getUpgradeLevel(hammerAction);
 
         if (blockStats.getBlockType() != BlockType.BUILDING) {
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
             player.sendMessage("§c此方塊非建築方塊!");
             return;
         }
 
         if (newBuild == null && newLevel < getCurrentBlockLevel(block)) {
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
             player.sendMessage("§c無法升級成你選擇的建材!");
             return;
         }
@@ -111,8 +113,10 @@ public class HammerManager {
                 craftManager.removeItemsFromInventory(player, recipe, 1);
                 player.sendMessage(" §e已消耗 "+craftManager.getCraft(recipe).getName()+" x "+ recipe.getAmount() + " !");
                 return;
-            } else
+            } else {
                 player.sendMessage("§c材料不足!");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+            }
         }
     }
 
@@ -161,6 +165,7 @@ public class HammerManager {
 
         if (blockStats.isGettingDestroyed()) {
             player.sendMessage("§c方塊遭破壞的30秒內無法修復!");
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
             return;
         }
 
@@ -171,8 +176,9 @@ public class HammerManager {
             blockStats.setHealth(currentHealth + 1);
 
             Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
-        } else
+        } else {
             player.sendMessage("§c方塊已達到最大耐久度!");
-
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+        }
     }
 }

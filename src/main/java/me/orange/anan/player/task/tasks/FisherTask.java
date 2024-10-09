@@ -17,7 +17,7 @@ public class FisherTask extends Task {
         if (data instanceof ItemStack) {
             ItemStack fish = (ItemStack) data;
             setProgress(getProgress() + fish.getAmount());
-            player.sendMessage("§eTask progress: §a" + getProgress() + "/" + getGoal());
+            player.sendMessage("§eTask " + getName() + " progress: §a" + getProgress() + "/" + getGoal());
 
             if (getProgress() >= getGoal()) {
                 Bukkit.getPluginManager().callEvent(new TaskCompleteEvent(player, this));

@@ -50,6 +50,9 @@ public class PlayerNPCEventListener implements Listener {
     public void onPlayerDamageEvent(PlayerDamageByPlayerEvent event) {
         if (event.getPlayer().hasMetadata("NPC")) {
             NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getPlayer());
+            if(npc.isProtected()){
+                return;
+            }
             OfflinePlayer npcOwner = playerNPCManager.getNPCOfflineOwner(npc);
             if (clanManager.sameClan(event.getDamager(), npcOwner)) {
                 event.getDamager().sendMessage("§cYou are in the same clan!");

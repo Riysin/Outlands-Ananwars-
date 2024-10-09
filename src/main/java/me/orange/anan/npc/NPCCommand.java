@@ -16,8 +16,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
-
 @InjectableComponent
 @Command(value = {"anpc"})
 public class NPCCommand extends BaseCommand {
@@ -43,13 +41,13 @@ public class NPCCommand extends BaseCommand {
     }
 
     @Command(value = "shop")
-    public void shop(BukkitCommandContext ctx, @Arg("merchantID") String merchantID) {
-        npcShopManager.open(ctx.getPlayer(), merchantID);
+    public void shop(BukkitCommandContext ctx, @Arg("outlands npc") OutlandsNPC outlandsNPC) {
+        npcShopManager.open(ctx.getPlayer(), outlandsNPC);
     }
 
     @Command(value = "hurt")
-    public void hurt(BukkitCommandContext ctx, @Arg("npc UUID") UUID id) {
-        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(id);
+    public void hurt(BukkitCommandContext ctx, @Arg("npc ID") int id) {
+        NPC npc = CitizensAPI.getNPCRegistry().getById(id);
         Player player = ctx.getPlayer();
         Block block = npc.getStoredLocation().getBlock();
 

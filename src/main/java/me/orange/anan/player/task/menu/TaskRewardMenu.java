@@ -10,9 +10,9 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.player.job.JobManager;
 import me.orange.anan.player.task.Task;
-import me.orange.anan.player.task.TaskManager;
 import me.orange.anan.player.task.TaskStatus;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -21,12 +21,10 @@ import java.util.List;
 @InjectableComponent
 public class TaskRewardMenu {
     private final GuiFactory guiFactory;
-    private final TaskManager taskManager;
     private final JobManager jobManager;
 
-    public TaskRewardMenu(GuiFactory guiFactory, TaskManager taskManager, JobManager jobManager) {
+    public TaskRewardMenu(GuiFactory guiFactory, JobManager jobManager) {
         this.guiFactory = guiFactory;
-        this.taskManager = taskManager;
         this.jobManager = jobManager;
     }
 
@@ -39,9 +37,12 @@ public class TaskRewardMenu {
                 .lore(getRewardInfo(task))
                 .build(), clicker -> {
             player.sendMessage("§aReward claimed.");
+            player.getWorld().playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
             player.closeInventory();
             task.setStatus(TaskStatus.CLAIMED);
-            jobManager.addPlayer(player, jobManager.getJobByID(task.getId()));
+            String taskFisher = "task.fisher";
+            String[] parts = taskFisher.split("\\.");
+            jobManager.addPlayer(player, jobManager.getJobByID(parts[1]));
         }));
 
         pane.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));
@@ -53,11 +54,10 @@ public class TaskRewardMenu {
     private List<String> getRewardInfo(Task task) {
         // Get reward info
         List<String> rewardInfo = new ArrayList<>();
-        rewardInfo.add("§eReward:");
-        rewardInfo.add("§a" + task.getReward());
+        rewardInfo.add("§f" + task.getReward());
         rewardInfo.add("");
-        rewardInfo.add("§fReward Info:");
-        rewardInfo.add("§7" + task.getRewardDescription());
+        rewardInfo.add("§eReward Info:");
+        rewardInfo.add("§a" + task.getRewardDescription());
         rewardInfo.add("");
         rewardInfo.add("&eClick to claim reward.");
         return rewardInfo;

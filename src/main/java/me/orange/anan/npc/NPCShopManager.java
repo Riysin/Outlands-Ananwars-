@@ -32,11 +32,11 @@ public class NPCShopManager {
         return trades;
     }
 
-    public void open(Player player, String merchantID) {
-        List<VillagerTrade> trade = getTrades().get(merchantID);
+    public void open(Player player, OutlandsNPC outlandsNPC) {
+        List<VillagerTrade> trade = getTrades().get(outlandsNPC.getID());
         VillagerInventory inventory = new VillagerInventory(trade, player);
 
-        inventory.setName(ChatColor.translateAlternateColorCodes('&', "&6" + merchantID));
+        inventory.setName(ChatColor.translateAlternateColorCodes('&', "&6" + outlandsNPC.getName()));
         inventory.open();
     }
 }

@@ -76,7 +76,8 @@ public class JobChooseMenu {
 
         if (jobManager.hasJob(player, job)) {
             lore.add("§6Level: §7" + jobManager.getPlayerJobLevel(player, job));
-            lore.add("§7Click to choose this job!");
+            lore.add("");
+            lore.add("§eClick to choose this job!");
         } else {
             lore.add("§cYou haven't unlocked this job yet!");
         }
