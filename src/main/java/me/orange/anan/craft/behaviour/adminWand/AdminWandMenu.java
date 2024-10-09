@@ -9,6 +9,7 @@ import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 @InjectableComponent
@@ -32,6 +33,7 @@ public class AdminWandMenu {
                     .name("§e" + action.toString())
                     .lore("§6Command:", "§7/"+action.getCommand())
                     .build(), event -> {
+                player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
                 adminWandManager.setAction(player, action);
                 player.closeInventory();
             }));

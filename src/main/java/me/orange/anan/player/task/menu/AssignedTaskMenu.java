@@ -13,6 +13,7 @@ import me.orange.anan.player.task.TaskManager;
 import me.orange.anan.player.task.TaskStatus;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,6 +45,14 @@ public class AssignedTaskMenu {
 
         outline.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).build()));
         outline.setSlot(4, 5, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_DOOR).name("§cBack").build(), ctx -> {
+            Bukkit.dispatchCommand(player, "player menu " + player.getName());
+        }));
+
+        // back button
+        outline.setSlot(4, 5, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_DOOR)
+                .name("§cBack")
+                .build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
             Bukkit.dispatchCommand(player, "player menu " + player.getName());
         }));
 

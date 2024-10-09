@@ -89,7 +89,7 @@ public class HammerManager {
             return;
         }
 
-        if (newBuild == null && newLevel < getCurrentBlockLevel(block)) {
+        if (newBuild == null || newLevel < getCurrentBlockLevel(block)) {
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
             player.sendMessage("§c無法升級成你選擇的建材!");
             return;
@@ -111,7 +111,7 @@ public class HammerManager {
 
                 player.getWorld().playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
                 craftManager.removeItemsFromInventory(player, recipe, 1);
-                player.sendMessage(" §e已消耗 "+craftManager.getCraft(recipe).getName()+" x "+ recipe.getAmount() + " !");
+                player.sendMessage(" §e已消耗 " + craftManager.getCraft(recipe).getName() + " x " + recipe.getAmount() + " !");
                 return;
             } else {
                 player.sendMessage("§c材料不足!");
@@ -169,16 +169,36 @@ public class HammerManager {
             return;
         }
 
+        if (blockStats.getBlockType() != BlockType.BUILDING) {
+            player.sendMessage("§c此方塊無法修復!");
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+            return;
+        }
+
         int currentHealth = blockStats.getHealth();
         int maxHealth = buildConfig.getBuildBlocks().get("buildLv1");
+        Craft craft = craftManager.getCraft(block);
+        List<ItemStack> recipes = craftManager.getRecipesFromIDs(craft.getRecipe(), player);
 
-        if (currentHealth < maxHealth) {
-            blockStats.setHealth(currentHealth + 1);
+        for (ItemStack recipe : recipes) {
+            if (!craftManager.hasEnough(player, recipe)) {
+                player.sendMessage("§c材料不足!");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+                return;
+            }
 
-            Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
-        } else {
-            player.sendMessage("§c方塊已達到最大耐久度!");
-            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+            if (currentHealth < maxHealth) {
+                blockStats.setHealth(currentHealth + 1);
+                craftManager.removeItemsFromInventory(player, recipe, recipe.getAmount() / 2);
+                player.sendMessage(" §e已消耗 " + craftManager.getCraft(recipe).getName() + " x " + recipe.getAmount() / 2 + " !");
+                player.getWorld().playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
+                Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));
+                return;
+            } else {
+                player.sendMessage("§c方塊已達到最大耐久度!");
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+                return;
+            }
         }
     }
 }

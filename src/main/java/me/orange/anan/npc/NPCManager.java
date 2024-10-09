@@ -31,9 +31,7 @@ public class NPCManager {
         npc.getOrAddTrait(Text.class).toggleSpeechBubbles();
         npc.getOrAddTrait(Text.class).toggleTalkClose();
         npc.getOrAddTrait(Text.class).setRange(6);
-        npc.getOrAddTrait(Text.class).add("&eHello, I'm a task NPC!");
-        npc.getOrAddTrait(Text.class).add("&eI have a task for you.");
-        npc.getOrAddTrait(Text.class).add("&eWould you like to accept it?");
+        npc.getOrAddTrait(Text.class).add("&eHello, I have a task for you.!");
         npc.getOrAddTrait(HologramTrait.class).addLine("§e[Quest] §f");
 
         npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(outlandsNPC.getID(), outlandsNPC.getSkin().skinSignature, outlandsNPC.getSkin().skinValue);

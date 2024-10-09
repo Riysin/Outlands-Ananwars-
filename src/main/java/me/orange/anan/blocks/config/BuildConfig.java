@@ -17,7 +17,6 @@ public class BuildConfig extends YamlConfiguration {
         super(plugin.getDataFolder().resolve("buildBlocks.yml"));
         this.loadAndSave();
 
-        craftManager.loadConfigFile();
         craftManager.getCrafts().forEach((s, craft) -> {
             if((craft.getType() == CraftType.BUILD || craft.getType() == CraftType.USAGE) && !buildBlocks.containsKey(s))
                 buildBlocks.put(s, 10);

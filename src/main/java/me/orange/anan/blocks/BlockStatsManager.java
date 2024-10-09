@@ -5,6 +5,7 @@ import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BlockConfigElement;
 import me.orange.anan.blocks.config.NatureBlockConfig;
+import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.config.ToolConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -26,13 +27,13 @@ import java.util.stream.Stream;
 @InjectableComponent
 public class BlockStatsManager {
     private final BlockConfig blockConfig;
-    private final ToolConfig toolConfig;
+    private final CraftManager craftManager;
     private final NatureBlockConfig natureBlockConfig;
     private Map<Block, BlockStats> blockStatsMap = new HashMap<>();
 
-    public BlockStatsManager(BlockConfig blockConfig, ToolConfig toolConfig, NatureBlockConfig natureBlockConfig) {
+    public BlockStatsManager(BlockConfig blockConfig, CraftManager craftManager, NatureBlockConfig natureBlockConfig) {
         this.blockConfig = blockConfig;
-        this.toolConfig = toolConfig;
+        this.craftManager = craftManager;
         this.natureBlockConfig = natureBlockConfig;
 
         loadConfig();
@@ -110,7 +111,7 @@ public class BlockStatsManager {
 
     public void breakBlock(Player player, Block block, ItemStack toolItem) {
         BlockStats blockStats = getBlockStats(block);
-        blockStats.setHealth(blockStats.getHealth() - toolConfig.getToolDamage(toolItem));
+        blockStats.setHealth(blockStats.getHealth() - craftManager.getDamage(toolItem));
 
         blockBreakScheduler(block);
         Bukkit.getPluginManager().callEvent(new PlayerMoveEvent(player, player.getLocation(), player.getLocation()));

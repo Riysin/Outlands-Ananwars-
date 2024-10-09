@@ -19,6 +19,7 @@ import me.orange.anan.player.death.DeathManager;
 import me.orange.anan.player.friend.FriendMenu;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
@@ -71,7 +72,7 @@ public class PlayerStatsMenu {
         pane.setSlot(3, 0, GuiSlot.of(ItemBuilder
                 .of(XMaterial.PLAYER_HEAD)
                 .skull(player.getName())
-                .name("§b§l" + player.getName())
+                .name("§6§l" + player.getName())
                 .lore("§f Kills: §e" + playerDataManager.getPlayerData(player).getKills()
                         , "§f Deaths: §c" + playerDataManager.getPlayerData(player).getDeaths())
                 .build()));
@@ -84,7 +85,10 @@ public class PlayerStatsMenu {
         pane.setSlot(2, 1, GuiSlot.of(ItemBuilder.of(XMaterial.DIAMOND)
                 .name("§eFriends")
                 .lore("§fFriends: §a" + playerDataManager.getFriends(player).size(), "", "§eClick to view friends")
-                .build(), friendMenu::open));
+                .build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
+            friendMenu.open(player);
+        }));
 
         pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.GOLDEN_HELMET).name("§eClan Info")
                 .lore("§fClan: §6" + clanName
@@ -93,7 +97,10 @@ public class PlayerStatsMenu {
         pane.setSlot(5, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BOOK)
                 .name("§eTasks")
                 .lore("§fTasks: §a" + (int) taskManager.getPlayerTasks(player).stream().filter(task -> task.getStatus().equals(TaskStatus.ASSIGNED)).count(), "", "§eClick to view assigned tasks")
-                .build(),clicker -> assignedTaskMenu.open(player)));
+                .build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
+            assignedTaskMenu.open(player);
+        }));
 
         pane.setSlot(6, 2, GuiSlot.of(ItemBuilder.of(XMaterial.REDSTONE_BLOCK)
                 .name("§cRespawn")
@@ -103,8 +110,11 @@ public class PlayerStatsMenu {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kill " + player.getName());
         }));
 
-        border.setSlot(4, 4, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER).name("§cClose").build(), $ -> {
-            ctx.getPlayer().closeInventory();
+        border.setSlot(4, 4, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER)
+                .name("§cClose")
+                .build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
+            clicker.getPlayer().closeInventory();
         }));
 
         border.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));

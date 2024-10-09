@@ -13,6 +13,8 @@ import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 @InjectableComponent
@@ -41,6 +43,14 @@ public class PlayerSettingsMenu {
                 .name("Friend Login Notification")
                 .lore("§cNot implemented yet.")
                 .build()));
+
+        //back button
+        border.setSlot(4, 2, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_DOOR)
+                .name("§cBack")
+                .build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
+            Bukkit.dispatchCommand(player, "player menu " + player.getName());
+        }));
 
         border.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
 

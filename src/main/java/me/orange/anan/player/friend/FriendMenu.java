@@ -13,6 +13,7 @@ import me.orange.anan.player.PlayerDataManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 @InjectableComponent
@@ -52,7 +53,8 @@ public class FriendMenu {
             });
         });
 
-        outline.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_DOOR).name("§cBack").build(), ctx -> {
+        outline.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_DOOR).name("§cBack").build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
             Bukkit.dispatchCommand(player, "player menu " + player.getName());
         }));
 

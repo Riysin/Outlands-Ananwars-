@@ -97,6 +97,7 @@ public class CraftMenu {
     private void addItemToCraftMenu(Gui gui, NormalPane pane, Player player, CraftType craftType) {
         // Add craftable item
         gui.onDrawCallback(updatePlayer -> {
+            updatePlayer.playSound(updatePlayer.getLocation(), Sound.CLICK, 1, 1);
             List<GuiSlot> canCrafts = new ArrayList<>(), cannotCrafts = new ArrayList<>();
 
             craftManager.getCrafts().forEach((key, craft) -> {
@@ -106,8 +107,6 @@ public class CraftMenu {
                 List<String> loreLines = new ArrayList<>();
                 boolean canCraft = craftManager.canCraft(player, craft);
 
-                loreLines.add("&8" + craft.getType().name());
-                loreLines.add("");
                 loreLines.addAll(craft.getLore());
                 loreLines.add("");
                 loreLines.add("§e所需材料:");

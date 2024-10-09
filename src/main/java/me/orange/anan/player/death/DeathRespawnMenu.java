@@ -13,6 +13,7 @@ import me.orange.anan.player.bed.BedManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.Random;
@@ -42,6 +43,7 @@ public class DeathRespawnMenu {
                         .name("§7" + bed.getBedName())
                         .lore("§7Click to respawn")
                         .build(), clicker -> {
+                    clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
                     player.teleport(bed.getLocation());
                     isManualClose.set(false);
                     clicker.closeInventory();
@@ -54,6 +56,7 @@ public class DeathRespawnMenu {
         pane.setSlot(26, GuiSlot.of(ItemBuilder.of(XMaterial.REDSTONE_BLOCK)
                 .name("§7Respawn")
                 .build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
             clicker.teleport(getRandomRespawnLocation(player.getLocation()));
             isManualClose.set(false);
             clicker.closeInventory();

@@ -4,7 +4,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.log.Log;
 import io.fairyproject.mc.scheduler.MCSchedulers;
-import me.orange.anan.craft.config.ToolConfig;
+import me.orange.anan.craft.CraftManager;
 import me.orange.anan.events.NPCResourceDieEvent;
 import me.orange.anan.events.PlayerDamageNPCResourceEvent;
 import net.citizensnpcs.api.event.CitizensEnableEvent;
@@ -13,7 +13,6 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -25,12 +24,12 @@ import org.bukkit.inventory.ItemStack;
 @InjectableComponent
 @RegisterAsListener
 public class NPCEventListener implements Listener {
-    private final ToolConfig toolConfig;
+    private final CraftManager craftManager;
     private final NPCLootManager npcLootManager;
     private final NPCManager npcManager;
 
-    public NPCEventListener(ToolConfig toolConfig, NPCLootManager npcLootManager, NPCManager npcManager) {
-        this.toolConfig = toolConfig;
+    public NPCEventListener(CraftManager craftManager, NPCLootManager npcLootManager, NPCManager npcManager) {
+        this.craftManager = craftManager;
         this.npcLootManager = npcLootManager;
         this.npcManager = npcManager;
     }
@@ -47,7 +46,7 @@ public class NPCEventListener implements Listener {
         Block block = event.getBlock();
 
         LivingEntity entity = (LivingEntity) npc.getEntity();
-        int toolDamage = toolConfig.getToolDamage(player.getItemInHand());
+        int toolDamage = craftManager.getDamage(player.getItemInHand());
 
         if (entity.getHealth() <= toolDamage) {
             Bukkit.getPluginManager().callEvent(new NPCResourceDieEvent(player, npc, block));

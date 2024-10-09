@@ -15,6 +15,7 @@ import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -97,10 +98,10 @@ public class ConfirmMenu {
         });
 
         //crafted item
-        gui.onDrawCallback($ -> {
+        gui.onDrawCallback(updataPlayer -> {
+            updataPlayer.playSound(updataPlayer.getLocation(), Sound.CLICK, 1, 1);
+
             loreLines.clear();
-            loreLines.add("§8" + craft.getType().name());
-            loreLines.add("");
             loreLines.addAll(craft.getLore());
             loreLines.add("");
             loreLines.add("§e所需材料:");
@@ -114,7 +115,7 @@ public class ConfirmMenu {
             }
 
             loreLines.add("");
-            loreLines.add("§e§l點擊以製作" + count + "§e個");
+            loreLines.add("§e點擊以製作" + count + "個");
 
             pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
                     .clearLore()

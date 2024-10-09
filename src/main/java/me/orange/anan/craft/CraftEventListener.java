@@ -6,6 +6,7 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.PlayerOpenInventoryEvent;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,15 +29,19 @@ public class CraftEventListener implements Listener {
         if (event.getWhoClicked() instanceof Player) {
             Player player = (Player) event.getWhoClicked();
             if (event.getSlot() == 1 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
                 player.performCommand("craft menu");
                 event.setCancelled(true);
             } else if (event.getSlot() == 2 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
                 player.performCommand("craft ongoing");
                 event.setCancelled(true);
             } else if (event.getSlot() == 3 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
                 player.performCommand("player menu "+ player.getName());
                 event.setCancelled(true);
             } else if (event.getSlot() == 4 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+                player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
                 player.performCommand("settings");
                 event.setCancelled(true);
             }

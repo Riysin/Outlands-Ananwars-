@@ -12,31 +12,18 @@ import java.util.Map;
 
 @InjectableComponent
 public class ToolConfig extends YamlConfiguration {
-    private final CraftManager craftManager;
     private Map<String, Integer> toolMap = new HashMap<>();
 
-    protected ToolConfig(Anan plugin, CraftManager craftManager) {
+    protected ToolConfig(Anan plugin) {
         super(plugin.getDataFolder().resolve("tools.yml"));
-        this.craftManager = craftManager;
         this.loadAndSave();
-
-        craftManager.loadConfigFile();
-        craftManager.getCrafts().forEach((s, craft) -> {
-            if(craft.getType() == CraftType.TOOL && !toolMap.containsKey(s))
-                toolMap.put(s, 1);
-        });
-        craftManager.setToolDamage(toolMap);
-        this.save();
     }
 
     public Map<String, Integer> getToolMap(){
         return this.toolMap;
     }
 
-    public int getToolDamage(ItemStack toolItem){
-        if(toolItem == null || craftManager.getCraft(toolItem) == null){
-            return 1;
-        }
-        return toolMap.getOrDefault(craftManager.getCraft(toolItem).getID(), 1);
+    public void setToolMap(Map<String, Integer> toolMap){
+        this.toolMap = toolMap;
     }
 }

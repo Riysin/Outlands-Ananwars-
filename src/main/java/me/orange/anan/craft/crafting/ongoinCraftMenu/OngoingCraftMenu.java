@@ -13,6 +13,7 @@ import me.orange.anan.craft.crafting.CraftTimer;
 import me.orange.anan.craft.crafting.CraftTimerManager;
 import me.orange.anan.events.CraftTimerCountDownEvent;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class OngoingCraftMenu {
                         .lore(loreLines)
                         .amount(craftTimer.getAmount())
                         .build(), clicker -> {
+                    clicker.playSound(clicker.getLocation(), Sound.CHEST_CLOSE, 1, 1);
                     craftTimerManager.craftingFailed(clicker, craftTimer);
                     gui.update(clicker);
                 }));

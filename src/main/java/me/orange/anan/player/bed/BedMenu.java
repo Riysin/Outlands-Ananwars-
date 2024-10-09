@@ -12,6 +12,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
 import net.kyori.adventure.text.Component;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -35,6 +36,7 @@ public class BedMenu implements Listener {
                 .name(bed.getBedName())
                 .lore("§eClick to rename bed")
                 .build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
             openAnvilGUI(player, bed);
         }));
 

@@ -12,6 +12,8 @@ import me.orange.anan.craft.behaviour.CraftBehaviour;
 import me.orange.anan.craft.config.CraftConfig;
 import me.orange.anan.craft.config.CraftConfigElement;
 import me.orange.anan.craft.config.CraftElement;
+import me.orange.anan.craft.config.ToolConfig;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,25 +24,31 @@ import java.util.concurrent.atomic.AtomicReference;
 @InjectableComponent
 public class CraftManager {
     private final Map<String, Craft> crafts = new LinkedHashMap<>();
-    private Map<String, Integer> toolDamage = new HashMap<>();
-    private final CraftConfig config;
+    private final CraftConfig craftConfig;
+    private final ToolConfig toolConfig;
     private final BehaviourManager behaviourManager;
     private final FairyItemRegistry fairyItemRegistry;
 
-    public CraftManager(CraftConfig config, BehaviourManager behaviourManager, FairyItemRegistry fairyItemRegistry) {
-        this.config = config;
+    public CraftManager(CraftConfig craftConfig, ToolConfig toolConfig, BehaviourManager behaviourManager, FairyItemRegistry fairyItemRegistry) {
+        this.craftConfig = craftConfig;
+        this.toolConfig = toolConfig;
         this.behaviourManager = behaviourManager;
         this.fairyItemRegistry = fairyItemRegistry;
-        loadConfigFile();
+        loadConfig();
     }
 
     public Map<String, Craft> getCrafts() {
         return this.crafts;
     }
 
-    public void loadConfigFile() {
-        config.loadAndSave();
-        config.getConfigElements().forEach(element ->
+    public void loadConfig() {
+        getCrafts().forEach((s, craft) -> {
+            if (craft.getType() == CraftType.TOOL && !toolConfig.getToolMap().containsKey(s))
+                toolConfig.getToolMap().put(s, 1);
+        });
+        toolConfig.save();
+
+        craftConfig.getConfigElements().forEach(element ->
                 element.getCrafts().forEach(craftElement -> {
                     Craft craft = new Craft();
                     craft.setType(element.getCraftType());
@@ -49,7 +57,7 @@ public class CraftManager {
                     craft.setTime(craftElement.getTime());
                     craft.setItemStack(ItemBuilder.of(craftElement.getMaterial())
                             .name(craftElement.getDisplayName())
-                            .lore(craftElement.getLore())
+                            .lore(getLores(craftElement))
                             .tag(NBTKey.create("craft"), craftElement.getId())
                             .build());
 
@@ -67,7 +75,7 @@ public class CraftManager {
     }
 
     public ItemStack getConfigItemWithID(String ID) {
-        return config.getConfigElements().stream()
+        return craftConfig.getConfigElements().stream()
                 .flatMap(element -> element.getCrafts().stream())
                 .filter(craftElement -> craftElement.getId().equals(ID))
                 .findFirst()
@@ -80,7 +88,7 @@ public class CraftManager {
     }
 
     private CraftType getCraftType(String ID) {
-        return config.getConfigElements().stream()
+        return craftConfig.getConfigElements().stream()
                 .filter(element -> element.getCrafts().stream().anyMatch(craftElement -> craftElement.getId().equals(ID)))
                 .findFirst()
                 .map(CraftConfigElement::getCraftType)
@@ -92,26 +100,26 @@ public class CraftManager {
         lores.add("§8" + getCraftType(craft.getId()));
         lores.add("");
         lores.addAll(craft.getLore());
-        if(getCraftType(craft.getId()) == CraftType.TOOL) {
-            lores.add("§7傷害: §6"+ getToolDamage(craft.getId()));
+        if (getCraftType(craft.getId()) == CraftType.TOOL) {
+            lores.add("");
+            lores.add("§e傷害: §c" + getDamage(craft.getIcon().parseItem()));
         }
         return lores;
     }
 
     public CraftElement getCraftElementWithID(String ID) {
-        return config.getConfigElements().stream()
+        return craftConfig.getConfigElements().stream()
                 .flatMap(element -> element.getCrafts().stream())
                 .filter(craft -> craft.getId().equals(ID))
                 .findFirst()
                 .orElse(null);
     }
 
-    public int getToolDamage(String ID) {
-        return toolDamage.get(ID);
-    }
-
-    public void setToolDamage(Map<String, Integer> toolDamage) {
-        this.toolDamage = toolDamage;
+    public int getDamage(ItemStack itemStack) {
+        if (itemStack == null || getCraft(itemStack) == null) {
+            return 1;
+        }
+        return toolConfig.getToolMap().getOrDefault(getCraft(itemStack).getID(), 1);
     }
 
     public boolean canCraft(Player player, Craft craft) {

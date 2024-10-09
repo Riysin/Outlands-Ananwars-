@@ -73,7 +73,7 @@ public class TcCommand extends BaseCommand {
     public void reloadConfig(BukkitCommandContext ctx) {
         craftManager.getCrafts().clear();
 
-        craftManager.loadConfigFile();
+        craftManager.loadConfig();
         natureBlockConfig.loadAndSave();
         clanConfig.loadAndSave();
         playerConfig.loadAndSave();

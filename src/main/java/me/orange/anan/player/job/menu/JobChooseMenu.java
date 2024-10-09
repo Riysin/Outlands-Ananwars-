@@ -14,6 +14,7 @@ import me.orange.anan.player.job.JobManager;
 import me.orange.anan.player.job.JobRegistry;
 import me.orange.anan.player.task.TaskManager;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -45,6 +46,8 @@ public class JobChooseMenu {
                     .name("§e" + job.getName())
                     .lore(getLore(player, job))
                     .build(), clicker -> {
+                clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
+
                 if (jobManager.getPlayerJobLevelMap(player).get(job.getID()) == null) {
                     player.sendMessage("§cYou haven't unlocked this job yet!");
                     return;
