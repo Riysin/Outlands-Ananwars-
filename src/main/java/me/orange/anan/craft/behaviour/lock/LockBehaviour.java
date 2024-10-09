@@ -5,8 +5,6 @@ import io.fairyproject.bukkit.util.items.behaviour.ItemBehaviour;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.behaviour.CraftBehaviour;
 import me.orange.anan.events.PlayerRightClickLockEvent;
-import me.orange.anan.events.TeamCoreInventoryOpenEvent;
-import me.orange.anan.events.TeamCoreLockEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.block.Action;
 

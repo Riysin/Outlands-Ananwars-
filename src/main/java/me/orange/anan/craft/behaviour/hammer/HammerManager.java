@@ -10,6 +10,7 @@ import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -106,7 +107,9 @@ public class HammerManager {
                 block.setType(newBuildItem.getType());
                 block.setData(newBuildItem.getData().getData(), true);
 
+                player.getWorld().playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
                 craftManager.removeItemsFromInventory(player, recipe, 1);
+                player.sendMessage(" §e已消耗 "+craftManager.getCraft(recipe).getName()+" x "+ recipe.getAmount() + " !");
                 return;
             } else
                 player.sendMessage("§c材料不足!");

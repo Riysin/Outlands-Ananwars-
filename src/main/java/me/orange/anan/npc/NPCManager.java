@@ -22,18 +22,19 @@ public class NPCManager {
         this.npcShopManager = npcShopManager;
     }
 
-    public void createNPC(String name, Location location) {
-        NPC npc = getTemplateNPC(name);
-
-        npc.getOrAddTrait(Text.class).add("&eHello, I'm an NPC!");
-        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc say", CommandTrait.Hand.RIGHT)
-                .player(true));
-
-        npc.spawn(location);
+    public void createNPC(Player player, OutlandsNPC outlandsNPC){
+        if(outlandsNPC.getType() == NPCType.TASK){
+            createTaskNPC(player, outlandsNPC);
+        } else if(outlandsNPC.getType() == NPCType.MERCHANT){
+            createMerchantNPC(player, outlandsNPC);
+        } else if(outlandsNPC.getType() == NPCType.LOOT){
+            createLootNPC(player.getLocation());
+        }
     }
 
-    public void createTaskNPC(String taskID, Location location) {
-        NPC npc = getTemplateNPC(taskID);
+    public void createTaskNPC(Player player, OutlandsNPC outlandsNPC) {
+        Location location = player.getLocation().clone();
+        NPC npc = getTemplateNPC(outlandsNPC.getName());
 
         npc.getOrAddTrait(Text.class).toggleSpeechBubbles();
         npc.getOrAddTrait(Text.class).toggleTalkClose();
@@ -42,38 +43,38 @@ public class NPCManager {
         npc.getOrAddTrait(Text.class).add("&eI have a task for you.");
         npc.getOrAddTrait(Text.class).add("&eWould you like to accept it?");
 
-        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task " + taskID, CommandTrait.Hand.RIGHT)
+        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task " + outlandsNPC.getID(), CommandTrait.Hand.RIGHT)
                 .player(true));
 
         npc.spawn(location);
     }
 
-    public void createMerchantNPC(Player player, String merchantID) {
-        if (npcShopManager.getTrades().get(merchantID) == null) {
+    public void createMerchantNPC(Player player, OutlandsNPC outlandsNPC) {
+        if (npcShopManager.getTrades().get(outlandsNPC.getID()) == null) {
             player.sendMessage("This merchant does not exist.");
             return;
         }
-        NPC npc = getTemplateNPC(Character.toUpperCase(merchantID.charAt(0)) + merchantID.substring(1));
+        NPC npc = getTemplateNPC(outlandsNPC.getName());
 
         npc.getOrAddTrait(Text.class).add("&eHello, I have a lot of items for sale!");
-        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc shop " + merchantID, CommandTrait.Hand.RIGHT)
+        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc shop " + outlandsNPC.getID(), CommandTrait.Hand.RIGHT)
                 .player(true));
 
         npc.spawn(player.getLocation());
     }
 
-    public void createLootNPC(String name, Location location) {
+    public void createLootNPC(Location location) {
         location.setX(location.getBlockX() + 0.5);
         location.setZ(location.getBlockZ() + 0.5);
         location.setYaw(0);
         location.getWorld().getBlockAt(location).setTypeIdAndData(123, (byte) 0, true);
 
-        NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.SLIME, name);
+        NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.SLIME, "loot");
         npc.getOrAddTrait(SlimeSize.class).setSize(2);
         npc.getOrAddTrait(HologramTrait.class).addLine("§e[Hit]");
 
         npc.getOrAddTrait(CommandTrait.class).setHideErrorMessages(true);
-        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc hurt " + npc.getId(), CommandTrait.Hand.LEFT)
+        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc hurt " + npc.getMinecraftUniqueId(), CommandTrait.Hand.LEFT)
                 .player(true));
 
         npc.spawn(location);

@@ -146,14 +146,14 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        if (teamCoreManager.isAboveOtherTeamBlock(player, block) && block.getType() != Material.LADDER) {
+        if (teamCoreManager.isAboveOtherTeamBlock(player, block) && block.getType() != Material.LADDER && block.getType() != Material.TNT) {
             event.setCancelled(true);
             player.sendMessage("§c你不能在他人領地的上方建造方塊!");
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);
             return;
         }
 
-        if (teamCoreManager.otherTeamBlockInRadius(player, block) && block.getType() != Material.LADDER) {
+        if (teamCoreManager.otherTeamBlockInRadius(player, block) && block.getType() != Material.LADDER && block.getType() != Material.TNT) {
             event.setCancelled(true);
             player.sendMessage("§c你不能在他人領地的旁建造方塊!");
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 0.2f);

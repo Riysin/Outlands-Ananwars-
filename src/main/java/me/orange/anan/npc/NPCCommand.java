@@ -16,6 +16,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 @InjectableComponent
 @Command(value = {"anpc"})
 public class NPCCommand extends BaseCommand {
@@ -34,17 +36,10 @@ public class NPCCommand extends BaseCommand {
     }
 
     @Command(value = "create", permissionNode = "npc.admin")
-    public void create(BukkitCommandContext ctx, @Arg("name") String name) {
+    public void create(BukkitCommandContext ctx, @Arg("outlands npc") OutlandsNPC outlandsNPC) {
         Player player = ctx.getPlayer();
-        npcManager.createNPC(name, player.getLocation());
-        player.sendMessage("NPC created.");
-    }
-
-    @Command(value = "merchant", permissionNode = "npc.admin")
-    public void setup(BukkitCommandContext ctx, @Arg("merchantID") String merchantID) {
-        Player player = ctx.getPlayer();
-        npcManager.createMerchantNPC(player, merchantID);
-        player.sendMessage("Merchant Setup.");
+        npcManager.createNPC(player, outlandsNPC);
+        player.sendMessage("NPC Created.");
     }
 
     @Command(value = "shop")
@@ -52,27 +47,15 @@ public class NPCCommand extends BaseCommand {
         npcShopManager.open(ctx.getPlayer(), merchantID);
     }
 
-    @Command(value = "loot", permissionNode = "npc.admin")
-    public void resource(BukkitCommandContext ctx) {
-        npcManager.createLootNPC("Loot", ctx.getPlayer().getLocation());
-        ctx.getPlayer().sendMessage("Loot Spawned.");
-    }
-
     @Command(value = "hurt")
-    public void hurt(BukkitCommandContext ctx, @Arg("npcID") int id) {
-        NPC npc = CitizensAPI.getNPCRegistry().getById(id);
+    public void hurt(BukkitCommandContext ctx, @Arg("npc UUID") UUID id) {
+        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(id);
         Player player = ctx.getPlayer();
         Block block = npc.getStoredLocation().getBlock();
 
         if (npc.getEntity() instanceof LivingEntity) {
             Bukkit.getPluginManager().callEvent(new PlayerDamageNPCResourceEvent(player, npc, block));
         }
-    }
-
-    @Command(value = "tasknpc", permissionNode = "npc.admin")
-    public void taskNPC(BukkitCommandContext ctx, @Arg("name") String taskID) {
-        npcManager.createTaskNPC(taskID, ctx.getPlayer().getLocation());
-        ctx.getPlayer().sendMessage("Task NPC setup.");
     }
 
     @Command(value = "task")
@@ -88,10 +71,5 @@ public class NPCCommand extends BaseCommand {
         } else {
             player.sendMessage("§fHope you are happy about your reward.");
         }
-    }
-
-    @Command(value = "say", permissionNode = "npc.admin")
-    public void say(BukkitCommandContext ctx) {
-        ctx.getPlayer().sendMessage("Hello, I am an NPC.");
     }
 }

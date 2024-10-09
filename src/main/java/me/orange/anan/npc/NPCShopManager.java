@@ -25,7 +25,7 @@ public class NPCShopManager {
         List<VillagerTrade> fisherTrades = new ArrayList<>();
         fisherTrades.add(new VillagerTrade(ItemBuilder.of(XMaterial.TROPICAL_FISH).build(), ItemBuilder.of(XMaterial.EMERALD).build(), 100));
         fisherTrades.add(new VillagerTrade(ItemBuilder.of(XMaterial.SALMON).build(), ItemBuilder.of(XMaterial.EMERALD).amount(10).build(), 100));
-        this.trades.put("fisher", fisherTrades);
+        this.trades.put("merchant.fisher", fisherTrades);
     }
 
     public Map<String, List<VillagerTrade>> getTrades() {

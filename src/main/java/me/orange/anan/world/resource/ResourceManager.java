@@ -80,7 +80,7 @@ public class ResourceManager {
             Resource resource = iterator.next();
             if (resource.getType().equals(ResourceType.LOOT)) {
                 resource.getLocation().setWorld(world);
-                npcManager.createLootNPC("Loot", resource.getLocation());
+                npcManager.createLootNPC(resource.getLocation());
                 iterator.remove(); // Safely remove the resource
             }
         }

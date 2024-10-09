@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 public class FisherTask extends Task {
 
     public FisherTask() {
-        super("fisher", "Fisher", "Catch 5 fish", 5, "漁夫職業", "解鎖漁夫職業");
+        super("task.fisher", "Fisher", "Catch 5 fish", 5, "漁夫職業", "解鎖漁夫職業");
     }
 
     @Override
