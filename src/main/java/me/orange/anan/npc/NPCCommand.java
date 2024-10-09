@@ -8,6 +8,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.PlayerDamageNPCResourceEvent;
 import me.orange.anan.player.task.*;
 import me.orange.anan.player.task.menu.TaskAssignMenu;
+import me.orange.anan.player.task.menu.TaskInfoMenu;
 import me.orange.anan.player.task.menu.TaskRewardMenu;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -24,13 +25,15 @@ public class NPCCommand extends BaseCommand {
     private final TaskAssignMenu taskAssignMenu;
     private final TaskRewardMenu taskRewardMenu;
     private final NPCShopManager npcShopManager;
+    private final TaskInfoMenu taskInfoMenu;
 
-    public NPCCommand(NPCManager npcManager, TaskManager taskManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu, NPCShopManager npcShopManager) {
+    public NPCCommand(NPCManager npcManager, TaskManager taskManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu, NPCShopManager npcShopManager, TaskInfoMenu taskInfoMenu) {
         this.npcManager = npcManager;
         this.taskManager = taskManager;
         this.taskAssignMenu = taskAssignMenu;
         this.taskRewardMenu = taskRewardMenu;
         this.npcShopManager = npcShopManager;
+        this.taskInfoMenu = taskInfoMenu;
     }
 
     @Command(value = "create", permissionNode = "npc.admin")
@@ -63,11 +66,12 @@ public class NPCCommand extends BaseCommand {
         if (task == null) {
             taskAssignMenu.open(player, taskID);
         } else if (task.getStatus() == TaskStatus.ASSIGNED) {
-            player.sendMessage("§eWhat are you waiting for? Go and finish your task!");
+            player.sendMessage("§eCheck your task info.");
+            taskInfoMenu.open(player, task);
         } else if (task.getStatus() == TaskStatus.COMPLETED) {
             taskRewardMenu.open(player, task);
         } else {
-            player.sendMessage("§fHope you are happy about your reward.");
+            player.sendMessage("§eHope you are happy about your reward!");
         }
     }
 }

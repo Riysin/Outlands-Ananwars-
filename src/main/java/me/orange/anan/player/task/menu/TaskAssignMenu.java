@@ -11,6 +11,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.player.task.Task;
 import me.orange.anan.player.task.TaskManager;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 @InjectableComponent
@@ -31,6 +32,7 @@ public class TaskAssignMenu {
                 .name(Component.text("§aAccept Task"))
                 .lore("§eclick to accept the task.")
                 .build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
             taskManager.addTask(player, taskID);
             player.sendMessage("§aTask accepted.");
             player.closeInventory();
@@ -45,6 +47,7 @@ public class TaskAssignMenu {
                 .name(Component.text("§cReject Task"))
                 .lore("§eClick to reject task.")
                 .build(), clicker -> {
+            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
             player.sendMessage("§cTask rejected.");
             player.closeInventory();
         }));
