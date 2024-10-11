@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @ConfigurationElement
 public class FriendElement {
-    private String uuid;
+    private String uuid = "";
 
     public UUID getUuid() {
         return UUID.fromString(uuid);

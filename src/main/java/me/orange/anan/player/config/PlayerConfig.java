@@ -4,12 +4,15 @@ import io.fairyproject.config.annotation.ElementType;
 import io.fairyproject.config.yaml.YamlConfiguration;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.Anan;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @InjectableComponent
 public class PlayerConfig extends YamlConfiguration {
@@ -29,34 +32,15 @@ public class PlayerConfig extends YamlConfiguration {
         this.playerElementMap = playerElementMap;
     }
 
-    public void addPlayer(Player player) {
+    public PlayerConfigElement getPlayerConfigElement(UUID id) {
+        OfflinePlayer player = Bukkit.getOfflinePlayer(id);
         String uuid = player.getUniqueId().toString();
         if(!playerElementMap.containsKey(uuid)) {
             playerElementMap.put(uuid, new PlayerConfigElement());
         }
         playerElementMap.get(uuid).setName(player.getName());
         this.save();
-    }
 
-    public void addBed(Player player, Location location) {
-        String uuid = player.getUniqueId().toString();
-
-        if (!playerElementMap.containsKey(uuid)) {
-            playerElementMap.put(uuid, new PlayerConfigElement());
-        }
-        BedElement element = new BedElement();
-        element.setBedName("Bed " + (playerElementMap.get(uuid).getBedList().size() + 1));
-        element.setPosition(location);
-
-        playerElementMap.get(uuid).getBedList().add(element);
-
-        this.save();
-    }
-
-    public void clearBeds() {
-        playerElementMap.forEach((uuid, playerConfigElement) -> {
-            playerConfigElement.getBedList().clear();
-        });
-        this.save();
+        return playerElementMap.get(uuid);
     }
 }

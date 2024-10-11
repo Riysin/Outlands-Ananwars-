@@ -7,6 +7,7 @@ import me.orange.anan.player.config.JobElement;
 import me.orange.anan.player.config.PlayerConfig;
 import me.orange.anan.player.config.PlayerConfigElement;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -29,23 +30,27 @@ public class JobManager {
 
     public void loadConfig() {
         playerConfig.getPlayerElementMap().forEach((uuid, playerConfigElement) -> {
-            if(getJob(playerConfigElement.getJobName()) != null) {
-                JobStats jobStats = new JobStats();
-                jobStats.setCurrentJob(getJob(playerConfigElement.getJobName()));
-                playerConfigElement.getJobLevelMap().forEach((jobID, jobElement) -> {
-                    jobStats.getJobLevelMap().put(jobID, jobElement.getLevel());
-                });
-                jobStatsMap.put(UUID.fromString(uuid), jobStats);
+            JobStats jobStats = new JobStats();
+            playerConfigElement.getJobLevelMap().forEach((jobID, jobElement) -> {
+                jobStats.getJobLevelMap().put(jobID, jobElement.getLevel());
+            });
+
+            if (!playerConfigElement.getJobId().isEmpty()) {
+                jobStats.setCurrentJob(getJobByID(playerConfigElement.getJobId()));
             }
+
+            jobStatsMap.put(UUID.fromString(uuid), jobStats);
         });
     }
 
     public void saveConfig() {
         jobStatsMap.forEach((uuid, jobStats) -> {
-            PlayerConfigElement configElement = playerConfig.getPlayerElementMap().get(uuid.toString());
+            PlayerConfigElement configElement = playerConfig.getPlayerConfigElement(uuid);
 
             configElement.getJobLevelMap().clear();
-            configElement.setJobName(jobStats.getCurrentJob().getName());
+
+            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+            configElement.setJobId(hasCurrentJob(player) ? getPlayerCurrentJob(player).getID() : "");
             jobStats.getJobLevelMap().forEach((jobID, level) -> {
                 JobElement element = new JobElement();
                 element.setLevel(level);
@@ -60,12 +65,12 @@ public class JobManager {
     }
 
     public Job getPlayerCurrentJob(UUID uuid) {
-        if(jobStatsMap.containsKey(uuid))
+        if (jobStatsMap.containsKey(uuid))
             return jobStatsMap.get(uuid).getCurrentJob();
         return null;
     }
 
-    public Job getPlayerCurrentJob(Player player) {
+    public Job getPlayerCurrentJob(OfflinePlayer player) {
         return getPlayerCurrentJob(player.getUniqueId());
     }
 
@@ -73,7 +78,7 @@ public class JobManager {
         jobStatsMap.get(uuid).setCurrentJob(job);
     }
 
-    public Job getJob(String jobName) {
+    public Job getJobByName(String jobName) {
         return jobRegistry.getJobs().stream().filter(job -> job.getName().equals(jobName)).findFirst().orElse(null);
     }
 
@@ -81,11 +86,11 @@ public class JobManager {
         return jobRegistry.getJobs().stream().filter(job -> job.getID().equals(jobID)).findFirst().orElse(null);
     }
 
-    public boolean hasCurrentJob(Player player) {
+    public boolean hasCurrentJob(OfflinePlayer player) {
         return jobStatsMap.get(player.getUniqueId()).getCurrentJob() != null;
     }
 
-    public boolean hasJob(Player player, Job job) {
+    public boolean hasJob(OfflinePlayer player, Job job) {
         return jobStatsMap.get(player.getUniqueId()).getJobLevelMap().containsKey(job.getID());
     }
 
@@ -103,7 +108,7 @@ public class JobManager {
             jobStatsMap.put(uuid, new JobStats());
         JobStats jobStats = jobStatsMap.get(uuid);
         jobStats.setCurrentJob(job);
-        if(!jobStats.getJobLevelMap().containsKey(job.getID()))
+        if (!jobStats.getJobLevelMap().containsKey(job.getID()))
             jobStats.getJobLevelMap().put(job.getID(), 0);
         Bukkit.getPluginManager().callEvent(new PlayerChooseJobEvent(Bukkit.getPlayer(uuid), job));
     }

@@ -50,25 +50,27 @@ public class PlayerDataManager {
     }
 
     public void saveConfig() {
-        playerConfig.getPlayerElementMap().clear();
         playerDataMap.forEach((uuid, playerData) -> {
-            PlayerConfigElement element = playerConfig.getPlayerElementMap().get(uuid.toString());
+            PlayerConfigElement element = playerConfig.getPlayerConfigElement(uuid);
             element.setKills(playerData.getKills());
             element.setDeaths(playerData.getDeaths());
             element.setLastDeathLocation(playerData.getLastDeathLocation());
             element.setBossBarActive(playerData.isBossBarActive());
+
+            element.getFriendList().clear();
             playerData.getFriends().forEach(friend -> {
                 FriendElement friendElement = new FriendElement();
                 friendElement.setUuid(friend);
                 element.getFriendList().add(friendElement);
             });
+
+            element.getTaskElementMap().clear();
             playerData.getTasks().forEach(task -> {
                 TaskElement taskElement = new TaskElement();
                 taskElement.setStatus(task.getStatus());
                 taskElement.setProgress(task.getProgress());
                 element.getTaskElementMap().put(task.getId(), taskElement);
             });
-
         });
         playerConfig.save();
     }

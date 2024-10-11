@@ -36,9 +36,16 @@ public class BedManager {
     }
 
     public void saveConfig() {
-        playerConfig.clearBeds();
         bedList.forEach(bed -> {
-            playerConfig.addBed(Bukkit.getPlayer(bed.getOwner()), bed.getLocation());
+            PlayerConfigElement playerConfigElement = playerConfig.getPlayerConfigElement(bed.getOwner());
+
+            playerConfigElement.getBedList().clear();
+
+            BedElement element = new BedElement();
+            element.setBedName(bed.getBedName());
+            element.setPosition(bed.getLocation());
+
+            playerConfigElement.getBedList().add(element);
         });
 
         playerConfig.save();

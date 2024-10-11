@@ -20,7 +20,7 @@ public class PlayerConfigElement {
     private boolean bossBarActive = false;
     @ElementType(BedElement.class)
     private List<BedElement> bedList = new ArrayList<>();
-    private String jobName = "";
+    private String jobId = "";
     @ElementType(JobElement.class)
     private Map<String,JobElement> jobLevelMap = new HashMap<>();
     @ElementType(FriendElement.class)
@@ -85,12 +85,12 @@ public class PlayerConfigElement {
         this.bedList = bedList;
     }
 
-    public String getJobName() {
-        return jobName;
+    public String getJobId() {
+        return jobId;
     }
 
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
     }
 
     public Map<String, JobElement> getJobLevelMap() {

@@ -45,13 +45,13 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        player.getOpenInventory().getTopInventory().clear();
+
         playerDataManager.setUpPlayer(event);
         jobManager.getJobStatsMap().putIfAbsent(player.getUniqueId(), new JobStats());
 
         playerDataManager.getFriends(player).forEach(friend -> {
             if (Bukkit.getOfflinePlayer(friend).isOnline()) {
-                Bukkit.getPlayer(friend).sendMessage("§fYour friend §6" + player.getName() + " §fis now online!");
+                Bukkit.getPlayer(friend).sendMessage("§eYour friend §6" + player.getName() + " §fis now online!");
             }
         });
 
@@ -63,7 +63,6 @@ public class PlayerEventListener implements Listener {
                 deathRespawnMenu.open(player);
             }, 1);
         }
-
 
         Bukkit.getOnlinePlayers().forEach(player1 -> {
             nameTagService.update(MCPlayer.from(player1));
