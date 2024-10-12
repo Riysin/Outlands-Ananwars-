@@ -7,25 +7,16 @@ import me.orange.anan.craft.CraftManager;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
 import java.util.Random;
 
 @InjectableComponent
 public class FishManager {
     private final CraftManager craftManager;
-    private FishConfig fishConfig;
+    private final FishConfig fishConfig;
     private final Random random = new Random();
 
     public FishManager(CraftManager craftManager, FishConfig fishConfig) {
         this.craftManager = craftManager;
-        this.fishConfig = fishConfig;
-    }
-
-    public FishConfig getFishConfig() {
-        return fishConfig;
-    }
-
-    public void setFishConfig(FishConfig fishConfig) {
         this.fishConfig = fishConfig;
     }
 
@@ -51,5 +42,15 @@ public class FishManager {
             randomValue -= element.getWeight();
         }
         return ItemBuilder.of(XMaterial.COD).name("§f§lno way").build();
+    }
+
+    public ItemStack getFishPriceEmerald(String fish) {
+        ItemStack emerald = craftManager.getConfigItemWithID("emerald").clone();
+        emerald.setAmount(getFishPrice(fish));
+        return emerald;
+    }
+
+    public int getFishPrice(String fish) {
+        return fishConfig.getFishMap().get(fish).getPrice();
     }
 }

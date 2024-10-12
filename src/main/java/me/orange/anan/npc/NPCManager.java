@@ -1,6 +1,8 @@
 package me.orange.anan.npc;
 
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.npc.outlandsnpc.OutlandsNPC;
+import me.orange.anan.npc.outlandsnpc.merchant.MerchantNPC;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.*;
@@ -34,8 +36,8 @@ public class NPCManager {
         npc.getOrAddTrait(Text.class).add("&eHello, I have a task for you.!");
         npc.getOrAddTrait(HologramTrait.class).addLine("§e[Quest] §f");
 
-        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(outlandsNPC.getID(), outlandsNPC.getSkin().skinSignature, outlandsNPC.getSkin().skinValue);
-        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task " + outlandsNPC.getID(), CommandTrait.Hand.RIGHT)
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(outlandsNPC.getId(), outlandsNPC.getSkin().skinSignature, outlandsNPC.getSkin().skinValue);
+        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc task " + outlandsNPC.getId(), CommandTrait.Hand.RIGHT)
                 .player(true));
 
         npc.spawn(location);
@@ -47,11 +49,17 @@ public class NPCManager {
         npc.getOrAddTrait(HologramTrait.class).addLine("§e[Merchant] §f");
         npc.getOrAddTrait(HologramTrait.class).setLineHeight(0.26);
         npc.getOrAddTrait(Text.class).add("&eHello, I have a lot of items for sale!");
-        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(outlandsNPC.getID(), outlandsNPC.getSkin().skinSignature, outlandsNPC.getSkin().skinValue);
-        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc shop " + outlandsNPC.getID(), CommandTrait.Hand.RIGHT)
+        npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(outlandsNPC.getId(), outlandsNPC.getSkin().skinSignature, outlandsNPC.getSkin().skinValue);
+        npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc shop " + outlandsNPC.getId(), CommandTrait.Hand.RIGHT)
                 .player(true));
 
         npc.spawn(player.getLocation());
+    }
+
+    public void openTrade(Player player, OutlandsNPC outlandsNPC){
+        if(outlandsNPC.getType() == NPCType.MERCHANT){
+            ((MerchantNPC) outlandsNPC).openTrade(player);
+        }
     }
 
     public void createLootNPC(Location location) {

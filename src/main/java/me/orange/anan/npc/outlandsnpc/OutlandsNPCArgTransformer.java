@@ -1,4 +1,4 @@
-package me.orange.anan.npc;
+package me.orange.anan.npc.outlandsnpc;
 
 import io.fairyproject.command.CommandContext;
 import io.fairyproject.command.exception.ArgTransformException;
@@ -22,7 +22,7 @@ public class OutlandsNPCArgTransformer implements ArgTransformer<OutlandsNPC> {
     @Override
     public OutlandsNPC transform(CommandContext commandContext, String source) throws ArgTransformException {
         OutlandsNPC outlandsNPC = outlandsNPCRegistry.getNPCs().stream()
-                .filter(npc -> npc.getID().equals(source))
+                .filter(npc -> npc.getId().equals(source))
                 .findFirst()
                 .orElse(null);
 
@@ -35,7 +35,7 @@ public class OutlandsNPCArgTransformer implements ArgTransformer<OutlandsNPC> {
     @Override
     public List<String> tabComplete(CommandContext commandContext, String source) throws ArgTransformException {
         return outlandsNPCRegistry.getNPCs().stream()
-                .map(OutlandsNPC::getID)
+                .map(OutlandsNPC::getId)
                 .filter(id -> id.startsWith(source))
                 .collect(Collectors.toList());
     }

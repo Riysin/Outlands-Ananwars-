@@ -6,6 +6,7 @@ import io.fairyproject.command.annotation.Arg;
 import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.PlayerDamageNPCResourceEvent;
+import me.orange.anan.npc.outlandsnpc.OutlandsNPC;
 import me.orange.anan.player.task.*;
 import me.orange.anan.player.task.menu.TaskAssignMenu;
 import me.orange.anan.player.task.menu.TaskInfoMenu;
@@ -24,15 +25,13 @@ public class NPCCommand extends BaseCommand {
     private final TaskManager taskManager;
     private final TaskAssignMenu taskAssignMenu;
     private final TaskRewardMenu taskRewardMenu;
-    private final NPCShopManager npcShopManager;
     private final TaskInfoMenu taskInfoMenu;
 
-    public NPCCommand(NPCManager npcManager, TaskManager taskManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu, NPCShopManager npcShopManager, TaskInfoMenu taskInfoMenu) {
+    public NPCCommand(NPCManager npcManager, TaskManager taskManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu, TaskInfoMenu taskInfoMenu) {
         this.npcManager = npcManager;
         this.taskManager = taskManager;
         this.taskAssignMenu = taskAssignMenu;
         this.taskRewardMenu = taskRewardMenu;
-        this.npcShopManager = npcShopManager;
         this.taskInfoMenu = taskInfoMenu;
     }
 
@@ -45,7 +44,8 @@ public class NPCCommand extends BaseCommand {
 
     @Command(value = "shop")
     public void shop(BukkitCommandContext ctx, @Arg("outlands npc") OutlandsNPC outlandsNPC) {
-        npcShopManager.open(ctx.getPlayer(), outlandsNPC);
+        Player player = ctx.getPlayer();
+        npcManager.openTrade(player, outlandsNPC);
     }
 
     @Command(value = "hurt")

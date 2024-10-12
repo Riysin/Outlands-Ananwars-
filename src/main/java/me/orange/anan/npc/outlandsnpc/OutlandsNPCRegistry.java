@@ -1,4 +1,4 @@
-package me.orange.anan.npc;
+package me.orange.anan.npc.outlandsnpc;
 
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.npc.outlandsnpc.loot.LootNPC;
@@ -20,7 +20,7 @@ public class OutlandsNPCRegistry {
     }
 
     public void registerNPC(OutlandsNPC npc) {
-        npcs.put(npc.getID(), npc);
+        npcs.put(npc.getId(), npc);
     }
 
     public OutlandsNPC getNPC(String id) {

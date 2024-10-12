@@ -3,21 +3,15 @@ package me.orange.anan.npc.outlandsnpc.task;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.tablist.util.Skin;
 import me.orange.anan.npc.NPCType;
-import me.orange.anan.npc.OutlandsNPC;
+import me.orange.anan.npc.outlandsnpc.OutlandsNPC;
 
 import java.util.UUID;
 
 
 @InjectableComponent
-public class FisherTaskNPC implements OutlandsNPC {
-    @Override
-    public String getID() {
-        return "task.fisher";
-    }
-
-    @Override
-    public String getName() {
-        return "FisherMan";
+public class FisherTaskNPC extends OutlandsNPC {
+    public FisherTaskNPC() {
+        super("task.fisher", "Fisher Task", NPCType.TASK);
     }
 
     @Override
@@ -27,10 +21,5 @@ public class FisherTaskNPC implements OutlandsNPC {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public NPCType getType() {
-        return NPCType.TASK;
     }
 }
