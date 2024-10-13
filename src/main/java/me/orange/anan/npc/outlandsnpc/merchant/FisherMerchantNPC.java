@@ -5,6 +5,7 @@ import io.fairyproject.mc.tablist.util.Skin;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.fishing.FishManager;
 import me.orange.anan.npc.NPCType;
+import org.bukkit.entity.Player;
 import teammt.villagerguiapi.classes.VillagerTrade;
 
 import java.util.ArrayList;
@@ -32,12 +33,12 @@ public class FisherMerchantNPC extends MerchantNPC {
     }
 
     @Override
-    public List<VillagerTrade> getTrades() {
+    public List<VillagerTrade> getTrades(Player player) {
         List<VillagerTrade> trades = new ArrayList<>();
-        trades.add(new VillagerTrade(craftManager.getConfigItemWithID("cod"),fishManager.getFishPriceEmerald("cod"),100));
-        trades.add(new VillagerTrade(craftManager.getConfigItemWithID("salmon"),fishManager.getFishPriceEmerald("salmon"),100));
-        trades.add(new VillagerTrade(craftManager.getConfigItemWithID("pufferfish"),fishManager.getFishPriceEmerald("pufferfish"),100));
-        trades.add(new VillagerTrade(craftManager.getConfigItemWithID("tropicalFish"),fishManager.getFishPriceEmerald("tropicalFish"),100));
+        trades.add(new VillagerTrade(craftManager.getItemStack("cod", player), fishManager.getFishPriceEmerald("cod", player), 100));
+        trades.add(new VillagerTrade(craftManager.getItemStack("salmon", player), fishManager.getFishPriceEmerald("salmon", player), 100));
+        trades.add(new VillagerTrade(craftManager.getItemStack("pufferfish", player), fishManager.getFishPriceEmerald("pufferfish", player), 100));
+        trades.add(new VillagerTrade(craftManager.getItemStack("tropicalFish", player), fishManager.getFishPriceEmerald("tropicalFish", player), 100));
         return trades;
     }
 }

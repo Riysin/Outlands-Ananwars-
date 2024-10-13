@@ -22,10 +22,8 @@ public class WorldManager {
         world.setGameRuleValue("doMobSpawning", "false");
         world.setGameRuleValue("doDaylightCycle", "true");
         world.setGameRuleValue("doFireTick", "false");
-        world.setGameRuleValue("doTileDrops", "false");
-        world.setGameRuleValue("doEntityDrops", "false");
-
-        world.setGameRuleValue("doMobLoot", "false");
+        world.setGameRuleValue("doTileDrops", "false"); //block break drop
+        world.setGameRuleValue("doEntityDrops", "false"); //entity break drop
         world.setTime(7000);
         world.setDifficulty(Difficulty.EASY);
         world.setStorm(false);

@@ -44,8 +44,8 @@ public class FishManager {
         return ItemBuilder.of(XMaterial.COD).name("§f§lno way").build();
     }
 
-    public ItemStack getFishPriceEmerald(String fish) {
-        ItemStack emerald = craftManager.getConfigItemWithID("emerald").clone();
+    public ItemStack getFishPriceEmerald(String fish, Player player) {
+        ItemStack emerald = craftManager.getItemStack("emerald", player).clone();
         emerald.setAmount(getFishPrice(fish));
         return emerald;
     }

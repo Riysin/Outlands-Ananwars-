@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import teammt.villagerguiapi.classes.VillagerInventory;
 import teammt.villagerguiapi.classes.VillagerTrade;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class MerchantNPC extends OutlandsNPC {
@@ -13,10 +14,10 @@ public abstract class MerchantNPC extends OutlandsNPC {
         super(id, name, type);
     }
 
-    public abstract List<VillagerTrade> getTrades();
+    public abstract List<VillagerTrade> getTrades(Player player);
 
     public void openTrade(Player player) {
-        VillagerInventory inventory = new VillagerInventory(getTrades(), player);
+        VillagerInventory inventory = new VillagerInventory(getTrades(player), player);
         inventory.setName(getName());
         inventory.open();
     }

@@ -20,9 +20,11 @@ import me.orange.anan.player.friend.FriendMenu;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +56,7 @@ public class PlayerStatsMenu {
         NormalPane border = Pane.normal(PaneMapping.outline(0, 0, 9, 5));
 
         List<String> jobLore = new ArrayList<>();
-        jobLore.add("§7No Job");
+        jobLore.add("§7None");
         if (jobManager.hasCurrentJob(player)) {
             Job job = jobManager.getPlayerCurrentJob(player);
             int jobLevel = jobManager.getPlayerJobLevel(player, job);
@@ -73,8 +75,7 @@ public class PlayerStatsMenu {
                 .of(XMaterial.PLAYER_HEAD)
                 .skull(player.getName())
                 .name("§6§l" + player.getName())
-                .lore("§f Kills: §e" + playerDataManager.getPlayerData(player).getKills()
-                        , "§f Deaths: §c" + playerDataManager.getPlayerData(player).getDeaths())
+                .lore(getPlayerLore(player))
                 .build()));
 
         pane.setSlot(1, 1, GuiSlot.of(ItemBuilder.of(XMaterial.IRON_SWORD)
@@ -122,5 +123,24 @@ public class PlayerStatsMenu {
         gui.addPane(pane);
         gui.addPane(border);
         gui.open(ctx);
+    }
+
+    private List<String> getPlayerLore(Player player) {
+
+        int playtimeTicks = player.getStatistic(Statistic.PLAY_ONE_TICK);
+
+        int playtimeSeconds = playtimeTicks / 20;
+        double playtimeHours = playtimeSeconds / 3600.0;
+
+        // 使用 DecimalFormat 格式化小數點後兩位
+        DecimalFormat df = new DecimalFormat("#.##");
+        String formattedPlaytime = df.format(playtimeHours);
+
+        List<String> lore = new ArrayList<>();
+        lore.add("§fKills: §e" + playerDataManager.getPlayerData(player).getKills());
+        lore.add("§fDeaths: §c" + playerDataManager.getPlayerData(player).getDeaths());
+        lore.add("");
+        lore.add("§fPlaytime: §a" + formattedPlaytime + " h");
+        return lore;
     }
 }

@@ -53,7 +53,7 @@ public class Sidebar implements SidebarAdapter {
         Player player = mcPlayer.as(Player.class);
         List<Component> sidebar = new ArrayList<>();
 
-        String jobName = "NO_JOB";
+        String jobName = "None";
         int jobLevel = 0;
         if (jobManager.hasCurrentJob(player)) {
             jobName = jobManager.getPlayerCurrentJob(player.getUniqueId()).getName();
@@ -65,7 +65,7 @@ public class Sidebar implements SidebarAdapter {
             location = "§6SafeZone";
         }
 
-        sidebar.add(Component.text("§7§m------------------"));
+        sidebar.add(Component.text(SEPARATOR));
         //server
         sidebar.add(Component.text("§fPlayer"));
         sidebar.add(Component.text("§3» §bTime§7: §f" + timeManager.getTimeState(player.getWorld())));

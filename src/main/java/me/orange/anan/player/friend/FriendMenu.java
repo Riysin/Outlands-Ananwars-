@@ -16,6 +16,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @InjectableComponent
 public class FriendMenu {
     private final GuiFactory guiFactory;
@@ -29,7 +33,7 @@ public class FriendMenu {
     public void open(Player player) {
         Gui gui = guiFactory.create(Component.text("Friends"));
         NormalPane pane = Pane.normal(9, 5);
-        NormalPane outline = Pane.normal(PaneMapping.rectangle(0,5,9,1));
+        NormalPane outline = Pane.normal(PaneMapping.rectangle(0, 5, 9, 1));
 
         int slot = 0;
 
@@ -41,7 +45,7 @@ public class FriendMenu {
                 pane.setSlot(slot, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                         .skull(friend.getName())
                         .name(friend.getName())
-                        .lore("§cClick to remove friend")
+                        .lore(getLores(friend))
                         .build(), ctx -> {
                     playerDataManager.removeFriend(player, friend);
                     player.sendMessage("§cYou have removed " + friend.getName() + " from your friends list");
@@ -63,5 +67,43 @@ public class FriendMenu {
         gui.addPane(pane);
         gui.addPane(outline);
         gui.open(player);
+    }
+
+    private List<String> getLores(OfflinePlayer player) {
+        Date lastPlayed = new Date(player.getLastPlayed());
+
+        List<String> lores = new ArrayList<>();
+        lores.add(getLastJoinTime(player));
+        lores.add("");
+        lores.add("§cClick to remove friend");
+        return lores;
+    }
+
+    private String getLastJoinTime(OfflinePlayer offlinePlayer) {
+        if (offlinePlayer.isOnline()) {
+            return "§aOnline Now!";
+        } else {
+            long lastPlayed = offlinePlayer.getLastPlayed();
+
+            long currentTime = System.currentTimeMillis();
+            long timeDiff = currentTime - lastPlayed;
+
+            long seconds = timeDiff / 1000;
+            long minutes = seconds / 60;
+            long hours = minutes / 60;
+            long days = hours / 24;
+
+            String timeAgo;
+            if (days > 0) {
+                timeAgo = days + " days ago";
+            } else if (hours > 0) {
+                timeAgo = hours + " hours ago";
+            } else if (minutes > 0) {
+                timeAgo = minutes + " minutes ago";
+            } else {
+                timeAgo = seconds + " seconds ago";
+            }
+            return "§eLast joined "+timeAgo;
+        }
     }
 }
