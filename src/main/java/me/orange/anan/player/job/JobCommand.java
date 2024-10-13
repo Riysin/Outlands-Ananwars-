@@ -5,6 +5,7 @@ import io.fairyproject.command.BaseCommand;
 import io.fairyproject.command.annotation.Arg;
 import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.events.JobSelectEvent;
 import me.orange.anan.events.PlayerLevelUpEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -24,15 +25,15 @@ public class JobCommand extends BaseCommand {
         if(!jobManager.getJobStatsMap().containsKey(player.getUniqueId())){
             jobManager.getJobStatsMap().put(player.getUniqueId(), new JobStats());
         }
-        jobManager.getPlayerJobLevelMap(player).put(job.getID(), 0);
+        jobManager.getJobLevelMap(player).put(job.getID(), 0);
         player.sendMessage("Job added");
     }
 
-    @Command(value = {"set"},permissionNode = "job.admin")
+    @Command(value = {"select"},permissionNode = "job.admin")
     public void setJob(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("job") Job job) {
         jobManager.addPlayer(player, job);
         ctx.getPlayer().sendMessage("Job set to " + job.getName());
-
+        Bukkit.getPluginManager().callEvent(new JobSelectEvent(player, job));
     }
 
     @Command(value = {"level"},permissionNode = "job.admin")
@@ -59,7 +60,7 @@ public class JobCommand extends BaseCommand {
 
     @Command(value = {"resign "})
     public void resign(BukkitCommandContext ctx) {
-        jobManager.setPlayerCurrentJob(ctx.getPlayer().getUniqueId(), null);
+        jobManager.setCurrentJob(ctx.getPlayer().getUniqueId(), null);
         ctx.getPlayer().sendMessage("You have resigned from your job");
     }
 }

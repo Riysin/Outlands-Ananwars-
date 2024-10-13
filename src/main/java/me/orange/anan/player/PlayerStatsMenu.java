@@ -58,8 +58,8 @@ public class PlayerStatsMenu {
         List<String> jobLore = new ArrayList<>();
         jobLore.add("§7None");
         if (jobManager.hasCurrentJob(player)) {
-            Job job = jobManager.getPlayerCurrentJob(player);
-            int jobLevel = jobManager.getPlayerJobLevel(player, job);
+            Job job = jobManager.geCurrentJob(player);
+            int jobLevel = jobManager.getJobLevel(player, job);
             jobLore.clear();
             jobLore.addAll(playerDataManager.getJobStatsLore(jobLevel, job));
         }

@@ -88,13 +88,4 @@ public class PlayerEventListener implements Listener {
             craftTimerManager.craftingFailed(event.getPlayer(), craftTimer);
         });
     }
-
-
-    @EventHandler
-    public void onPickupItem(PlayerPickupItemEvent event) {
-        ItemStack item = event.getItem().getItemStack();
-        if (craftManager.getCraft(item) == null) {
-            event.setCancelled(true);
-        }
-    }
 }

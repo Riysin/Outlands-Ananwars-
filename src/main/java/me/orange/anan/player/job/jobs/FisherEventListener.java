@@ -37,7 +37,7 @@ public class FisherEventListener implements Listener {
         Player player = event.getPlayer();
         Job job = jobManager.getJobByID("fisher");
 
-        if (jobManager.hasCurrentJob(player) && jobManager.getPlayerCurrentJob(player) == job) {
+        if (jobManager.hasCurrentJob(player) && jobManager.geCurrentJob(player) == job) {
             ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
             ItemStack previousItem = player.getInventory().getItem(event.getPreviousSlot());
 
@@ -69,7 +69,7 @@ public class FisherEventListener implements Listener {
         if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
             ItemStack fish = ((Item) event.getCaught()).getItemStack();
 
-            if (!jobManager.hasCurrentJob(player) || jobManager.getPlayerCurrentJob(player) != job) {
+            if (!jobManager.hasCurrentJob(player) || jobManager.geCurrentJob(player) != job) {
                 fish = fishManager.getFishingLoot(player, 1);
             } else if (job.upgradeSKill(player.getLevel())) {
                 fish = fishManager.getFishingLoot(player, 2);
@@ -84,7 +84,7 @@ public class FisherEventListener implements Listener {
         Player player = event.getPlayer();
         Job job = jobManager.getJobByID("fisher");
 
-        if (!jobManager.hasCurrentJob(player) || jobManager.getPlayerCurrentJob(player) != job) {
+        if (!jobManager.hasCurrentJob(player) || jobManager.geCurrentJob(player) != job) {
             return;
         }
         Fisher fisher = (Fisher) job;

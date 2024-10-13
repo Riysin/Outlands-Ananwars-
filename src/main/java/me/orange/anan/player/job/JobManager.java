@@ -1,7 +1,7 @@
 package me.orange.anan.player.job;
 
 import io.fairyproject.container.InjectableComponent;
-import me.orange.anan.events.PlayerChooseJobEvent;
+import me.orange.anan.events.JobSelectEvent;
 import me.orange.anan.events.PlayerLevelUpEvent;
 import me.orange.anan.player.config.JobElement;
 import me.orange.anan.player.config.PlayerConfig;
@@ -50,7 +50,7 @@ public class JobManager {
             configElement.getJobLevelMap().clear();
 
             OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-            configElement.setJobId(hasCurrentJob(player) ? getPlayerCurrentJob(player).getID() : "");
+            configElement.setJobId(hasCurrentJob(player) ? geCurrentJob(player).getID() : "");
             jobStats.getJobLevelMap().forEach((jobID, level) -> {
                 JobElement element = new JobElement();
                 element.setLevel(level);
@@ -64,41 +64,38 @@ public class JobManager {
         return jobStatsMap;
     }
 
-    public Job getPlayerCurrentJob(UUID uuid) {
+    public Job geCurrentJob(UUID uuid) {
         if (jobStatsMap.containsKey(uuid))
             return jobStatsMap.get(uuid).getCurrentJob();
         return null;
     }
 
-    public Job getPlayerCurrentJob(OfflinePlayer player) {
-        return getPlayerCurrentJob(player.getUniqueId());
+    public Job geCurrentJob(OfflinePlayer player) {
+        return geCurrentJob(player.getUniqueId());
     }
 
-    public void setPlayerCurrentJob(UUID uuid, Job job) {
+    public void setCurrentJob(UUID uuid, Job job) {
         jobStatsMap.get(uuid).setCurrentJob(job);
-    }
-
-    public Job getJobByName(String jobName) {
-        return jobRegistry.getJobs().stream().filter(job -> job.getName().equals(jobName)).findFirst().orElse(null);
-    }
-
-    public Job getJobByID(String jobID) {
-        return jobRegistry.getJobs().stream().filter(job -> job.getID().equals(jobID)).findFirst().orElse(null);
     }
 
     public boolean hasCurrentJob(OfflinePlayer player) {
         return jobStatsMap.get(player.getUniqueId()).getCurrentJob() != null;
     }
 
-    public boolean hasJob(OfflinePlayer player, Job job) {
+    public Job getJobByID(String jobID) {
+        return jobRegistry.getJobs().stream().filter(job -> job.getID().equals(jobID)).findFirst().orElse(null);
+    }
+
+
+    public boolean hasUnlockJob(OfflinePlayer player, Job job) {
         return jobStatsMap.get(player.getUniqueId()).getJobLevelMap().containsKey(job.getID());
     }
 
-    public Map<String, Integer> getPlayerJobLevelMap(Player player) {
+    public Map<String, Integer> getJobLevelMap(Player player) {
         return jobStatsMap.get(player.getUniqueId()).getJobLevelMap();
     }
 
-    public int getPlayerJobLevel(Player player, Job job) {
+    public int getJobLevel(Player player, Job job) {
         return jobStatsMap.get(player.getUniqueId()).getJobLevelMap().get(job.getID());
     }
 
@@ -110,7 +107,7 @@ public class JobManager {
         jobStats.setCurrentJob(job);
         if (!jobStats.getJobLevelMap().containsKey(job.getID()))
             jobStats.getJobLevelMap().put(job.getID(), 0);
-        Bukkit.getPluginManager().callEvent(new PlayerChooseJobEvent(Bukkit.getPlayer(uuid), job));
+        Bukkit.getPluginManager().callEvent(new JobSelectEvent(Bukkit.getPlayer(uuid), job));
     }
 
     public void addJobLevel(UUID uuid, Job job) {

@@ -19,33 +19,33 @@ public class CraftEventListener implements Listener {
     public void craftItem(PrepareItemCraftEvent event) {
         Material itemType = event.getRecipe().getResult().getType();
         event.getViewers().forEach(player -> {
-            player.sendMessage("§cYou cannot use the crafting system!");
+            player.sendMessage("§cYou cannot use this crafting system!");
             event.getInventory().setResult(ItemBuilder.of(XMaterial.AIR).build());
         });
     }
 
     @EventHandler
     public void onOpenCraftMenu(InventoryClickEvent event) {
-        if (event.getWhoClicked() instanceof Player) {
+        if (event.getWhoClicked() instanceof Player && event.getInventory().getType() == InventoryType.CRAFTING) {
             Player player = (Player) event.getWhoClicked();
-            if (event.getSlot() == 1 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+            if (event.getSlot() == 1) {
                 player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
                 player.performCommand("craft menu");
                 event.setCancelled(true);
-            } else if (event.getSlot() == 2 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+            } else if (event.getSlot() == 2) {
                 player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
                 player.performCommand("craft ongoing");
                 event.setCancelled(true);
-            } else if (event.getSlot() == 3 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+            } else if (event.getSlot() == 3) {
                 player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
                 player.performCommand("player menu "+ player.getName());
                 event.setCancelled(true);
-            } else if (event.getSlot() == 4 && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
+            } else if (event.getSlot() == 4) {
                 player.playSound(player.getLocation(), Sound.CLICK, 1, 1);
                 player.performCommand("settings");
                 event.setCancelled(true);
             }
-            if (event.getInventory().getType() == InventoryType.CRAFTING && event.getInventory().getItem(1) != null) {
+            if (event.getInventory().getItem(1) != null) {
                 event.getView().getTopInventory().clear();
             }
         }

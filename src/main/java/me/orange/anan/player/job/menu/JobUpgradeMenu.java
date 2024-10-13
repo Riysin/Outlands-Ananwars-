@@ -45,7 +45,7 @@ public class JobUpgradeMenu {
 
         gui.onDrawCallback($ -> {
             pane.clear();
-            int playerLevel = jobManager.getPlayerJobLevel(player, job);
+            int playerLevel = jobManager.getJobLevel(player, job);
             for (int level = 1; level <= 35; level++) {
                 int clickLevel = level;
 
@@ -89,7 +89,7 @@ public class JobUpgradeMenu {
         NormalPane ui = Pane.normal(PaneMapping.rectangle(0, 4, 9, 2));
 
         gui.onDrawCallback($ -> {
-            int level = jobManager.getPlayerJobLevel(player, job);
+            int level = jobManager.getJobLevel(player, job);
             ui.setSlot(4, 0, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                     .skull(player.getName())
                     .name("§e§l" + job.getName())

@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -58,6 +59,14 @@ public class GeneralEventListener implements Listener {
                 player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
             });
             event.getDrops().clear();
+        }
+    }
+
+    @EventHandler
+    public void onPickupItem(PlayerPickupItemEvent event) {
+        ItemStack item = event.getItem().getItemStack();
+        if (craftManager.getCraft(item) == null) {
+            event.setCancelled(true);
         }
     }
 }

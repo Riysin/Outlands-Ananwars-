@@ -5,12 +5,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class PlayerChooseJobEvent extends Event {
+public class JobSelectEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
     private final Job job;
 
-    public PlayerChooseJobEvent(Player player, Job job) {
+    public JobSelectEvent(Player player, Job job) {
         this.player = player;
         this.job = job;
     }

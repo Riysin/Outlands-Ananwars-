@@ -5,14 +5,16 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
-import me.orange.anan.events.PlayerChooseJobEvent;
+import me.orange.anan.events.JobSelectEvent;
 import me.orange.anan.events.PlayerLevelUpEvent;
 import me.orange.anan.player.job.menu.JobChooseMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerLevelChangeEvent;
 
 @InjectableComponent
 @RegisterAsListener
@@ -36,13 +38,12 @@ public class JobEventListener implements Listener {
     }
 
     @EventHandler
-    public void onChoose(PlayerChooseJobEvent event) {
+    public void onSelect(JobSelectEvent event) {
         Player player = event.getPlayer();
         Job job = event.getJob();
-        int jobLevel = jobManager.getPlayerJobLevel(player, job);
-        player.sendMessage("§fYou have chosen the §6§l" + job.getName() + " §fjob!");
-        player.setLevel(0);
-        player.setLevel(jobLevel);
+
+        syncLevel(player);
+        player.sendMessage("§eYou have selected §6§l" + job.getName() + " as you job!");
 
         nameTagService.update(MCPlayer.from(player));
     }
@@ -51,13 +52,31 @@ public class JobEventListener implements Listener {
     public void onUpgrade(PlayerLevelUpEvent event) {
         Player player = event.getPlayer();
         Job job = event.getJob();
-        int jobLevel = jobManager.getPlayerJobLevel(player, job);
+        int jobLevel = jobManager.getJobLevel(player, job);
+
+        syncLevel(player);
         player.sendMessage("§eYour §6§l" + job.getName() + " §r§ehas become level §a" + jobLevel + "§e!");
-        player.setLevel(0);
-        player.setLevel(jobLevel);
         if(jobLevel == 35) {
             player.sendMessage("§eYou have reached the maximum level of §6§l" + job.getName() + "§r§e!");
             job.active(player);
+        }
+    }
+
+    @EventHandler
+    public void onExpChange(PlayerExpChangeEvent event){
+        syncLevel(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onLevelChange(PlayerLevelChangeEvent event){
+        syncLevel(event.getPlayer());
+    }
+
+    private void syncLevel(Player player) {
+        player.setLevel(0);
+        player.setExp(0);
+        if(jobManager.hasCurrentJob(player)){
+            player.setLevel(jobManager.getJobLevel(player, jobManager.geCurrentJob(player)));
         }
     }
 }

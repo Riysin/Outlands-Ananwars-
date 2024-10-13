@@ -56,8 +56,8 @@ public class Sidebar implements SidebarAdapter {
         String jobName = "None";
         int jobLevel = 0;
         if (jobManager.hasCurrentJob(player)) {
-            jobName = jobManager.getPlayerCurrentJob(player.getUniqueId()).getName();
-            jobLevel = jobManager.getPlayerJobLevel(player, jobManager.getPlayerCurrentJob(player.getUniqueId()));
+            jobName = jobManager.geCurrentJob(player.getUniqueId()).getName();
+            jobLevel = jobManager.getJobLevel(player, jobManager.geCurrentJob(player.getUniqueId()));
         }
 
         String location = teamCoreManager.isInTerritory(player) ? "§3Territory" : "§2Wilderness";

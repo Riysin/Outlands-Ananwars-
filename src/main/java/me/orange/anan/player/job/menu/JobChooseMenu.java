@@ -48,7 +48,7 @@ public class JobChooseMenu {
                     .build(), clicker -> {
                 clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
 
-                if (jobManager.getPlayerJobLevelMap(player).get(job.getID()) == null) {
+                if (jobManager.getJobLevelMap(player).get(job.getID()) == null) {
                     player.sendMessage("§cYou haven't unlocked this job yet!");
                     return;
                 }
@@ -59,7 +59,7 @@ public class JobChooseMenu {
         }
 
         pane.setSlot(5, 2, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER).name("§cResign").lore("§eClick to have no job!").build(), clicker -> {
-            jobManager.setPlayerCurrentJob(player.getUniqueId(), null);
+            jobManager.setCurrentJob(player.getUniqueId(), null);
             player.closeInventory();
         }));
 
@@ -77,8 +77,8 @@ public class JobChooseMenu {
         lore.add("§7" + job.getDescription());
         lore.add("");
 
-        if (jobManager.hasJob(player, job)) {
-            lore.add("§6Level: §7" + jobManager.getPlayerJobLevel(player, job));
+        if (jobManager.hasUnlockJob(player, job)) {
+            lore.add("§6Level: §7" + jobManager.getJobLevel(player, job));
             lore.add("");
             lore.add("§eClick to choose this job!");
         } else {

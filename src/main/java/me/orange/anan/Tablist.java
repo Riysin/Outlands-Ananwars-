@@ -109,9 +109,9 @@ public class Tablist implements TablistAdapter {
         String name = "No Job";
         int level = 0;
         if (jobManager.hasCurrentJob(player.as(Player.class))) {
-            Job currentJob = jobManager.getPlayerCurrentJob(player.getUUID());
+            Job currentJob = jobManager.geCurrentJob(player.getUUID());
             name = currentJob.getName();
-            level = jobManager.getPlayerJobLevel(Bukkit.getPlayer(player.getUUID()), currentJob);
+            level = jobManager.getJobLevel(Bukkit.getPlayer(player.getUUID()), currentJob);
         }
         slots.add(new TabSlot()
                 .column(TabColumn.MIDDLE)
