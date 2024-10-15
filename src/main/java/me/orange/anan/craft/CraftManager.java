@@ -57,7 +57,7 @@ public class CraftManager {
                     craft.setTime(craftElement.getTime());
                     craft.setItemStack(ItemBuilder.of(craftElement.getMaterial())
                             .name(craftElement.getDisplayName())
-                            .lore(getLores(craftElement))
+                            .lore(craftElement.getLore())
                             .tag(NBTKey.create("craft"), craftElement.getId())
                             .build());
 
@@ -81,7 +81,7 @@ public class CraftManager {
                 .findFirst()
                 .map(craftElement -> ItemBuilder.of(craftElement.getMaterial())
                         .name(craftElement.getDisplayName())
-                        .lore(getLores(craftElement))
+                        .lore(craftElement.getLore())
                         .tag(NBTKey.create("craft"), craftElement.getId())
                         .build())
                 .orElse(null);
@@ -93,18 +93,6 @@ public class CraftManager {
                 .findFirst()
                 .map(CraftConfigElement::getCraftType)
                 .orElse(null);
-    }
-
-    private List<String> getLores(CraftElement craft) {
-        List<String> lores = new ArrayList<>();
-        lores.add("§8" + getCraftType(craft.getId()));
-        lores.add("");
-        lores.addAll(craft.getLore());
-        if (getCraftType(craft.getId()) == CraftType.TOOL) {
-            lores.add("");
-            lores.add("§e傷害: §c" + getDamage(craft.getIcon().parseItem()));
-        }
-        return lores;
     }
 
     public CraftElement getCraftElementWithID(String ID) {
