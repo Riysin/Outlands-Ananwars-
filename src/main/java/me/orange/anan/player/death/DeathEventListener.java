@@ -82,9 +82,13 @@ public class DeathEventListener implements Listener {
 
         deathManager.removeDownPlayer(player);
         deathManager.stopRescueByRescued(player);
+        deathLootManager.addPlayer(player, player.getLocation());
         playerDataManager.getPlayerData(player).addDeath();
         playerDataManager.getPlayerData(player).setLastDeathLocation(player.getLocation());
-        deathLootManager.addPlayer(player, player.getLocation());
+
+        if (player.getKiller() != null) {
+            playerDataManager.getPlayerData(player.getKiller()).addKill();
+        }
 
         //Revive player and show respawn menu
         Bukkit.getPluginManager().callEvent(new PlayerRevivedEvent(player));

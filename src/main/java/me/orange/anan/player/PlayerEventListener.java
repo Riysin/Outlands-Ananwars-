@@ -1,6 +1,7 @@
 package me.orange.anan.player;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
+import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.MCPlayer;
 import io.fairyproject.mc.nametag.NameTagService;
@@ -13,13 +14,11 @@ import me.orange.anan.player.job.JobManager;
 import me.orange.anan.player.job.JobStats;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.entity.EntityType;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.ItemStack;
 
 @InjectableComponent
 @RegisterAsListener
@@ -61,6 +60,7 @@ public class PlayerEventListener implements Listener {
             MCSchedulers.getGlobalScheduler().schedule(() ->{
                 player.setGameMode(GameMode.SPECTATOR);
                 deathRespawnMenu.open(player);
+                ItemBuilder.of(Material.BRICK).name("§c§lYou have to respawn!").build();
             }, 1);
         }
 
@@ -68,16 +68,6 @@ public class PlayerEventListener implements Listener {
             nameTagService.update(MCPlayer.from(player1));
         });
         clanManager.setHologram(player);
-    }
-
-    @EventHandler
-    public void onEntityKilled(EntityDeathEvent event) {
-        Player killer = event.getEntity().getKiller();
-        if (killer == null)
-            return;
-        if (killer.getType() == EntityType.PLAYER) {
-            playerDataManager.getPlayerData(killer).addKill();
-        }
     }
 
     @EventHandler

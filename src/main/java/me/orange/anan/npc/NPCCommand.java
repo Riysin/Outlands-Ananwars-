@@ -17,22 +17,27 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 @InjectableComponent
 @Command(value = {"anpc"})
 public class NPCCommand extends BaseCommand {
     private final NPCManager npcManager;
+    private final NPCLootManager npcLootManager;
     private final TaskManager taskManager;
     private final TaskAssignMenu taskAssignMenu;
     private final TaskRewardMenu taskRewardMenu;
     private final TaskInfoMenu taskInfoMenu;
+    private final LootConfig lootConfig;
 
-    public NPCCommand(NPCManager npcManager, TaskManager taskManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu, TaskInfoMenu taskInfoMenu) {
+    public NPCCommand(NPCManager npcManager, NPCLootManager npcLootManager, TaskManager taskManager, TaskAssignMenu taskAssignMenu, TaskRewardMenu taskRewardMenu, TaskInfoMenu taskInfoMenu, LootConfig lootConfig) {
         this.npcManager = npcManager;
+        this.npcLootManager = npcLootManager;
         this.taskManager = taskManager;
         this.taskAssignMenu = taskAssignMenu;
         this.taskRewardMenu = taskRewardMenu;
         this.taskInfoMenu = taskInfoMenu;
+        this.lootConfig = lootConfig;
     }
 
     @Command(value = "create", permissionNode = "npc.admin")
@@ -73,5 +78,13 @@ public class NPCCommand extends BaseCommand {
         } else {
             player.sendMessage("§eHope you are happy about your reward!");
         }
+    }
+
+    @Command(value = "addLoot")
+    public void addLoot(BukkitCommandContext ctx){
+        ItemStack itemStack = ctx.getPlayer().getItemInHand();
+        npcLootManager.loadConfig();
+        lootConfig.addLoot(itemStack);
+        lootConfig.loadAndSave();
     }
 }

@@ -43,7 +43,7 @@ public class JobEventListener implements Listener {
         Job job = event.getJob();
 
         syncLevel(player);
-        player.sendMessage("§eYou have selected §6§l" + job.getName() + " as you job!");
+        player.sendMessage("§eYou have selected §6§l" + job.getName() + " §eas you job!");
 
         nameTagService.update(MCPlayer.from(player));
     }

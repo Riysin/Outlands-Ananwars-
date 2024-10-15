@@ -26,7 +26,7 @@ public class CraftEventListener implements Listener {
 
     @EventHandler
     public void onOpenCraftMenu(InventoryClickEvent event) {
-        if (event.getWhoClicked() instanceof Player && event.getInventory().getType() == InventoryType.CRAFTING) {
+        if (event.getWhoClicked() instanceof Player && event.getInventory().getType() == InventoryType.CRAFTING && event.getSlotType().equals(InventoryType.SlotType.CRAFTING)) {
             Player player = (Player) event.getWhoClicked();
             if (event.getSlot() == 1) {
                 player.playSound(player.getLocation(), Sound.CLICK, 1, 1);

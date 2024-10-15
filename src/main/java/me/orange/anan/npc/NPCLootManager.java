@@ -2,7 +2,7 @@ package me.orange.anan.npc;
 
 import io.fairyproject.container.InjectableComponent;
 
-import me.orange.anan.craft.CraftManager;
+import me.orange.anan.util.ItemStackEncoder;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,12 +11,10 @@ import java.util.*;
 
 @InjectableComponent
 public class NPCLootManager {
-    private final CraftManager craftManager;
     private final LootConfig lootConfig;
     private final List<Loot> lootList = new ArrayList<>();
 
-    public NPCLootManager(CraftManager craftManager, LootConfig lootConfig) {
-        this.craftManager = craftManager;
+    public NPCLootManager(LootConfig lootConfig) {
         this.lootConfig = lootConfig;
 
         loadConfig();
@@ -24,11 +22,12 @@ public class NPCLootManager {
 
     public void loadConfig() {
         lootConfig.getLoots().forEach(lootConfigElement -> {
-            Loot loot = new Loot();
-            loot.setId(lootConfigElement.getId());
-            loot.setAmount(lootConfigElement.getAmount());
-            loot.setWeight(lootConfigElement.getWeight());
-            lootList.add(loot);
+            ItemStack itemStack = ItemStackEncoder.base64ToItemStack(lootConfigElement.getItem());
+
+            Loot loot = new Loot(itemStack, lootConfigElement.getWeight());
+            if (!lootList.contains(loot)){
+                lootList.add(loot);
+            }
         });
     }
 
@@ -47,8 +46,7 @@ public class NPCLootManager {
         for (Loot loot : possibleLoots) {
             weight += loot.getWeight();
             if (random < weight) {
-                ItemStack item = craftManager.getItemStack(loot.getId(),player);
-                item.setAmount(loot.getAmount());
+                ItemStack item = loot.getItem().clone();
                 return item;
             }
         }

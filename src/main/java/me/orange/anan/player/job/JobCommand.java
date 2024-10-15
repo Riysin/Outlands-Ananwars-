@@ -32,7 +32,6 @@ public class JobCommand extends BaseCommand {
     @Command(value = {"select"},permissionNode = "job.admin")
     public void setJob(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("job") Job job) {
         jobManager.addPlayer(player, job);
-        ctx.getPlayer().sendMessage("Job set to " + job.getName());
         Bukkit.getPluginManager().callEvent(new JobSelectEvent(player, job));
     }
 
