@@ -5,7 +5,7 @@ import io.fairyproject.config.annotation.ConfigurationElement;
 @ConfigurationElement
 public class LootConfigElement {
     private String id = "";
-    private int amount = 1;
+    private String item = "";
     private int weight = 1;
 
     public String getId() {
@@ -16,12 +16,12 @@ public class LootConfigElement {
         this.id = id;
     }
 
-    public int getAmount() {
-        return amount;
+    public String getItem() {
+        return item;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setItem(String item) {
+        this.item = item;
     }
 
     public int getWeight() {

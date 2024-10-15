@@ -1,24 +1,25 @@
 package me.orange.anan.npc;
 
+import org.bukkit.inventory.ItemStack;
+
 public class Loot {
-    private String id;
-    private int amount;
+    private ItemStack item;
     private int weight;
 
-    public String getId() {
-        return id;
+    public Loot() {
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public Loot(ItemStack item, int weight) {
+        this.item = item;
+        this.weight = weight;
     }
 
-    public int getAmount() {
-        return amount;
+    public ItemStack getItem() {
+        return item;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setItem(ItemStack item) {
+        this.item = item;
     }
 
     public int getWeight() {

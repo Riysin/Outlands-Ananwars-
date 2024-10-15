@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @InjectableComponent
 public class FriendMenu {
@@ -35,14 +36,14 @@ public class FriendMenu {
         NormalPane pane = Pane.normal(9, 5);
         NormalPane outline = Pane.normal(PaneMapping.rectangle(0, 5, 9, 1));
 
-        int slot = 0;
-
         gui.onDrawCallback($ -> {
+            AtomicInteger slot = new AtomicInteger();
+
             pane.clear();
             playerDataManager.getFriends(player).forEach(uuid -> {
                 OfflinePlayer friend = Bukkit.getOfflinePlayer(uuid);
 
-                pane.setSlot(slot, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                pane.setSlot(slot.get(), GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                         .skull(friend.getName())
                         .name(friend.getName())
                         .lore(getLores(friend))
@@ -54,6 +55,8 @@ public class FriendMenu {
                     }
                     gui.update(player);
                 }));
+
+                slot.getAndIncrement();
             });
         });
 
