@@ -108,7 +108,7 @@ public class CraftTimerManager {
 
     //return player items back if crafting failed
     public void returnItems(Player player, Craft craft, Integer craftCount) {
-        for (ItemStack item : craftManager.getRecipesFromIDs(craft.getRecipe(), player)) {
+        for (ItemStack item : craftManager.getRecipeList(craft.getRecipe(), player)) {
             int totalAmount = item.getAmount() * craftCount;
             ItemStack returnItem = item.clone();
             returnItem.setAmount(totalAmount);

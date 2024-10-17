@@ -6,6 +6,8 @@ import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.events.PlayerOpenInventoryEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.InventoryView;
 
 @InjectableComponent
 public class InventoryEventDectector {
@@ -13,10 +15,11 @@ public class InventoryEventDectector {
     public void init() {
         MCSchedulers.getGlobalScheduler().scheduleAtFixedRate(() -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory().getItem(1) == null) {
-                    Bukkit.getPluginManager().callEvent(new PlayerOpenInventoryEvent(player,player.getOpenInventory()));
+                InventoryView inventory = player.getOpenInventory();
+                if (inventory != null && inventory.getType().equals(InventoryType.CRAFTING) &&inventory.getTopInventory().getItem(1) == null) {
+                    Bukkit.getPluginManager().callEvent(new PlayerOpenInventoryEvent(player, inventory));
                 }
             }
-        }, 0, 3);
+        }, 0, 5);
     }
 }

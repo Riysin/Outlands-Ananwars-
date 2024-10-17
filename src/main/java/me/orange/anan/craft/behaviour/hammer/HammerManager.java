@@ -96,7 +96,7 @@ public class HammerManager {
         }
 
         Map<String, Craft> crafts = craftManager.getCrafts();
-        List<ItemStack> recipes = craftManager.getRecipesFromIDs(crafts.get(newBuild).getRecipe(), player);
+        List<ItemStack> recipes = craftManager.getRecipeList(crafts.get(newBuild).getRecipe(), player);
 
         for (ItemStack recipe : recipes) {
             if (craftManager.hasEnough(player, recipe)) {
@@ -105,7 +105,7 @@ public class HammerManager {
                 int healthLost = buildConfig.getBuildBlocks().get(currentBuild) - blockStats.getHealth();
                 blockStats.setHealth(maxHealth - healthLost);
 
-                ItemStack newBuildItem = craftManager.getConfigItemWithID(newBuild);
+                ItemStack newBuildItem = craftManager.getRawItem(newBuild);
                 block.setType(newBuildItem.getType());
                 block.setData(newBuildItem.getData().getData(), true);
 
@@ -152,7 +152,7 @@ public class HammerManager {
 
     private int getCurrentBlockLevel(Block block) {
         for (int level = 1; level <= 4; level++) {
-            ItemStack buildLv = craftManager.getConfigItemWithID("buildLv" + level);
+            ItemStack buildLv = craftManager.getRawItem("buildLv" + level);
             if (block.getTypeId() == buildLv.getTypeId() && block.getData() == buildLv.getData().getData()) {
                 return level;
             }
@@ -178,7 +178,7 @@ public class HammerManager {
         int currentHealth = blockStats.getHealth();
         int maxHealth = buildConfig.getBuildBlocks().get("buildLv1");
         Craft craft = craftManager.getCraft(block);
-        List<ItemStack> recipes = craftManager.getRecipesFromIDs(craft.getRecipe(), player);
+        List<ItemStack> recipes = craftManager.getRecipeList(craft.getRecipe(), player);
 
         for (ItemStack recipe : recipes) {
             if (!craftManager.hasEnough(player, recipe)) {

@@ -10,11 +10,11 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
+import me.orange.anan.util.ItemLoreBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,25 +104,16 @@ public class CraftMenu {
                 if (craftType != CraftType.ALL && craft.getType() != craftType || craft.getRecipe().isEmpty()) {
                     return;
                 }
-                List<String> loreLines = new ArrayList<>();
-                boolean canCraft = craftManager.canCraft(player, craft);
 
-                loreLines.addAll(craft.getLore());
-                loreLines.add("");
-                loreLines.add("§e所需材料:");
+                List<String> loreLines = ItemLoreBuilder.of(craft.getItemStack())
+                        .setCraft(craftManager,craft)
+                        .craftType()
+                        .damage()
+                        .description()
+                        .recipe(player)
+                        .build();
 
-                //setup recipe lore
-                for (ItemStack itemStack : craftManager.getRecipesFromIDs(craft.getRecipe(), player)) {
-                    String itemName = itemStack.getItemMeta().getDisplayName();
-                    int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
-                    boolean hasEnough = craftManager.hasEnough(player, itemStack);
-                    loreLines.add((hasEnough ? "§a   " : "§c   ") + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
-                }
-
-                loreLines.add("");
-                loreLines.add("§8需要花費" + craft.getTime() + "秒製作");
-                loreLines.add((canCraft ? "§e點擊合成此物品" : "§c材料不足"));
-
+                boolean canCraft = craftManager.canCraftItem(player, craft);
                 if (canCraft) {
                     canCrafts.add(GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
                             .clearLore()

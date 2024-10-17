@@ -13,6 +13,7 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
+import me.orange.anan.util.ItemLoreBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -21,7 +22,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,9 +40,8 @@ public class ConfirmMenu {
     public void open(Player player, Craft craft) {
         Gui gui = guiFactory.create(Component.text("§f§l確認介面"));
         NormalPane pane = Pane.normal(9, 3);
-        List<String> loreLines = new ArrayList<>();
         AtomicInteger count = new AtomicInteger(1);
-        int maxAmount = craftManager.getCanCraftAmount(player, craft);
+        int maxAmount = craftManager.getMaxCraftAmount(player, craft);
 
         //minus amount
         pane.setSlot(2, 1, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD).transformItemStack(itemStack -> {
@@ -101,21 +100,13 @@ public class ConfirmMenu {
         gui.onDrawCallback(updataPlayer -> {
             updataPlayer.playSound(updataPlayer.getLocation(), Sound.CLICK, 1, 1);
 
-            loreLines.clear();
-            loreLines.addAll(craft.getLore());
-            loreLines.add("");
-            loreLines.add("§e所需材料:");
-
-            //setup recipe lore
-            for (ItemStack itemStack : craftManager.getRecipesFromIDs(craft.getRecipe(), player)) {
-                String itemName = itemStack.getItemMeta().getDisplayName();
-                int playerAmount = craftManager.getPlayerItemAmount(player, itemStack);
-                boolean hasEnough = craftManager.hasEnough(player, itemStack);
-                loreLines.add((hasEnough ? "§a   " : "§c   ") + itemName + " §7(" + playerAmount + "/" + itemStack.getAmount() + ")");
-            }
-
-            loreLines.add("");
-            loreLines.add("§e點擊以製作" + count + "個");
+            List<String> loreLines = ItemLoreBuilder.of(craft.getItemStack())
+                    .setCraft(craftManager,craft)
+                    .craftType()
+                    .damage()
+                    .description()
+                    .recipe(player)
+                    .build();
 
             pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(craft.getMenuIcon())
                     .clearLore()
@@ -129,7 +120,7 @@ public class ConfirmMenu {
                     player1.getInventory().addItem(ItemBuilder.of(craftManager.getItemStack(craft, player1)).amount(count.get()).build());
                 }
 
-                for (ItemStack item : craftManager.getRecipesFromIDs(craft.getRecipe(), player1)) {
+                for (ItemStack item : craftManager.getRecipeList(craft.getRecipe(), player1)) {
                     craftManager.removeItemsFromInventory(player1, item, count.get());
                 }
             }));

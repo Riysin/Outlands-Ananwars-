@@ -230,6 +230,6 @@ public class JobUpgradeMenu {
     }
 
     private int getMoney(Player player) {
-        return craftManger.getPlayerItemAmount(player, craftManger.getConfigItemWithID("emerald"));
+        return craftManger.getPlayerItemAmount(player, craftManger.getRawItem("emerald"));
     }
 }

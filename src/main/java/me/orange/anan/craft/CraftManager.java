@@ -10,20 +10,17 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.behaviour.BehaviourManager;
 import me.orange.anan.craft.behaviour.CraftBehaviour;
 import me.orange.anan.craft.config.CraftConfig;
-import me.orange.anan.craft.config.CraftConfigElement;
-import me.orange.anan.craft.config.CraftElement;
 import me.orange.anan.craft.config.ToolConfig;
-import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ConcurrentHashMap;
 
 @InjectableComponent
 public class CraftManager {
-    private final Map<String, Craft> crafts = new LinkedHashMap<>();
+    private final Map<String, Craft> crafts = new ConcurrentHashMap<>();
     private final CraftConfig craftConfig;
     private final ToolConfig toolConfig;
     private final BehaviourManager behaviourManager;
@@ -55,9 +52,9 @@ public class CraftManager {
                     craft.setMenuIcon(craftElement.getIcon());
                     craft.setTier(craftElement.getTier());
                     craft.setTime(craftElement.getTime());
+                    craft.setLore(craftElement.getLore());
                     craft.setItemStack(ItemBuilder.of(craftElement.getMaterial())
                             .name(craftElement.getDisplayName())
-                            .lore(craftElement.getLore())
                             .tag(NBTKey.create("craft"), craftElement.getId())
                             .build());
 
@@ -66,78 +63,29 @@ public class CraftManager {
                 })
         );
 
+        createFairyItems(crafts);
+    }
+
+    private void createFairyItems(Map<String, Craft> crafts) {
         crafts.forEach((id, craft) -> {
             if (fairyItemRegistry.has(id)) {
                 fairyItemRegistry.unregister(fairyItemRegistry.get(id));
             }
-            createFairyItem(craft);
+
+            FairyItem.Builder builder = FairyItem.builder(craft.getID())
+                    .item(craft.getItemStack());
+
+            CraftBehaviour craftBehaviour = behaviourManager.getBehaviours().get(craft.getID());
+            if (craftBehaviour != null) {
+                craftBehaviour.getBehaviours().forEach(builder::behaviour);
+            }
+
+            builder.create(fairyItemRegistry);
         });
     }
 
-    public ItemStack getConfigItemWithID(String ID) {
-        return craftConfig.getConfigElements().stream()
-                .flatMap(element -> element.getCrafts().stream())
-                .filter(craftElement -> craftElement.getId().equals(ID))
-                .findFirst()
-                .map(craftElement -> ItemBuilder.of(craftElement.getMaterial())
-                        .name(craftElement.getDisplayName())
-                        .lore(craftElement.getLore())
-                        .tag(NBTKey.create("craft"), craftElement.getId())
-                        .build())
-                .orElse(null);
-    }
-
-    private CraftType getCraftType(String ID) {
-        return craftConfig.getConfigElements().stream()
-                .filter(element -> element.getCrafts().stream().anyMatch(craftElement -> craftElement.getId().equals(ID)))
-                .findFirst()
-                .map(CraftConfigElement::getCraftType)
-                .orElse(null);
-    }
-
-    public CraftElement getCraftElementWithID(String ID) {
-        return craftConfig.getConfigElements().stream()
-                .flatMap(element -> element.getCrafts().stream())
-                .filter(craft -> craft.getId().equals(ID))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public int getDamage(ItemStack itemStack) {
-        if (itemStack == null || getCraft(itemStack) == null) {
-            return 1;
-        }
-        return toolConfig.getToolMap().getOrDefault(getCraft(itemStack).getID(), 1);
-    }
-
-    public boolean canCraft(Player player, Craft craft) {
-        Map<String, Integer> playerMaterials = countPlayerMaterials(player);
-
-        return getRecipesFromIDs(craft.getRecipe(), player).stream()
-                .allMatch(requiredItem -> playerMaterials.getOrDefault(
-                        NBTModifier.get().getString(requiredItem, NBTKey.create("craft")), 0
-                ) >= requiredItem.getAmount());
-    }
-
-    public boolean hasEnough(Player player, ItemStack itemStack) {
-        String requiredNBT = NBTModifier.get().getString(itemStack, NBTKey.create("craft"));
-        return countPlayerItemAmount(player, requiredNBT) >= itemStack.getAmount();
-    }
-
-    public int getPlayerItemAmount(Player player, ItemStack itemStack) {
-        String requiredNBT = NBTModifier.get().getString(itemStack, NBTKey.create("craft"));
-        return countPlayerItemAmount(player, requiredNBT);
-    }
-
-    public int getCanCraftAmount(Player player, Craft craft) {
-        Map<String, Integer> playerMaterials = countPlayerMaterials(player);
-
-        return getRecipesFromIDs(craft.getRecipe(), player).stream()
-                .mapToInt(requiredItem -> playerMaterials.getOrDefault(
-                        NBTModifier.get().getString(requiredItem, NBTKey.create("craft")), 0
-                ) / requiredItem.getAmount())
-                .min()
-                .orElse(0);
+    public ItemStack getRawItem(String ID) {
+        return getCrafts().get(ID).getItemStack();
     }
 
     public ItemStack getItemStack(Craft craft, Player player) {
@@ -153,19 +101,32 @@ public class CraftManager {
         return fairyItemRegistry.get(ID).provideItemStack(player);
     }
 
-    private void createFairyItem(Craft craft) {
-        FairyItem.Builder builder = FairyItem.builder(craft.getID())
-                .item(craft.getItemStack());
-
-        CraftBehaviour craftBehaviour = behaviourManager.getBehaviours().get(craft.getID());
-        if (craftBehaviour != null) {
-            craftBehaviour.getBehaviours().forEach(builder::behaviour);
+    public int getDamage(ItemStack itemStack) {
+        if (itemStack == null || getCraft(itemStack) == null) {
+            return 1;
         }
-
-        builder.create(fairyItemRegistry);
+        return toolConfig.getToolMap().getOrDefault(getCraft(itemStack).getID(), 1);
     }
 
-    public List<ItemStack> getRecipesFromIDs(Map<String, Integer> recipes, Player player) {
+    private Map<String, Integer> getInventoryItems(Player player) {
+        Map<String, Integer> playerMaterials = new HashMap<>();
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null) {
+                String NBTValue = NBTModifier.get().getString(item, NBTKey.create("craft"));
+                playerMaterials.merge(NBTValue, item.getAmount(), Integer::sum);
+            }
+        }
+        return playerMaterials;
+    }
+
+    public boolean canCraftItem(Player player, Craft craft) {
+        Map<String, Integer> items = getInventoryItems(player);
+
+        return craft.getRecipe().entrySet().stream()
+                .allMatch(entry -> items.getOrDefault(entry.getKey(), 0) >= entry.getValue());
+    }
+
+    public List<ItemStack> getRecipeList(Map<String, Integer> recipes, Player player) {
         List<ItemStack> items = new ArrayList<>();
         recipes.forEach((id, amount) -> {
             ItemStack item = fairyItemRegistry.get(id).provideItemStack(player);
@@ -174,6 +135,27 @@ public class CraftManager {
         });
 
         return items;
+    }
+
+    public boolean hasEnough(Player player, ItemStack itemStack) {
+        String requiredNBT = NBTModifier.get().getString(itemStack, NBTKey.create("craft"));
+        return countPlayerItemAmount(player, requiredNBT) >= itemStack.getAmount();
+    }
+
+    public int getPlayerItemAmount(Player player, ItemStack itemStack) {
+        String requiredNBT = NBTModifier.get().getString(itemStack, NBTKey.create("craft"));
+        return countPlayerItemAmount(player, requiredNBT);
+    }
+
+    public int getMaxCraftAmount(Player player, Craft craft) {
+        Map<String, Integer> playerMaterials = getInventoryItems(player);
+
+        return getRecipeList(craft.getRecipe(), player).stream()
+                .mapToInt(requiredItem -> playerMaterials.getOrDefault(
+                        NBTModifier.get().getString(requiredItem, NBTKey.create("craft")), 0
+                ) / requiredItem.getAmount())
+                .min()
+                .orElse(0);
     }
 
     public void removeItemsFromInventory(Player player, ItemStack itemStack, int count) {
@@ -186,17 +168,6 @@ public class CraftManager {
             player.getInventory().removeItem(ItemBuilder.of(itemStack).amount(amountToRemove).build());
             player.updateInventory();
         }
-    }
-
-    private Map<String, Integer> countPlayerMaterials(Player player) {
-        Map<String, Integer> playerMaterials = new HashMap<>();
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null) {
-                String NBTValue = NBTModifier.get().getString(item, NBTKey.create("craft"));
-                playerMaterials.merge(NBTValue, item.getAmount(), Integer::sum);
-            }
-        }
-        return playerMaterials;
     }
 
     private int countPlayerItemAmount(Player player, String requiredNBT) {
@@ -214,32 +185,23 @@ public class CraftManager {
     }
 
     public Craft getCraft(ItemStack itemStack) {
-        AtomicReference<Craft> craft = new AtomicReference<>(null);
-        crafts.forEach((id, c) -> {
-            if (c.getMenuIcon() == XMaterial.matchXMaterial(itemStack)) {
-                craft.set(c);
-            }
-        });
-        return craft.get();
+        return crafts.values().stream()
+                .filter(c -> c.getMenuIcon() == XMaterial.matchXMaterial(itemStack))
+                .findFirst()
+                .orElse(null);
     }
 
     public Craft getCraft(XMaterial material) {
-        AtomicReference<Craft> craft = new AtomicReference<>(null);
-        crafts.forEach((id, c) -> {
-            if (c.getMenuIcon() == material) {
-                craft.set(c);
-            }
-        });
-        return craft.get();
+        return crafts.values().stream()
+                .filter(c -> c.getMenuIcon() == material)
+                .findFirst()
+                .orElse(null);
     }
 
     public Craft getCraft(Block block) {
-        AtomicReference<Craft> craft = new AtomicReference<>(null);
-        crafts.forEach((id, c) -> {
-            if (c.getMenuIcon().parseMaterial() == block.getType() && c.getMenuIcon().getData() == block.getData()) {
-                craft.set(c);
-            }
-        });
-        return craft.get();
+        return crafts.values().stream()
+                .filter(c -> c.getMenuIcon().parseMaterial() == block.getType() && c.getMenuIcon().getData() == block.getData())
+                .findFirst()
+                .orElse(null);
     }
 }

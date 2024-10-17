@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class Craft {
     private ItemStack itemStack;
+    private List<String> lore;
     private Map<String, Integer> recipe = new HashMap<>();
     private int time = 0;
     private CraftTier tier = CraftTier.COMMON;
@@ -34,7 +35,11 @@ public class Craft {
     }
 
     public List<String> getLore() {
-        return getItemStack().getItemMeta().getLore();
+        return lore;
+    }
+
+    public void setLore(List<String> lore) {
+        this.lore = lore;
     }
 
     public Map<String, Integer> getRecipe() {
