@@ -66,7 +66,7 @@ public class ResourceManager {
         Iterator<Resource> iterator = resources.iterator();
         while (iterator.hasNext()) {
             Resource resource = iterator.next();
-            if (resource.getType().equals(ResourceType.ORE)) {
+            if (resource.getType().equals(ResourceType.ORE) && resource.getLocation().getBlock().isEmpty()) {
                 world.getBlockAt(resource.getLocation()).setType(resource.getMaterial().parseMaterial());
                 iterator.remove(); // Safely remove the resource
             }
@@ -80,7 +80,9 @@ public class ResourceManager {
             Resource resource = iterator.next();
             if (resource.getType().equals(ResourceType.LOOT)) {
                 resource.getLocation().setWorld(world);
-                npcManager.createLootNPC(resource.getLocation());
+                if (resource.getLocation().getBlock().isEmpty()) {
+                    npcManager.createLootNPC(resource.getLocation());
+                }
                 iterator.remove(); // Safely remove the resource
             }
         }

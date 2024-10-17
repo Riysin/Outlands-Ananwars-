@@ -8,6 +8,7 @@ import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
 import me.orange.anan.util.ItemLoreBuilder;
@@ -25,11 +26,13 @@ import java.util.stream.Stream;
 public class CraftMenu {
     private final GuiFactory guiFactory;
     private final CraftManager craftManager;
+    private final BlockStatsManager blockStatsManager;
     private final ConfirmMenu confirmMenu;
 
-    public CraftMenu(GuiFactory guiFactory, CraftManager craftManager, ConfirmMenu confirmMenu) {
+    public CraftMenu(GuiFactory guiFactory, CraftManager craftManager, BlockStatsManager blockStatsManager, ConfirmMenu confirmMenu) {
         this.guiFactory = guiFactory;
         this.craftManager = craftManager;
+        this.blockStatsManager = blockStatsManager;
         this.confirmMenu = confirmMenu;
     }
 
@@ -109,6 +112,7 @@ public class CraftMenu {
                         .setCraft(craftManager,craft)
                         .craftType()
                         .damage()
+                        .health(blockStatsManager)
                         .description()
                         .recipe(player)
                         .build();

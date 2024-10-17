@@ -46,7 +46,7 @@ public class JobUpgradeMenu {
         gui.onDrawCallback($ -> {
             pane.clear();
             int playerLevel = jobManager.getJobLevel(player, job);
-            for (int level = 1; level <= 35; level++) {
+            for (int level = 1; level <= 40; level++) {
                 int clickLevel = level;
 
                 int x = getX(level) - scrollAmount.get();
@@ -116,7 +116,7 @@ public class JobUpgradeMenu {
         ui.setSlot(5, 1, GuiSlot.of(ItemBuilder.of(XMaterial.ARROW)
                 .lore("§eClick to scroll forward")
                 .build(), clicker -> {
-            if (scrollAmount.get() == 6) {
+            if (scrollAmount.get() == 8) {
                 player.sendMessage("§eYou are already at the end");
                 player.getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
                 return;
@@ -170,7 +170,7 @@ public class JobUpgradeMenu {
     }
 
     private XMaterial getMaterial(int level, int playerLevel, Job job) {
-        if (level == 35) {
+        if (level == 40) {
             return job.getActiveIcon();
         }
         if (level <= playerLevel) {
@@ -204,7 +204,7 @@ public class JobUpgradeMenu {
             lore.add("§6" + job.getSkill3Name());
             lore.add("§7" + job.getSkill3Description());
             lore.add("");
-        } else if (level == 35) {
+        } else if (level == 40) {
             lore.add("§6" + job.getActiveName());
             lore.add("§7" + job.getActiveDescription());
             lore.add("");

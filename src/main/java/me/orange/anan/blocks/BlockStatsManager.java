@@ -4,8 +4,11 @@ import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.blocks.config.BlockConfig;
 import me.orange.anan.blocks.config.BlockConfigElement;
+import me.orange.anan.blocks.config.BuildConfig;
 import me.orange.anan.blocks.config.NatureBlockConfig;
+import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
+import me.orange.anan.craft.CraftType;
 import me.orange.anan.craft.config.ToolConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -27,12 +30,14 @@ import java.util.stream.Stream;
 @InjectableComponent
 public class BlockStatsManager {
     private final BlockConfig blockConfig;
+    private final BuildConfig buildConfig;
     private final CraftManager craftManager;
     private final NatureBlockConfig natureBlockConfig;
     private Map<Block, BlockStats> blockStatsMap = new HashMap<>();
 
-    public BlockStatsManager(BlockConfig blockConfig, CraftManager craftManager, NatureBlockConfig natureBlockConfig) {
+    public BlockStatsManager(BlockConfig blockConfig, BuildConfig buildConfig, CraftManager craftManager, NatureBlockConfig natureBlockConfig) {
         this.blockConfig = blockConfig;
+        this.buildConfig = buildConfig;
         this.craftManager = craftManager;
         this.natureBlockConfig = natureBlockConfig;
 
@@ -175,5 +180,12 @@ public class BlockStatsManager {
                 block.getRelative(BlockFace.EAST),
                 block.getRelative(BlockFace.WEST)
         ).anyMatch(b -> b.getType() == type);
+    }
+
+    public int getBlockHealth(Craft craft) {
+        if(craft.getType() == CraftType.BUILD || craft.getType() == CraftType.USAGE) {
+            return buildConfig.getBuildBlocks().get(craft.getID());
+        }
+        return 0;
     }
 }

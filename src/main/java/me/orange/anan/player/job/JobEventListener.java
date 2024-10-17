@@ -56,7 +56,7 @@ public class JobEventListener implements Listener {
 
         syncLevel(player);
         player.sendMessage("§eYour §6§l" + job.getName() + " §r§ehas become level §a" + jobLevel + "§e!");
-        if(jobLevel == 35) {
+        if(jobLevel == 40) {
             player.sendMessage("§eYou have reached the maximum level of §6§l" + job.getName() + "§r§e!");
             job.active(player);
         }

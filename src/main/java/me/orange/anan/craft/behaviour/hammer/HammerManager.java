@@ -89,7 +89,7 @@ public class HammerManager {
             return;
         }
 
-        if (newBuild == null || newLevel < getCurrentBlockLevel(block)) {
+        if (newBuild == null || newLevel <= getCurrentBlockLevel(block)) {
             player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
             player.sendMessage("§c無法升級成你選擇的建材!");
             return;

@@ -1,6 +1,7 @@
 package me.orange.anan.util;
 
 import io.fairyproject.bukkit.util.items.ItemBuilder;
+import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
@@ -23,6 +24,7 @@ public class ItemLoreBuilder {
     private Craft craft;
     private CraftType craftType;
     private int damage;
+    private int health;
     private List<String> description;
     private Map<Enchantment, Integer> enchantments;
     private List<String> recipeLines = new ArrayList<>();
@@ -51,6 +53,12 @@ public class ItemLoreBuilder {
     // Optional: Set damage
     public ItemLoreBuilder damage() {
         this.damage = craftManager.getDamage(itemStack);
+        return this;
+    }
+
+    // Optional: Set health
+    public ItemLoreBuilder health(BlockStatsManager blockStatsManager) {
+        this.health = blockStatsManager.getBlockHealth(craft);
         return this;
     }
 
@@ -105,6 +113,11 @@ public class ItemLoreBuilder {
         if (damage >= 1 && (craftType == CraftType.TOOL || craftType == CraftType.COMBAT)) {
             lore.add("");
             lore.add("§7Damage: §c" + damage);
+        }
+
+        if (health >= 1 && (craftType == CraftType.BUILD || craftType == CraftType.USAGE)) {
+            lore.add("");
+            lore.add("§7Health: §a" + health);
         }
 
         if (description != null) {
