@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @InjectableComponent
 public class SafeZoneManager {
@@ -45,31 +46,6 @@ public class SafeZoneManager {
         return set.queryValue(localPlayer, DefaultFlag.PVP) != null;
     }
 
-    private void configureSafeZone(String regionName) {
-        RegionManager regions = getRegionManager();
-        ProtectedRegion region = regions.getRegion(regionName);
-
-        if (region != null) {
-            // Deny various actions in the region
-            region.setFlag(DefaultFlag.BLOCK_BREAK, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.BLOCK_PLACE, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.CHEST_ACCESS, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.DAMAGE_ANIMALS, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.ENDER_BUILD, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.ENTITY_ITEM_FRAME_DESTROY, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.ENTITY_PAINTING_DESTROY, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.MOB_SPAWNING, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.MOB_DAMAGE, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.PVP, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.PLACE_VEHICLE, StateFlag.State.DENY);
-            region.setFlag(DefaultFlag.GREET_MESSAGE, "§eYou are in a safe zone");
-            region.setFlag(DefaultFlag.FAREWELL_MESSAGE, "§eYou are leaving the safe zone");
-
-            // Allow entry into the region
-            region.setFlag(DefaultFlag.ENTRY, StateFlag.State.ALLOW);
-        }
-    }
-
     public void pasteSchematicWithSafeZone(Player player, String schematicName) {
         File file = new File(Bukkit.getPluginManager().getPlugin("WorldEdit").getDataFolder(), "schematics/" + schematicName + ".schematic");
         if (!file.exists() || !isSchematicFormatSupported(file, player, schematicName)) return;
@@ -82,7 +58,7 @@ public class SafeZoneManager {
             pasteClipboardToWorld(clipboard, player);
 
             List<BlockVector2D> points = generatePoints(getVector(player.getLocation()), calculateRadius(clipboard));
-            createPolygonalSafeZone(points);
+            createPolygonalSafeZone(points, player);
 
             player.sendMessage("Schematic pasted successfully and safe zone created!");
         } catch (IOException e) {
@@ -108,11 +84,11 @@ public class SafeZoneManager {
         return Math.max(width, length) / 2.0 + 50;  // Use half of the largest dimension as the radius
     }
 
-    private void createPolygonalSafeZone(List<BlockVector2D> points) {
-        RegionManager regions = getRegionManager();
+    private void createPolygonalSafeZone(List<BlockVector2D> points, Player player) {
+        RegionManager regions = getRegionManager(player);
         ProtectedRegion region = new ProtectedPolygonalRegion("safe_zone_" + zoneCounter++, points, 0, 300);
         regions.addRegion(region);
-        configureSafeZone(region.getId());
+        configureSafeZone(region.getId(), player);
     }
 
     private void pasteClipboardToWorld(Clipboard clipboard, Player player) {
@@ -130,6 +106,32 @@ public class SafeZoneManager {
         }
     }
 
+    private void configureSafeZone(String regionName, Player player) {
+        RegionManager regions = getRegionManager(player);
+        ProtectedRegion region = regions.getRegion(regionName);
+
+        if (region != null) {
+            // Deny various actions in the region
+            region.setFlag(DefaultFlag.BLOCK_BREAK, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.BLOCK_PLACE, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.CHEST_ACCESS, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.DAMAGE_ANIMALS, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.ENDER_BUILD, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.ENTITY_ITEM_FRAME_DESTROY, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.ENTITY_PAINTING_DESTROY, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.MOB_SPAWNING, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.MOB_DAMAGE, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.PVP, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.PLACE_VEHICLE, StateFlag.State.DENY);
+            region.setFlag(DefaultFlag.GREET_MESSAGE, "§eYou are in a safe zone");
+            region.setFlag(DefaultFlag.FAREWELL_MESSAGE, "§eYou are leaving the safe zone");
+            region.setFlag(DefaultFlag.TELE_LOC, BukkitUtil.toLocation(player.getLocation()));
+
+            // Allow entry into the region
+            region.setFlag(DefaultFlag.ENTRY, StateFlag.State.ALLOW);
+        }
+    }
+
     private World getWorld(Player player) {
         return BukkitUtil.getLocalWorld(player.getWorld());
     }
@@ -138,9 +140,9 @@ public class SafeZoneManager {
         return getWorld(player).getWorldData();
     }
 
-    private RegionManager getRegionManager() {
+    private RegionManager getRegionManager(Player player) {
         RegionContainer container = WorldGuardPlugin.inst().getRegionContainer();
-        return container.get(Bukkit.getWorld("world"));
+        return container.get(player.getWorld());
     }
 
     private Vector getVector(Location location) {
@@ -153,5 +155,49 @@ public class SafeZoneManager {
             return false;
         }
         return true;
+    }
+
+    public void listSafeZones(Player player) {
+        RegionManager regions = getRegionManager(player);
+        player.sendMessage("Safe zones:");
+        for (ProtectedRegion region : regions.getRegions().values()) {
+            if (region.getId().startsWith("safe_zone_")) {
+                player.sendMessage(region.getId());
+            }
+        }
+    }
+
+    public void removeSafeZone(Player player, String name) {
+        RegionManager regions = getRegionManager(player);
+        ProtectedRegion region = regions.getRegion(name);
+        if (region != null) {
+            regions.removeRegion(name);
+            player.sendMessage("Safe zone removed: " + name);
+        } else {
+            player.sendMessage("Safe zone not found: " + name);
+        }
+    }
+
+    public void setSafeZoneTeleport(Player player, String name) {
+        RegionManager regions = getRegionManager(player);
+        ProtectedRegion region = regions.getRegion(name);
+        if (region != null) {
+            region.setFlag(DefaultFlag.TELE_LOC, BukkitUtil.toLocation(player.getLocation()));
+            player.sendMessage("Teleport location set for safe zone: " + name);
+        } else {
+            player.sendMessage("Safe zone not found: " + name);
+        }
+    }
+
+    public void teleportToSafeZone(Player player, String name) {
+        RegionManager regions = getRegionManager(player);
+        ProtectedRegion region = regions.getRegion(name);
+        if (region != null) {
+            Location location = BukkitUtil.toLocation(Objects.requireNonNull(region.getFlag(DefaultFlag.TELE_LOC)));
+            player.teleport(location);
+            player.sendMessage("Teleported to safe zone: " + name);
+        } else {
+            player.sendMessage("Safe zone not found: " + name);
+        }
     }
 }
