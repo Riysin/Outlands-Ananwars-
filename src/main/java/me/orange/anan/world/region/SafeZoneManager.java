@@ -192,7 +192,7 @@ public class SafeZoneManager {
     public void teleportToSafeZone(Player player, String name) {
         RegionManager regions = getRegionManager(player);
         ProtectedRegion region = regions.getRegion(name);
-        if (region != null) {
+        if (region != null && region.getFlag(DefaultFlag.TELE_LOC) != null) {
             Location location = BukkitUtil.toLocation(Objects.requireNonNull(region.getFlag(DefaultFlag.TELE_LOC)));
             player.teleport(location);
             player.sendMessage("Teleported to safe zone: " + name);

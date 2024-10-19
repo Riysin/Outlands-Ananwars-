@@ -28,7 +28,7 @@ public class Fisher implements Job {
 
     @Override
     public String getSuffix() {
-        return " §3[F]§f" ;
+        return " §3[漁]§f";
     }
 
     @Override
@@ -51,7 +51,8 @@ public class Fisher implements Job {
         return 3;
     }
 
-    public boolean upgradeSKill(int level) {
+    @Override
+    public boolean upgradeSKill(Player player, int level) {
         Random random = new Random();
         int roll = random.nextInt(100);
         int chancePerLevel = 3;
@@ -73,52 +74,62 @@ public class Fisher implements Job {
         return "將手中釣竿提升一級魚餌等級。";
     }
 
-    public boolean skill1(Player player) {
-        ItemStack item = player.getItemInHand();
-        return item.getType().equals(Material.FISHING_ROD);
+    @Override
+    public boolean skill1(Player player, int level) {
+        return level >= 10;
     }
 
     @Override
     public String getSkill2Name() {
-        return "捕魚狂熱";
+        return "海神之力";
     }
 
     @Override
     public String getSkill2Description() {
-        return "有機會一次捕到兩條魚。";
+        return "在水中獲得水中呼吸及加速。";
     }
 
-    public boolean skill2(Player player) {
+    @Override
+    public boolean skill2(Player player, int level) {
+        if (level < 20) {
+            return false;
+        }
+
+        Material type = player.getLocation().getBlock().getType();
+        return type.equals(Material.WATER) || type.equals(Material.STATIONARY_WATER);
+
+    }
+
+    @Override
+    public String getSkill3Name() {
+        return "致命魚鉤";
+    }
+
+    @Override
+    public String getSkill3Description() {
+        return "釣到人有30%機率造成1傷害。";
+    }
+
+    @Override
+    public boolean skill3(Player player, int level) {
+        if (level < 30) {
+            return false;
+        }
         Random random = new Random();
         int roll = random.nextInt(100);
-        int chance = 10;
+        int chance = 30;
 
         return roll < chance;
     }
 
     @Override
-    public String getSkill3Name() {
-        return "海神之力";
-    }
-
-    @Override
-    public String getSkill3Description() {
-        return "在水中擁有水中呼吸效果。";
-    }
-
-    public boolean skill3(Player player) {
-        Material type = player.getLocation().getBlock().getType();
-        return type.equals(Material.WATER) || type.equals(Material.STATIONARY_WATER);
-    }
-
-    @Override
     public String getActiveName() {
-        return "漁王釣竿";
+        return "釣者之力";
     }
 
     @Override
     public String getActiveDescription() {
-        return "獲得一把超強的釣竿。";
+        return "。";
     }
 
     @Override
@@ -127,16 +138,7 @@ public class Fisher implements Job {
     }
 
     @Override
-    public void active(Player player) {
-        ItemStack item = ItemBuilder.of(XMaterial.FISHING_ROD)
-                .name("§6漁王釣竿")
-                .enchantment(XEnchantment.LURE,4)
-                .enchantment(XEnchantment.LUCK_OF_THE_SEA,3)
-                .build();
-
-        item.getItemMeta().spigot().setUnbreakable(true);
-
-        player.getInventory().addItem(item);
-        player.sendMessage("§a你獲得了一把§6漁王釣竿§a!");
+    public boolean active(Player player , int level) {
+        return level == 40;
     }
 }

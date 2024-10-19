@@ -15,6 +15,11 @@ public class SafeZoneCommand extends BaseCommand {
         this.safeZoneManager = safeZoneManager;
     }
 
+    @Command("save")
+    public void save(BukkitCommandContext ctx, @Arg("schematic name") String name) {
+        ctx.getPlayer().performCommand("schematic save " + name);
+    }
+
     @Command("paste")
     public void load(BukkitCommandContext ctx, @Arg("schematic name") String name) {
         safeZoneManager.pasteSchematicWithSafeZone(ctx.getPlayer(), name);

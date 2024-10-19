@@ -58,7 +58,7 @@ public class JobEventListener implements Listener {
         player.sendMessage("§eYour §6§l" + job.getName() + " §r§ehas become level §a" + jobLevel + "§e!");
         if(jobLevel == 40) {
             player.sendMessage("§eYou have reached the maximum level of §6§l" + job.getName() + "§r§e!");
-            job.active(player);
+            job.active(player, jobLevel);
         }
     }
 

@@ -12,19 +12,19 @@ public interface Job {
 
     String getUpgradeName();
     String getUpgradeDescription();
-    boolean upgradeSKill(int level);
+    boolean upgradeSKill(Player player,int level);
     int getChancePerLevel();
     String getSkill1Name();
     String getSkill1Description();
-    boolean skill1(Player player);
+    boolean skill1(Player player, int level);
     String getSkill2Name();
     String getSkill2Description();
-    boolean skill2(Player player);
+    boolean skill2(Player player, int level);
     String getSkill3Name();
     String getSkill3Description();
-    boolean skill3(Player player);
+    boolean skill3(Player player, int level);
     String getActiveName();
     String getActiveDescription();
     XMaterial getActiveIcon();
-    void active(Player player);
+    boolean active(Player player, int level);
 }

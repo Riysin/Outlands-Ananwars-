@@ -20,8 +20,8 @@ public class JobCommand extends BaseCommand {
     }
 
     @Command("add")
-    public void addJob(BukkitCommandContext ctx, @Arg("job") Job job) {
-        Player player = ctx.getPlayer();
+    public void addJob(BukkitCommandContext ctx,@Arg("Player") Player player , @Arg("job") Job job) {
+        Player ctxPlayer = ctx.getPlayer();
         if(!jobManager.getJobStatsMap().containsKey(player.getUniqueId())){
             jobManager.getJobStatsMap().put(player.getUniqueId(), new JobStats());
         }
