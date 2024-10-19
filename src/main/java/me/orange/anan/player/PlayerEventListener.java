@@ -45,12 +45,13 @@ public class PlayerEventListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
+        event.setJoinMessage(null);
         playerDataManager.setUpPlayer(event);
         jobManager.getJobStatsMap().putIfAbsent(player.getUniqueId(), new JobStats());
 
         playerDataManager.getFriends(player).forEach(friend -> {
             if (Bukkit.getOfflinePlayer(friend).isOnline()) {
-                Bukkit.getPlayer(friend).sendMessage("§eYour friend §6" + player.getName() + " §fis now online!");
+                Bukkit.getPlayer(friend).sendMessage("§eYour friend §6" + player.getName() + " §eis now online!");
             }
         });
 

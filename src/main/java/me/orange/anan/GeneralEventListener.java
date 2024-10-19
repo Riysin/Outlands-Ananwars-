@@ -5,6 +5,7 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
+import me.orange.anan.util.ItemLoreBuilder;
 import me.orange.anan.world.resource.OreClusterPopulator;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -51,10 +52,15 @@ public class GeneralEventListener implements Listener {
     @EventHandler
     public void onEntityKilled(EntityDeathEvent event) {
         event.setDroppedExp(0);
-        if (event.getEntity().getKiller()!= null){
+        if (event.getEntity().getKiller() != null) {
             Player player = event.getEntity().getKiller();
-            event.getDrops().forEach(drop ->{
-                ItemStack itemStack = craftManager.getItemStack(drop,player);
+            event.getDrops().forEach(drop -> {
+                ItemStack itemStack = craftManager.getItemStack(drop, player);
+                ItemLoreBuilder.of(itemStack)
+                        .setCraft(craftManager, craftManager.getCraft(drop))
+                        .craftType()
+                        .description()
+                        .applyLore();
                 player.getInventory().addItem(itemStack);
                 player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
             });

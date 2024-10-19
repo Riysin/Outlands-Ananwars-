@@ -32,11 +32,14 @@ public class JobCommand extends BaseCommand {
     @Command(value = {"select"},permissionNode = "job.admin")
     public void setJob(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("job") Job job) {
         jobManager.addPlayer(player, job);
-        Bukkit.getPluginManager().callEvent(new JobSelectEvent(player, job));
     }
 
     @Command(value = {"level"},permissionNode = "job.admin")
     public void setLevel(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("level") int level) {
+        if (jobManager.getJobStatsMap().get(player.getUniqueId()).getCurrentJob() == null) {
+            ctx.getPlayer().sendMessage("Player has no job");
+            return;
+        }
         JobStats jobStats = jobManager.getJobStatsMap().get(player.getUniqueId());
         Job job = jobStats.getCurrentJob();
         jobStats.getJobLevelMap().replace(job.getID(), level);
