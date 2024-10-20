@@ -13,7 +13,7 @@ public interface Job {
     String getUpgradeName();
     String getUpgradeDescription();
     boolean upgradeSKill(Player player,int level);
-    int getChancePerLevel();
+    double getChancePerLevel();
     String getSkill1Name();
     String getSkill1Description();
     boolean skill1(Player player, int level);

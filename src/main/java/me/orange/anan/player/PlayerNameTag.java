@@ -34,7 +34,7 @@ public class PlayerNameTag extends NameTagAdapter {
 
         //output
         if (jobManager.hasCurrentJob(bukkitTarget)) {
-            String jobSuffix = jobManager.geCurrentJob(bukkitTarget).getSuffix();
+            String jobSuffix = jobManager.getCurrentJob(bukkitTarget).getSuffix();
 
             Component prefix = Component.text("");
             Component suffix = Component.text(jobSuffix);

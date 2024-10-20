@@ -71,8 +71,8 @@ public class RescueEventListener implements Listener {
 
             double progress = (double) progressCounter.get() / 100;
             String progressBar = createProgressBar(progress);
-            Titles.sendTitle(rescuer, 0, 20, 10, "", progressBar);
-            Titles.sendTitle(rescuedPlayer, 0, 20, 10, "", progressBar);
+            Titles.sendTitle(rescuer, 0, 20, 10,  progressBar, "§e再按一次右鍵以取消");
+            Titles.sendTitle(rescuedPlayer, 0, 20, 10, progressBar, "§e救援中");
             rescuedPlayer.getWorld().playEffect(rescuer.getLocation(), Effect.HEART, 0);
             if ((progressCounter.get() % 20) == 0)
                 rescuedPlayer.getWorld().playSound(rescuedPlayer.getLocation(), Sound.NOTE_STICKS, 1, 1);
@@ -82,8 +82,8 @@ public class RescueEventListener implements Listener {
         }, 0, 1, RepeatPredicate.length(Duration.ofSeconds(5))).getFuture();
 
         future.thenRun(() -> {
-            Titles.sendTitle(rescuer, 0, 20, 10, "", "§afinished");
-            Titles.sendTitle(rescuedPlayer, 0, 20, 10, "", "§afinished");
+            Titles.sendTitle(rescuer, 0, 20, 10, "§a救援完成", "");
+            Titles.sendTitle(rescuedPlayer, 0, 20, 10, "§a救援完成", "");
             deathManager.stopRescueByRescuer(rescuer);
             Bukkit.getPluginManager().callEvent(new PlayerRevivedEvent(rescuedPlayer));
         });

@@ -112,12 +112,12 @@ public class ItemLoreBuilder {
 
         if (damage >= 1 && (craftType == CraftType.TOOL || craftType == CraftType.COMBAT)) {
             lore.add("");
-            lore.add("§7Damage: §c" + damage);
+            lore.add("§7破壞力: §c" + damage);
         }
 
         if (health >= 1 && (craftType == CraftType.BUILD || craftType == CraftType.USAGE)) {
             lore.add("");
-            lore.add("§7Health: §a" + health);
+            lore.add("§7血量: §a" + health);
         }
 
         if (description != null) {

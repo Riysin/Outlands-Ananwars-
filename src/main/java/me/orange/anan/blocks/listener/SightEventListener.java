@@ -53,7 +53,7 @@ public class SightEventListener implements Listener {
             ActionBar.sendActionBar(player, "");
         }
 
-        if (target instanceof Slime) {
+        if (target instanceof Slime && mainBlock.getType().equals(Material.REDSTONE_LAMP_OFF)) {
             Slime slime = (Slime) target;
             double health = slime.getHealth();
             ActionBar.sendActionBar(player, " health:§a " + health);

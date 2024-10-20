@@ -2,6 +2,7 @@ package me.orange.anan.blocks.listener;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.cryptomorin.xseries.messages.ActionBar;
+    import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemLore;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
@@ -20,6 +21,7 @@ import me.orange.anan.craft.behaviour.lock.LockManager;
 import me.orange.anan.craft.behaviour.teamCore.TeamCore;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import me.orange.anan.events.BlockResourceBreakEvent;
+import me.orange.anan.util.ItemLoreBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -106,6 +108,11 @@ public class BlockEventListener implements Listener {
                 for (String key : natureBlock.getDrops().keySet()) {
                     Craft craft = craftManager.getCrafts().get(key);
                     ItemStack itemStack = craftManager.getItemStack(craft, player);
+                    ItemLoreBuilder.of(itemStack)
+                            .setCraft(craftManager, craft)
+                            .craftType()
+                            .description()
+                            .applyLore();
                     itemStack.setAmount(natureBlock.getDrops().get(key));
                     dropItem(player, itemStack);
                     drop = true;

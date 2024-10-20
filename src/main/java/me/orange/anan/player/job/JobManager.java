@@ -50,7 +50,7 @@ public class JobManager {
             configElement.getJobLevelMap().clear();
 
             OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-            configElement.setJobId(hasCurrentJob(player) ? geCurrentJob(player).getID() : "");
+            configElement.setJobId(hasCurrentJob(player) ? getCurrentJob(player).getID() : "");
             jobStats.getJobLevelMap().forEach((jobID, level) -> {
                 JobElement element = new JobElement();
                 element.setLevel(level);
@@ -64,14 +64,14 @@ public class JobManager {
         return jobStatsMap;
     }
 
-    public Job geCurrentJob(UUID uuid) {
+    public Job getCurrentJob(UUID uuid) {
         if (jobStatsMap.containsKey(uuid))
             return jobStatsMap.get(uuid).getCurrentJob();
         return null;
     }
 
-    public Job geCurrentJob(OfflinePlayer player) {
-        return geCurrentJob(player.getUniqueId());
+    public Job getCurrentJob(OfflinePlayer player) {
+        return getCurrentJob(player.getUniqueId());
     }
 
     public void setCurrentJob(UUID uuid, Job job) {

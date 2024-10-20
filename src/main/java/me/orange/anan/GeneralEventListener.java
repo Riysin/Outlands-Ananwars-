@@ -8,12 +8,15 @@ import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import me.orange.anan.util.ItemLoreBuilder;
 import me.orange.anan.world.resource.OreClusterPopulator;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.world.WorldInitEvent;
@@ -39,11 +42,6 @@ public class GeneralEventListener implements Listener {
     }
 
     @EventHandler
-    public void onFoodChange(FoodLevelChangeEvent event) {
-        event.setCancelled(true);
-    }
-
-    @EventHandler
     public void populateChunk(WorldInitEvent event) {
         Bukkit.broadcastMessage("Populating chunk");
         event.getWorld().getPopulators().add(new OreClusterPopulator(teamCoreManager, blockStatsManager));
@@ -56,15 +54,23 @@ public class GeneralEventListener implements Listener {
             Player player = event.getEntity().getKiller();
             event.getDrops().forEach(drop -> {
                 ItemStack itemStack = craftManager.getItemStack(drop, player);
-                ItemLoreBuilder.of(itemStack)
-                        .setCraft(craftManager, craftManager.getCraft(drop))
-                        .craftType()
-                        .description()
-                        .applyLore();
                 player.getInventory().addItem(itemStack);
                 player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 1, 1);
             });
             event.getDrops().clear();
+        }
+    }
+
+    @EventHandler
+    public void onSwim(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        Location location = player.getLocation();
+        Material blockType = location.getBlock().getType();
+
+        if (blockType == Material.WATER || blockType == Material.STATIONARY_WATER) {
+            if (player.isSneaking()) {
+                player.setVelocity(location.getDirection().multiply(0.5));
+            }
         }
     }
 

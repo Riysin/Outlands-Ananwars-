@@ -76,7 +76,7 @@ public class JobEventListener implements Listener {
         player.setLevel(0);
         player.setExp(0);
         if(jobManager.hasCurrentJob(player)){
-            player.setLevel(jobManager.getJobLevel(player, jobManager.geCurrentJob(player)));
+            player.setLevel(jobManager.getJobLevel(player, jobManager.getCurrentJob(player)));
         }
     }
 }
