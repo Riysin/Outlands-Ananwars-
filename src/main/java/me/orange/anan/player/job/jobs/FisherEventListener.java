@@ -127,7 +127,7 @@ public class FisherEventListener implements Listener {
             FishHook hook = (FishHook) event.getDamager();
             Player player = ((Player) hook.getShooter());
 
-            if (event.getEntity().hasMetadata("NPC") || clanManager.sameClan(player, (Player) event.getEntity())) {
+            if (event.getEntity().hasMetadata("NPC") || (event.getEntity() instanceof Player && clanManager.sameClan(player, (Player) event.getEntity()))) {
                 return;
             }
 

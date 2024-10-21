@@ -3,18 +3,13 @@ package me.orange.anan.world.resource;
 import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.npc.NPCManager;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 @InjectableComponent
 public class ResourceManager {

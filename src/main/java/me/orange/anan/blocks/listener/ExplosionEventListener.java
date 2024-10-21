@@ -28,7 +28,7 @@ public class ExplosionEventListener implements Listener {
         Block block = event.getBlock();
         if (block.getType() == Material.TNT) {
             event.setCancelled(true);
-            Entity tnt = block.getWorld().spawnEntity(block.getLocation(), EntityType.PRIMED_TNT);
+            Entity tnt = block.getWorld().spawnEntity(block.getLocation().add(0.5, 0, 0.5), EntityType.PRIMED_TNT);
             TNTPrimed tntPrimed = (TNTPrimed) tnt;
             tntPrimed.setFuseTicks(80);
         }
@@ -41,7 +41,7 @@ public class ExplosionEventListener implements Listener {
         for (Block block : event.blockList()) {
             Block mainBlock = blockStatsManager.getMainBlock(block);
 
-            if(!blockStatsManager.getBlockStatsMap().containsKey(mainBlock)) {
+            if (!blockStatsManager.getBlockStatsMap().containsKey(mainBlock)) {
                 continue;
             }
 

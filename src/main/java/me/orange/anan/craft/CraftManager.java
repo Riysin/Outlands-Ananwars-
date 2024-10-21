@@ -12,8 +12,10 @@ import me.orange.anan.craft.behaviour.CraftBehaviour;
 import me.orange.anan.craft.config.CraftConfig;
 import me.orange.anan.craft.config.ToolConfig;
 import me.orange.anan.util.ItemLoreBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -55,8 +57,10 @@ public class CraftManager {
                     craft.setTime(craftElement.getTime());
                     craft.setLore(craftElement.getLore());
                     craft.setItemStack(ItemBuilder.of(craftElement.getMaterial())
-                            .name(craftElement.getDisplayName())
-                            .lore(ItemLoreBuilder.of(craft.getItemStack())
+                            .name(ChatColor.RESET + craftElement.getDisplayName())
+                            .editMeta(meta -> meta.addItemFlags(ItemFlag.HIDE_ENCHANTS))
+                            .clearLore()
+                            .lore(ItemLoreBuilder.of(craftElement.getMaterial())
                                     .setCraft(this, craft)
                                     .craftType()
                                     .description()

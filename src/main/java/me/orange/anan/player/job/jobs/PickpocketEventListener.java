@@ -33,6 +33,10 @@ public class PickpocketEventListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player && !isPickpocket((Player) event.getDamager())) {
+            return;
+        }
+
         if (event.getDamager() instanceof Player) {
             Player player = (Player) event.getDamager();
             if (event.getEntity() instanceof Player) {

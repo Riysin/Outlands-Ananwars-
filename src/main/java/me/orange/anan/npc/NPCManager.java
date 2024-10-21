@@ -1,5 +1,6 @@
 package me.orange.anan.npc;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.npc.outlandsnpc.OutlandsNPC;
 import me.orange.anan.npc.outlandsnpc.merchant.MerchantNPC;
@@ -8,26 +9,40 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.*;
 import net.citizensnpcs.trait.text.Text;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @InjectableComponent
 public class NPCManager {
     public void createNPC(Player player, OutlandsNPC outlandsNPC){
+        Location location = getTargetBlockLocation(player);
         if(outlandsNPC.getType() == NPCType.TASK){
             createTaskNPC(player, outlandsNPC);
         } else if(outlandsNPC.getType() == NPCType.MERCHANT){
             createMerchantNPC(player, outlandsNPC);
         } else if(outlandsNPC.getType() == NPCType.LOOT){
-            createLootNPC(player.getLocation());
+            createLootNPC(location);
         }
     }
 
+    private Location getTargetBlockLocation(Player player){
+        Set<Material> materials = new HashSet<>();
+        materials.add(XMaterial.AIR.parseMaterial());
+        materials.add(XMaterial.WATER.parseMaterial());
+        materials.add(XMaterial.LAVA.parseMaterial());
+
+        return player.getTargetBlock(materials, 5).getLocation().add(0,1,0);
+    }
+
     public void createTaskNPC(Player player, OutlandsNPC outlandsNPC) {
-        Location location = player.getLocation().clone();
+        Location location = getTargetBlockLocation(player);
         NPC npc = getTemplateNPC(outlandsNPC.getName());
 
         npc.getOrAddTrait(Text.class).toggleSpeechBubbles();
@@ -44,6 +59,7 @@ public class NPCManager {
     }
 
     public void createMerchantNPC(Player player, OutlandsNPC outlandsNPC) {
+        Location location = getTargetBlockLocation(player);
         NPC npc = getTemplateNPC(outlandsNPC.getName());
 
         npc.getOrAddTrait(HologramTrait.class).addLine("§e[Merchant] §f");
@@ -53,7 +69,7 @@ public class NPCManager {
         npc.getOrAddTrait(CommandTrait.class).addCommand(new CommandTrait.NPCCommandBuilder("anpc shop " + outlandsNPC.getId(), CommandTrait.Hand.RIGHT)
                 .player(true));
 
-        npc.spawn(player.getLocation());
+        npc.spawn(location);
     }
 
     public void openTrade(Player player, OutlandsNPC outlandsNPC){

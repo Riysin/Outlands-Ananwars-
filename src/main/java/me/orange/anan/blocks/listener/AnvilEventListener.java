@@ -2,6 +2,7 @@ package me.orange.anan.blocks.listener;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
+import io.fairyproject.mc.scheduler.MCSchedulers;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.util.ItemLoreBuilder;
@@ -27,25 +28,31 @@ public class AnvilEventListener implements Listener {
     @EventHandler
     public void onAnvil(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        if (event.getInventory().getType().equals(InventoryType.ANVIL) && event.getSlotType().equals(InventoryType.SlotType.RESULT)) {
-            ItemStack itemStack = event.getCurrentItem();
-            ItemStack fairyItem = craftManager.getItemStack(itemStack,player);
-            fairyItem.getItemMeta().setDisplayName(itemStack.getItemMeta().getDisplayName());
 
-            Map<Enchantment, Integer> enchantments = itemStack.getEnchantments();
-            if (!enchantments.isEmpty())
-                enchantments.forEach(fairyItem::addUnsafeEnchantment);
+        MCSchedulers.getGlobalScheduler().schedule(() -> {
+            ItemStack itemStack = event.getInventory().getItem(2);
 
-            Craft craft = craftManager.getCraft(itemStack);
-            fairyItem = ItemLoreBuilder.of(itemStack)
-                    .setCraft(craftManager,craft)
-                    .craftType()
-                    .damage()
-                    .description()
-                    .enchantments()
-                    .applyLore();
+            if (event.getInventory().getType().equals(InventoryType.ANVIL)
+                    && itemStack != null) {
+                ItemStack fairyItem = craftManager.getItemStack(itemStack, player);
+                fairyItem.getItemMeta().setDisplayName(itemStack.getItemMeta().getDisplayName());
+                fairyItem.getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
-            event.setCurrentItem(fairyItem);
-        }
+                Map<Enchantment, Integer> enchantments = itemStack.getEnchantments();
+                if (!enchantments.isEmpty())
+                    enchantments.forEach(fairyItem::addUnsafeEnchantment);
+
+                Craft craft = craftManager.getCraft(itemStack);
+                fairyItem = ItemLoreBuilder.of(itemStack)
+                        .setCraft(craftManager, craft)
+                        .craftType()
+                        .damage()
+                        .description()
+                        .enchantments()
+                        .applyLore();
+
+                event.getInventory().setItem(2, fairyItem);
+            }
+        },1);
     }
 }

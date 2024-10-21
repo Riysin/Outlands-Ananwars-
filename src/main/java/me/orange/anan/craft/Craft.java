@@ -19,6 +19,10 @@ public class Craft {
     private XMaterial menuIcon = XMaterial.STONE;
 
     public ItemStack getItemStack() {
+        return itemStack.clone();
+    }
+
+    public ItemStack getRawItemStack() {
         return itemStack;
     }
 

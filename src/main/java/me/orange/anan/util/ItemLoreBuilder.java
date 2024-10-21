@@ -1,5 +1,6 @@
 package me.orange.anan.util;
 
+import com.cryptomorin.xseries.XMaterial;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.craft.Craft;
@@ -38,6 +39,14 @@ public class ItemLoreBuilder {
         return new ItemLoreBuilder(itemStack);
     }
 
+    public static ItemLoreBuilder of(Material material) {
+        return new ItemLoreBuilder(XMaterial.matchXMaterial(material).parseItem());
+    }
+
+    public static ItemLoreBuilder of(XMaterial material) {
+        return new ItemLoreBuilder(material.parseItem());
+    }
+
     public ItemLoreBuilder setCraft(CraftManager craftManager, Craft craft) {
         this.craftManager = craftManager;
         this.craft = craft;
@@ -74,7 +83,7 @@ public class ItemLoreBuilder {
             this.enchantments = itemStack.getEnchantments();
         }
 
-        if (itemStack.isSimilar(new ItemStack(Material.ENCHANTED_BOOK))) {
+        if (itemStack.getType() == Material.ENCHANTED_BOOK) {
             EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
             if (meta.hasStoredEnchants()) {
                 this.enchantments = meta.getStoredEnchants();
@@ -110,7 +119,7 @@ public class ItemLoreBuilder {
             lore.add("§8" + craftType);
         }
 
-        if (damage >= 1 && (craftType == CraftType.TOOL || craftType == CraftType.COMBAT)) {
+        if (damage > 1 && (craftType == CraftType.TOOL || craftType == CraftType.COMBAT)) {
             lore.add("");
             lore.add("§7破壞力: §c" + damage);
         }

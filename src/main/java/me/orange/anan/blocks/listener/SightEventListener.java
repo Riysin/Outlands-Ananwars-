@@ -49,10 +49,6 @@ public class SightEventListener implements Listener {
 
         Entity target = getTargetEntity(player, 5);
 
-        if (materials.contains(targetBlock.getType())) {
-            ActionBar.sendActionBar(player, "");
-        }
-
         if (target instanceof Slime && mainBlock.getType().equals(Material.REDSTONE_LAMP_OFF)) {
             Slime slime = (Slime) target;
             double health = slime.getHealth();

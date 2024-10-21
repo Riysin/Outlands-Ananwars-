@@ -9,6 +9,7 @@ import me.orange.anan.util.ItemLoreBuilder;
 import me.orange.anan.util.ItemStackEncoder;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -30,8 +31,9 @@ public class NPCLootManager {
         lootConfig.getLoots().forEach(lootConfigElement -> {
             ItemStack itemStack = ItemStackEncoder.base64ToItemStack(lootConfigElement.getItem());
             Craft craft = craftManager.getCraft(itemStack);
-            ItemBuilder.of(itemStack)
+            itemStack = ItemBuilder.of(itemStack)
                     .name(craft.getName())
+                    .editMeta(meta -> meta.addItemFlags(ItemFlag.HIDE_ENCHANTS))
                     .clearLore()
                     .lore(ItemLoreBuilder.of(itemStack)
                             .setCraft(craftManager, craft)

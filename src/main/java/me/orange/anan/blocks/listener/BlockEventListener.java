@@ -1,8 +1,5 @@
 package me.orange.anan.blocks.listener;
 
-import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.messages.ActionBar;
-    import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemLore;
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.bukkit.nbt.NBTKey;
 import io.fairyproject.bukkit.nbt.NBTModifier;
@@ -11,43 +8,23 @@ import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
 import me.orange.anan.blocks.BlockType;
 import me.orange.anan.blocks.config.BuildConfig;
-import me.orange.anan.clan.ClanManager;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
 import me.orange.anan.craft.CraftType;
 import me.orange.anan.blocks.config.NatureBlockConfig;
 import me.orange.anan.blocks.config.NatureBlockElement;
-import me.orange.anan.craft.behaviour.lock.LockManager;
 import me.orange.anan.craft.behaviour.teamCore.TeamCore;
 import me.orange.anan.craft.behaviour.teamCore.TeamCoreManager;
 import me.orange.anan.events.BlockResourceBreakEvent;
 import me.orange.anan.util.ItemLoreBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.inventory.FurnaceExtractEvent;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Door;
-import org.bukkit.util.Vector;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Stream;
 
 @InjectableComponent
 @RegisterAsListener
