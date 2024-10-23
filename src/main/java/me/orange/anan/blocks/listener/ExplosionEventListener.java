@@ -4,6 +4,7 @@ import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.blocks.BlockStats;
 import me.orange.anan.blocks.BlockStatsManager;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -60,7 +61,6 @@ public class ExplosionEventListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        // Check if the damage is caused by an explosion
         if (event.getCause() == EntityDamageByEntityEvent.DamageCause.ENTITY_EXPLOSION ||
                 event.getCause() == EntityDamageByEntityEvent.DamageCause.BLOCK_EXPLOSION) {
 
@@ -68,33 +68,30 @@ public class ExplosionEventListener implements Listener {
             Entity damager = event.getDamager();
 
             if (damagedEntity instanceof LivingEntity) {
-                // Check if there's a wall between the explosion and the entity
-                if (isBlockedByWall(damager, damagedEntity)) {
-                    // Cancel the damage if there's a wall between
+                if (isBlockedByWall(damager, (LivingEntity) damagedEntity)) {
                     event.setCancelled(true);
                 }
             }
         }
     }
 
-    // This method checks if there's a block between the explosion and the entity
-    private boolean isBlockedByWall(Entity explosionSource, Entity entity) {
-        Vector sourceLocation = explosionSource.getLocation().toVector();
-        Vector entityLocation = entity.getLocation().toVector();
-        Vector direction = entityLocation.subtract(sourceLocation).normalize();
+    public boolean isBlockedByWall(Entity damager, LivingEntity damagedEntity) {
+        Location damagerLocation = damager.getLocation().add(0.5,0.5,0.5);
+        Location damagedLocation = damagedEntity.getEyeLocation();
 
-        double distance = sourceLocation.distance(entityLocation);
+        Vector direction = damagedLocation.toVector().subtract(damagerLocation.toVector()).normalize();
+        double distance = damagerLocation.distance(damagedLocation);
+        double stepSize = 0.5;
 
-        for (double i = 0; i < distance; i += 0.5) {
-            Vector currentPosition = sourceLocation.clone().add(direction.clone().multiply(i));
-            Block block = explosionSource.getWorld().getBlockAt(currentPosition.getBlockX(), currentPosition.getBlockY(), currentPosition.getBlockZ());
+        // Iterate through the line between the damager and the damaged entity
+        for (double d = 0; d < distance; d += stepSize) {
+            Location currentLocation = damagerLocation.clone().add(direction.clone().multiply(d));
 
-            // If there's a solid block between the explosion and the entity, return true
-            if (block.getType() != Material.AIR && block.getType().isSolid()) {
-                return true;
+            if (currentLocation.getBlock().getType().isSolid()) {
+                return true; // Block (wall) is in the way
             }
         }
 
-        return false;
+        return false; // No blocks were found in the way
     }
 }

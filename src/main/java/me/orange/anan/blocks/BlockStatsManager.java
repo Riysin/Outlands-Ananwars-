@@ -165,6 +165,16 @@ public class BlockStatsManager {
         Integer id = block.getTypeId();
         byte data = block.getData();
 
+        int grassBlockId = 31;
+        int flowerBlockId = 37;
+        int flowerBlockId2 = 38;
+        int tallGrassBlockId2 = 175;
+
+        // Ignore if the block is grass, flower, or tallgrass
+        if (id.equals(grassBlockId) || id.equals(flowerBlockId) || id.equals(flowerBlockId2) || id.equals(tallGrassBlockId2)) {
+            return false;
+        }
+
         // Stream through nature blocks and check ID and data
         return natureBlockConfig.getNatureBlocks().stream().anyMatch(natureBlock ->
                 id.equals(natureBlock.getBlockId()) && (natureBlock.getData() == -1 || data == natureBlock.getData())

@@ -44,7 +44,7 @@ public class ClanEventListener implements Listener {
         Player player = event.getPlayer();
 
         if (clanManager.getPlayerClan(player) != null && clanManager.getPlayerClan(damager) != null) {
-            if (clanManager.sameClan(player, damager)) {
+            if (clanManager.sameClan(player, damager) && player != damager) {
                 event.setCancelled(true);
                 damager.sendMessage("§cYou are in the same clan!");
             }
