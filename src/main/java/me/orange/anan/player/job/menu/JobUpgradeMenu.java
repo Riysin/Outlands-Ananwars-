@@ -41,7 +41,7 @@ public class JobUpgradeMenu {
         Gui gui = guiFactory.create(Component.text("Job Upgrade Menu"));
         NormalPane pane = Pane.normal(PaneMapping.rectangle(0, 0, 9, 4));
 
-        AtomicInteger scrollAmount = new AtomicInteger();
+        AtomicInteger scrollAmount = new AtomicInteger(0);
 
         gui.onDrawCallback($ -> {
             pane.clear();
@@ -98,7 +98,7 @@ public class JobUpgradeMenu {
         });
 
 
-        ui.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.ARROW)
+        ui.setSlot(0, 1, GuiSlot.of(ItemBuilder.of(XMaterial.ARROW)
                 .lore("§eClick to scroll backward")
                 .build(), clicker -> {
             if (scrollAmount.get() == 0) {
@@ -110,10 +110,28 @@ public class JobUpgradeMenu {
             player.getWorld().playEffect(player.getLocation(), Effect.CLICK1, 0);
             gui.update(player);
         }));
+        //back to choose menu
+        ui.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.COMPASS)
+                .name("§eRechoose Job")
+                .lore("§eClick to back to choose menu")
+                .build(), clicker -> {
+            player.performCommand("job choose");
+            player.playEffect(player.getLocation(), Effect.CLICK1, 0);
+        }));
         ui.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER)
                 .lore("§cClose the menu")
                 .build(), HumanEntity::closeInventory));
-        ui.setSlot(5, 1, GuiSlot.of(ItemBuilder.of(XMaterial.ARROW)
+        //resign
+        ui.setSlot(5, 1, GuiSlot.of(ItemBuilder.of(XMaterial.WHITE_BANNER)
+                .name("§cResign")
+                .lore("§eClick to resign your job")
+                .build(), clicker -> {
+            jobManager.setCurrentJob(player.getUniqueId(), null);
+            player.getWorld().playSound(player.getLocation(), Sound.ITEM_BREAK, 1, 1);
+            player.sendMessage("§eYou have resigned from §6§l" + job.getName());
+            gui.update(player);
+        }));
+        ui.setSlot(8, 1, GuiSlot.of(ItemBuilder.of(XMaterial.ARROW)
                 .lore("§eClick to scroll forward")
                 .build(), clicker -> {
             if (scrollAmount.get() == 8) {
@@ -190,7 +208,7 @@ public class JobUpgradeMenu {
         List<String> lore = new ArrayList<>();
         lore.add("§6" + job.getUpgradeName());
         lore.add("§7" + job.getUpgradeDescription());
-        lore.add("§eChance: §a" + job.getChancePerLevel() * level + "§f%");
+        lore.add("§7Chance: §a" + job.getChancePerLevel() * level + "§7%");
         lore.add("");
         if (level == 10) {
             lore.add("§6" + job.getSkill1Name());
@@ -209,8 +227,7 @@ public class JobUpgradeMenu {
             lore.add("§7" + job.getActiveDescription());
             lore.add("");
         }
-        lore.add("§eCost: " + level * 5);
-        lore.add("");
+        lore.add("§7Cost: §e" + level * 5);
         if (level <= playerLevel) {
             lore.add("§aUnlocked");
         } else {

@@ -8,6 +8,7 @@ import io.fairyproject.mc.nametag.NameTagService;
 import me.orange.anan.events.JobSelectEvent;
 import me.orange.anan.events.PlayerLevelUpEvent;
 import me.orange.anan.player.job.menu.JobChooseMenu;
+import me.orange.anan.player.job.menu.JobUpgradeMenu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,20 +21,27 @@ import org.bukkit.event.player.PlayerLevelChangeEvent;
 @RegisterAsListener
 public class JobEventListener implements Listener {
     private final JobChooseMenu jobChooseMenu;
+    private final JobUpgradeMenu jobUpgradeMenu;
     private final JobManager jobManager;
     private final NameTagService nameTagService;
 
-    public JobEventListener(JobChooseMenu jobChooseMenu, JobManager jobManager, NameTagService nameTagService) {
+    public JobEventListener(JobChooseMenu jobChooseMenu, JobUpgradeMenu jobUpgradeMenu, JobManager jobManager, NameTagService nameTagService) {
         this.jobChooseMenu = jobChooseMenu;
+        this.jobUpgradeMenu = jobUpgradeMenu;
         this.jobManager = jobManager;
         this.nameTagService = nameTagService;
     }
 
     @EventHandler
     public void onRightClickEnchantingTable(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
         if (event.hasBlock() && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == XMaterial.ENCHANTING_TABLE.parseMaterial()) {
             event.setCancelled(true);
-            jobChooseMenu.open(event.getPlayer());
+
+            if(jobManager.hasCurrentJob(player)){
+                jobUpgradeMenu.open(player, jobManager.getCurrentJob(player));
+            }
+            jobChooseMenu.open(player);
         }
     }
 

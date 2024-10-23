@@ -7,34 +7,37 @@ import io.fairyproject.command.annotation.Command;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.events.JobSelectEvent;
 import me.orange.anan.events.PlayerLevelUpEvent;
+import me.orange.anan.player.job.menu.JobChooseMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @InjectableComponent
-@Command(value = {"j","job"},permissionNode = "job.admin")
+@Command(value = {"j", "job"})
 public class JobCommand extends BaseCommand {
     private final JobManager jobManager;
+    private final JobChooseMenu jobChooseMenu;
 
-    public JobCommand(JobManager jobManager) {
+    public JobCommand(JobManager jobManager, JobChooseMenu jobChooseMenu) {
         this.jobManager = jobManager;
+        this.jobChooseMenu = jobChooseMenu;
     }
 
-    @Command("add")
-    public void addJob(BukkitCommandContext ctx,@Arg("Player") Player player , @Arg("job") Job job) {
+    @Command(value = "add", permissionNode = "job.admin")
+    public void addJob(BukkitCommandContext ctx, @Arg("Player") Player player, @Arg("job") Job job) {
         Player ctxPlayer = ctx.getPlayer();
-        if(!jobManager.getJobStatsMap().containsKey(player.getUniqueId())){
+        if (!jobManager.getJobStatsMap().containsKey(player.getUniqueId())) {
             jobManager.getJobStatsMap().put(player.getUniqueId(), new JobStats());
         }
         jobManager.getJobLevelMap(player).put(job.getID(), 0);
         player.sendMessage("Job added");
     }
 
-    @Command(value = {"select"},permissionNode = "job.admin")
+    @Command(value = {"select"}, permissionNode = "job.admin")
     public void setJob(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("job") Job job) {
         jobManager.addPlayer(player, job);
     }
 
-    @Command(value = {"level"},permissionNode = "job.admin")
+    @Command(value = {"level"}, permissionNode = "job.admin")
     public void setLevel(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("level") int level) {
         if (jobManager.getJobStatsMap().get(player.getUniqueId()).getCurrentJob() == null) {
             ctx.getPlayer().sendMessage("Player has no job");
@@ -46,13 +49,13 @@ public class JobCommand extends BaseCommand {
         Bukkit.getPluginManager().callEvent(new PlayerLevelUpEvent(player, job));
     }
 
-    @Command(value = {"remove"},permissionNode = "job.admin")
+    @Command(value = {"remove"}, permissionNode = "job.admin")
     public void setRemove(BukkitCommandContext ctx, @Arg("player") Player player, @Arg("job") Job job) {
         jobManager.removePlayer(player, job);
         ctx.getPlayer().sendMessage("Job removed");
     }
 
-    @Command(value = {"list"},permissionNode = "job.admin")
+    @Command(value = {"list"}, permissionNode = "job.admin")
     public void list(BukkitCommandContext ctx) {
         ctx.getPlayer().sendMessage("Jobs: ");
         for (String id : jobManager.getJobStatsMap().get(ctx.getPlayer().getUniqueId()).getJobLevelMap().keySet()) {
@@ -60,9 +63,14 @@ public class JobCommand extends BaseCommand {
         }
     }
 
-    @Command(value = {"resign "})
+    @Command(value = {"resign "}, permissionNode = "job.admin")
     public void resign(BukkitCommandContext ctx) {
         jobManager.setCurrentJob(ctx.getPlayer().getUniqueId(), null);
         ctx.getPlayer().sendMessage("You have resigned from your job");
+    }
+
+    @Command(value = {"choose"})
+    public void choose(BukkitCommandContext ctx) {
+        jobChooseMenu.open(ctx.getPlayer());
     }
 }
