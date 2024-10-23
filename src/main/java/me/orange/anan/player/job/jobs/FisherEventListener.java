@@ -76,6 +76,10 @@ public class FisherEventListener implements Listener {
     public void onPlayerEatFish(PlayerItemConsumeEvent event) {
         ItemStack item = event.getItem();
 
+        if (!isFisher(event.getPlayer())) {
+            return;
+        }
+
         // 檢查玩家是否吃的是生魚
         if (item.getType() == Material.RAW_FISH || item.getType() == XMaterial.SALMON.parseMaterial() || item.getType() == XMaterial.TROPICAL_FISH.parseMaterial() || item.getType() == XMaterial.PUFFERFISH.parseMaterial()) {
             Player player = event.getPlayer();
@@ -86,6 +90,7 @@ public class FisherEventListener implements Listener {
 
             ActionBar.sendActionBar(player, "§a你回復了額外的飽食度!");
             player.setFoodLevel(newHunger);
+            player.setSaturation(player.getSaturation() + 2);
         }
     }
 

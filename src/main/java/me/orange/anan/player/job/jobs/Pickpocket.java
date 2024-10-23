@@ -74,17 +74,19 @@ public class Pickpocket implements Job {
 
     @Override
     public String getSkill2Name() {
-        return "靈活身手";
+        return "腳底抹油";
     }
 
     @Override
     public String getSkill2Description() {
-        return "移動速度提高5%，並在短時間內無法被鎖定。";
+        return "被打有機率獲得移動加速效果";
     }
 
     @Override
     public boolean skill2(Player player, int level) {
-        return level >= 20;
+        Random random = new Random();
+        int roll = random.nextInt(100);
+        return roll < 15 && level >= 20; // 15%的機率讓敵人暈眩
     }
 
     @Override

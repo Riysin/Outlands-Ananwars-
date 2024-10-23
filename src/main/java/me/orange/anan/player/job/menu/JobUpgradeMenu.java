@@ -83,6 +83,8 @@ public class JobUpgradeMenu {
                         gui.update(player);
                     }
                 }));
+
+                pane.fillEmptySlots(GuiSlot.of(ItemBuilder.of(XMaterial.GRAY_STAINED_GLASS_PANE).name("").build()));
             }
         });
 
@@ -112,23 +114,25 @@ public class JobUpgradeMenu {
         }));
         //back to choose menu
         ui.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(XMaterial.COMPASS)
-                .name("§eRechoose Job")
-                .lore("§eClick to back to choose menu")
+                .name("§eReturn to choose menu")
+                .lore("§7Click to go back to choose menu")
                 .build(), clicker -> {
             player.performCommand("job choose");
             player.playEffect(player.getLocation(), Effect.CLICK1, 0);
         }));
         ui.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER)
-                .lore("§cClose the menu")
+                .name("§cClose")
+                .lore("§7Click to close this menu")
                 .build(), HumanEntity::closeInventory));
         //resign
         ui.setSlot(5, 1, GuiSlot.of(ItemBuilder.of(XMaterial.WHITE_BANNER)
                 .name("§cResign")
-                .lore("§eClick to resign your job")
+                .lore("§7Click to resign your job")
                 .build(), clicker -> {
             jobManager.setCurrentJob(player.getUniqueId(), null);
             player.getWorld().playSound(player.getLocation(), Sound.ITEM_BREAK, 1, 1);
             player.sendMessage("§eYou have resigned from §6§l" + job.getName());
+            player.performCommand("job choose");
             gui.update(player);
         }));
         ui.setSlot(8, 1, GuiSlot.of(ItemBuilder.of(XMaterial.ARROW)

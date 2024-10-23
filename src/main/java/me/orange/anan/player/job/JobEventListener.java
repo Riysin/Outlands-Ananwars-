@@ -38,10 +38,11 @@ public class JobEventListener implements Listener {
         if (event.hasBlock() && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == XMaterial.ENCHANTING_TABLE.parseMaterial()) {
             event.setCancelled(true);
 
-            if(jobManager.hasCurrentJob(player)){
+            if (jobManager.hasCurrentJob(player)) {
                 jobUpgradeMenu.open(player, jobManager.getCurrentJob(player));
+            } else {
+                jobChooseMenu.open(player);
             }
-            jobChooseMenu.open(player);
         }
     }
 
@@ -64,26 +65,26 @@ public class JobEventListener implements Listener {
 
         syncLevel(player);
         player.sendMessage("§eYour §6§l" + job.getName() + " §r§ehas become level §a" + jobLevel + "§e!");
-        if(jobLevel == 40) {
+        if (jobLevel == 40) {
             player.sendMessage("§eYou have reached the maximum level of §6§l" + job.getName() + "§r§e!");
             job.active(player, jobLevel);
         }
     }
 
     @EventHandler
-    public void onExpChange(PlayerExpChangeEvent event){
+    public void onExpChange(PlayerExpChangeEvent event) {
         syncLevel(event.getPlayer());
     }
 
     @EventHandler
-    public void onLevelChange(PlayerLevelChangeEvent event){
+    public void onLevelChange(PlayerLevelChangeEvent event) {
         syncLevel(event.getPlayer());
     }
 
     private void syncLevel(Player player) {
         player.setLevel(0);
         player.setExp(0);
-        if(jobManager.hasCurrentJob(player)){
+        if (jobManager.hasCurrentJob(player)) {
             player.setLevel(jobManager.getJobLevel(player, jobManager.getCurrentJob(player)));
         }
     }

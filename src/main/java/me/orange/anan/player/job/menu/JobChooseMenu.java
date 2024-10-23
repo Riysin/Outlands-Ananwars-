@@ -12,7 +12,6 @@ import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.player.job.Job;
 import me.orange.anan.player.job.JobManager;
 import me.orange.anan.player.job.JobRegistry;
-import me.orange.anan.player.task.TaskManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -25,13 +24,11 @@ public class JobChooseMenu {
     private final GuiFactory guiFactory;
     private final JobUpgradeMenu jobUpgradeMenu;
     private final JobManager jobManager;
-    private final TaskManager taskManager;
 
-    public JobChooseMenu(GuiFactory guiFactory, JobUpgradeMenu jobUpgradeMenu, JobManager jobManager, TaskManager taskManager) {
+    public JobChooseMenu(GuiFactory guiFactory, JobUpgradeMenu jobUpgradeMenu, JobManager jobManager) {
         this.guiFactory = guiFactory;
         this.jobUpgradeMenu = jobUpgradeMenu;
         this.jobManager = jobManager;
-        this.taskManager = taskManager;
     }
 
     public void open(Player player) {
@@ -40,9 +37,9 @@ public class JobChooseMenu {
 
         //for Job in JobRegister
         JobRegistry jobRegistry = new JobRegistry();
-        int slot = 1;
+        int slot = 0;
         for (Job job : jobRegistry.getJobs()) {
-            pane.setSlot(slot, slot / 7 + 1, GuiSlot.of(ItemBuilder.of(job.getIcon())
+            pane.setSlot(slot, GuiSlot.of(ItemBuilder.of(job.getIcon())
                     .name("§e" + job.getName())
                     .lore(getLore(player, job))
                     .build(), clicker -> {
@@ -58,7 +55,7 @@ public class JobChooseMenu {
             slot++;
         }
 
-        pane.setSlot(5, 2, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER).name("§cResign").lore("§eClick to have no job!").build(), clicker -> {
+        pane.setSlot(6, 3, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER).name("§cResign").lore("§eClick to have no job!").build(), clicker -> {
             jobManager.setCurrentJob(player.getUniqueId(), null);
             player.closeInventory();
         }));
