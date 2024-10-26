@@ -30,17 +30,24 @@ public class PlayerSettingsMenu {
         NormalPane pane = Pane.normal(PaneMapping.rectangle(1, 1, 7, 1));
         NormalPane border = Pane.normal(PaneMapping.outline(0, 0, 9, 3));
 
-        pane.setSlot(0, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                .transformItemStack(itemStack -> {
-                    return XSkull.of(itemStack).profile(Profileable.of(ProfileInputType.BASE64, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjE1MWNmZmRhZjMwMzY3MzUzMWE3NjUxYjM2NjM3Y2FkOTEyYmE0ODU2NDMxNThlNTQ4ZDU5YjJlYWQ1MDExIn19fQ==")).apply();
-                })
-                .name("Language!")
+        //hint
+        pane.setSlot(0, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_SIGN)
+                .name("§e新手提示")
                 .lore("§cNot implemented yet.")
                 .build()));
+
         //friend login notification on/off
         pane.setSlot(1, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
                 .skull(player)
                 .name("Friend Login Notification")
+                .lore("§cNot implemented yet.")
+                .build()));
+
+        pane.setSlot(2, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                .transformItemStack(itemStack -> {
+                    return XSkull.of(itemStack).profile(Profileable.of(ProfileInputType.BASE64, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjE1MWNmZmRhZjMwMzY3MzUzMWE3NjUxYjM2NjM3Y2FkOTEyYmE0ODU2NDMxNThlNTQ4ZDU5YjJlYWQ1MDExIn19fQ==")).apply();
+                })
+                .name("Language!")
                 .lore("§cNot implemented yet.")
                 .build()));
 

@@ -8,9 +8,11 @@ import io.fairyproject.bukkit.gui.pane.Pane;
 import io.fairyproject.bukkit.gui.slot.GuiSlot;
 import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
+import me.orange.anan.events.TaskAcceptEvent;
 import me.orange.anan.player.task.Task;
 import me.orange.anan.player.task.TaskManager;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -32,6 +34,7 @@ public class TaskAssignMenu {
                 .name(Component.text("§aAccept Task"))
                 .lore("§eclick to accept the task.")
                 .build(), clicker -> {
+            Bukkit.getPluginManager().callEvent(new TaskAcceptEvent(player, taskManager.getPlayerTask(player, taskID)));
             clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
             taskManager.addTask(player, taskID);
             player.sendMessage("§aTask accepted.");

@@ -6,16 +6,16 @@ import org.bukkit.entity.Player;
 
 import java.util.Random;
 
-public class Archer implements Job {
+public class Hunter implements Job {
 
     @Override
     public String getID() {
-        return "archer";
+        return "hunter";
     }
 
     @Override
     public String getName() {
-        return "弓箭手";
+        return "獵人";
     }
 
     @Override
@@ -25,7 +25,7 @@ public class Archer implements Job {
 
     @Override
     public String getSuffix() {
-        return " §2[弓]§f";
+        return " §2[獵]§f";
     }
 
     @Override
@@ -83,7 +83,7 @@ public class Archer implements Job {
 
     @Override
     public String getSkill2Description() {
-        return "當弓箭手在森林或草原環境中不移動（如草地或樹林）時，每3秒恢復1點生命值。";
+        return "當獵人在森林或草原環境中不移動時，每5秒恢復1點生命值。";
     }
 
     @Override

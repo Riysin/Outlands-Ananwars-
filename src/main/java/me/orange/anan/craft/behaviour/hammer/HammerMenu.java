@@ -10,6 +10,7 @@ import io.fairyproject.bukkit.util.items.ItemBuilder;
 import io.fairyproject.container.InjectableComponent;
 import me.orange.anan.craft.Craft;
 import me.orange.anan.craft.CraftManager;
+import me.orange.anan.util.ItemLoreBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -35,34 +36,39 @@ public class HammerMenu {
 
         pane.setSlot(2, 1, GuiSlot.of(ItemBuilder.of(craftManager.getItemStack("buildLv2", player))
                 .name("§6BuildLv2")
-                .lore(getLore(2,player)).build(), player1 -> {
+                .clearLore()
+                .lore(getLore(2, player)).build(), player1 -> {
             hammerManager.setHammerStat(player, HammerAction.UPGRADELv2);
             player1.playSound(player1.getLocation(), Sound.CLICK, 1, 1);
             player1.closeInventory();
         }));
         pane.setSlot(3, 1, GuiSlot.of(ItemBuilder.of(craftManager.getItemStack("buildLv3", player))
                 .name("§6BuildLv3")
-                .lore(getLore(3,player)).build(), player1 -> {
+                .clearLore()
+                .lore(getLore(3, player)).build(), player1 -> {
             player1.playSound(player1.getLocation(), Sound.CLICK, 1, 1);
             hammerManager.setHammerStat(player, HammerAction.UPGRADELv3);
             player1.closeInventory();
         }));
         pane.setSlot(4, 1, GuiSlot.of(ItemBuilder.of(craftManager.getItemStack("buildLv4", player))
                 .name("§6BuildLv4")
-                .lore(getLore(4,player)).build(), player1 -> {
+                .clearLore()
+                .lore(getLore(4, player)).build(), player1 -> {
             player1.playSound(player1.getLocation(), Sound.CLICK, 1, 1);
             hammerManager.setHammerStat(player, HammerAction.UPGRADELv4);
             player1.closeInventory();
         }));
         pane.setSlot(5, 1, GuiSlot.of(ItemBuilder.of(craftManager.getItemStack("buildLv5", player))
                 .name("§6BuildLv5")
-                .lore(getLore(5,player)).build(), player1 -> {
+                .clearLore()
+                .lore(getLore(5, player)).build(), player1 -> {
             player1.playSound(player1.getLocation(), Sound.CLICK, 1, 1);
             hammerManager.setHammerStat(player, HammerAction.UPGRADELv5);
             player1.closeInventory();
         }));
         pane.setSlot(6, 1, GuiSlot.of(ItemBuilder.of(XMaterial.BARRIER)
                 .name("§c拆除")
+                .clearLore()
                 .lore("§e可拆除1分鐘內建造的方塊").build(), player1 -> {
             player1.playSound(player1.getLocation(), Sound.CLICK, 1, 1);
             hammerManager.setHammerStat(player, HammerAction.BREAK);
@@ -75,20 +81,12 @@ public class HammerMenu {
 
     private List<String> getLore(int level, Player player) {
         Craft craft = craftManager.getCrafts().get("buildLv" + level);
-        List<String> loreLines = new ArrayList<>();
 
-        loreLines.add("§8BUILD");
-        loreLines.add("");
-        loreLines.addAll(craft.getLore());
-        loreLines.add("");
-        loreLines.add("§e消耗材料:");
-
-        craftManager.getRecipeList(craft.getRecipe(), player).forEach(itemStack -> {
-            loreLines.add("  §7" + itemStack.getItemMeta().getDisplayName() + " (§a" + itemStack.getAmount() + "§7)");
-        });
-
-        loreLines.add("");
-        loreLines.add("§e§l點擊選擇升級為此建材");
-        return loreLines;
+        return ItemLoreBuilder.of(craft.getItemStack())
+                .setCraft(craftManager, craft)
+                .craftType()
+                .description()
+                .upgrade(player)
+                .build();
     }
 }

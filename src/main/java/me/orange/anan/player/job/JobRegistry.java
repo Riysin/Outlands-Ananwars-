@@ -1,7 +1,7 @@
 package me.orange.anan.player.job;
 
 import io.fairyproject.container.InjectableComponent;
-import me.orange.anan.player.job.jobs.Archer;
+import me.orange.anan.player.job.jobs.Hunter;
 import me.orange.anan.player.job.jobs.Fisher;
 import me.orange.anan.player.job.jobs.Pickpocket;
 
@@ -14,7 +14,7 @@ public class JobRegistry {
 
     public JobRegistry() {
         registerJob(new Fisher());
-        registerJob(new Archer());
+        registerJob(new Hunter());
         registerJob(new Pickpocket());
     }
 

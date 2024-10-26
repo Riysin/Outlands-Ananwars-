@@ -111,6 +111,18 @@ public class ItemLoreBuilder {
         return this;
     }
 
+    public ItemLoreBuilder upgrade(Player player){
+        recipeLines.add("§e消耗材料:");
+
+        craftManager.getRecipeList(craft.getRecipe(), player).forEach(itemStack -> {
+            recipeLines.add("  §7" + itemStack.getItemMeta().getDisplayName() + " (§a" + itemStack.getAmount() + "§7)");
+        });
+
+        recipeLines.add("");
+        recipeLines.add("§e§l點擊選擇升級為此建材");
+        return this;
+    }
+
     // Build method to return a list of lore strings
     public List<String> build() {
         List<String> lore = new ArrayList<>();
