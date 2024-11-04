@@ -27,6 +27,7 @@ public class PlayerConfigElement {
     private List<FriendElement> friendList = new ArrayList<>();
     @ElementType(TaskElement.class)
     private Map<String, TaskElement> taskElementMap = new HashMap<>();
+    private boolean hint = true;
 
     public String getName() {
         return name;
@@ -115,5 +116,13 @@ public class PlayerConfigElement {
 
     public void setTaskElementMap(Map<String, TaskElement> taskElementMap) {
         this.taskElementMap = taskElementMap;
+    }
+
+    public boolean isHint() {
+        return hint;
+    }
+
+    public void setHint(boolean hint) {
+        this.hint = hint;
     }
 }

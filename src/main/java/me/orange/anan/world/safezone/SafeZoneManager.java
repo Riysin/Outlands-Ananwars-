@@ -1,6 +1,7 @@
-package me.orange.anan.world.region;
+package me.orange.anan.world.safezone;
 
 import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
@@ -22,6 +23,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.fairyproject.container.InjectableComponent;
 import io.fairyproject.log.Log;
+import me.orange.anan.events.PlayerEnterSafeZoneEvent;
+import me.orange.anan.events.PlayerLeftSafeZoneEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -29,13 +32,12 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @InjectableComponent
 public class SafeZoneManager {
     private int zoneCounter = 0;
+    private final Map<Player, Boolean> playerSafeZoneStatus = new HashMap<>();
 
     public boolean isInSafeZone(Player player) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
@@ -43,7 +45,16 @@ public class SafeZoneManager {
         RegionQuery query = container.createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(player.getLocation());
 
-        return set.queryValue(localPlayer, DefaultFlag.PVP) != null;
+        boolean isInSafeZone = set.queryValue(localPlayer, DefaultFlag.GREET_MESSAGE) != null;
+        Boolean wasInSafeZone = playerSafeZoneStatus.getOrDefault(player, false);
+
+        if (isInSafeZone && !wasInSafeZone) {
+            Bukkit.getPluginManager().callEvent(new PlayerEnterSafeZoneEvent(player, getRegionManager(player)));
+        } else if (!isInSafeZone && wasInSafeZone) {
+            Bukkit.getPluginManager().callEvent(new PlayerLeftSafeZoneEvent(player, getRegionManager(player)));
+        }
+        playerSafeZoneStatus.put(player, isInSafeZone);
+        return isInSafeZone;
     }
 
     public void pasteSchematicWithSafeZone(Player player, String schematicName) {

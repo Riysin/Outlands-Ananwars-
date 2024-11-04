@@ -44,6 +44,7 @@ public class PlayerDataManager {
                 task.setProgress(taskElement.getProgress());
                 playerData.getTasks().add(task);
             });
+            playerData.setHint(playerConfigElement.isHint());
 
             playerDataMap.put(UUID.fromString(uuid), playerData);
         });
@@ -71,6 +72,7 @@ public class PlayerDataManager {
                 taskElement.setProgress(task.getProgress());
                 element.getTaskElementMap().put(task.getId(), taskElement);
             });
+            element.setHint(playerData.isHint());
         });
         playerConfig.save();
     }

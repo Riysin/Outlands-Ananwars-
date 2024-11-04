@@ -114,7 +114,9 @@ public class DeathEventListener implements Listener {
             player.teleport(from);
         }
 
-        deathBossBar.updateBossBar(player);
+        if (playerDataManager.getPlayerData(player).isBossBarActive()) {
+            deathBossBar.updateBossBar(player);
+        }
     }
 
     @EventHandler

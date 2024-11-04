@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @InjectableComponent
 public class CraftManager {
-    private final Map<String, Craft> crafts = new ConcurrentHashMap<>();
+    private final Map<String, Craft> crafts = new LinkedHashMap<>();
     private final CraftConfig craftConfig;
     private final ToolConfig toolConfig;
     private final BehaviourManager behaviourManager;

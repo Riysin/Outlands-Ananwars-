@@ -1,4 +1,4 @@
-package me.orange.anan.world.region;
+package me.orange.anan.world.safezone;
 
 import io.fairyproject.bukkit.listener.RegisterAsListener;
 import io.fairyproject.container.InjectableComponent;

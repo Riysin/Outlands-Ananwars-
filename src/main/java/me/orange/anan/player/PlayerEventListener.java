@@ -27,16 +27,14 @@ public class PlayerEventListener implements Listener {
     private final CraftTimerManager craftTimerManager;
     private final NameTagService nameTagService;
     private final JobManager jobManager;
-    private final CraftManager craftManager;
     private final ClanManager clanManager;
     private final DeathRespawnMenu deathRespawnMenu;
 
-    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService, JobManager jobManager, CraftManager craftManager, ClanManager clanManager, DeathRespawnMenu deathRespawnMenu) {
+    public PlayerEventListener(PlayerDataManager playerDataManager, CraftTimerManager craftTimerManager, NameTagService nameTagService, JobManager jobManager, ClanManager clanManager, DeathRespawnMenu deathRespawnMenu) {
         this.playerDataManager = playerDataManager;
         this.craftTimerManager = craftTimerManager;
         this.nameTagService = nameTagService;
         this.jobManager = jobManager;
-        this.craftManager = craftManager;
         this.clanManager = clanManager;
         this.deathRespawnMenu = deathRespawnMenu;
     }

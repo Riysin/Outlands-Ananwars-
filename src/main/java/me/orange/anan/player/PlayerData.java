@@ -15,6 +15,7 @@ public class PlayerData {
     private boolean bossBarActive = false;
     private List<UUID> friends = new ArrayList<>();
     private List<Task> tasks = new ArrayList<>();
+    private boolean hint = true;
     //stats
     private List<UUID> friendRequests = new ArrayList<>();
     private BossBar BossBar;
@@ -102,6 +103,14 @@ public class PlayerData {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    public boolean isHint() {
+        return hint;
+    }
+
+    public void setHint(boolean hasHint) {
+        this.hint = hasHint;
     }
 
     public List<UUID> getFriendRequests() {

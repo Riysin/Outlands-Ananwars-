@@ -34,14 +34,12 @@ public class DeathBossBar {
     public void hideBossBar(Player player) {
         MCPlayer target = MCPlayer.from(player);
         BossBar bossBar = playerDataManager.getPlayerData(player).getBossBar();
+        playerDataManager.getPlayerData(player).setBossBarActive(false);
         target.hideBossBar(bossBar);
     }
 
     public void updateBossBar(Player player) {
         PlayerData playerData = playerDataManager.getPlayerData(player);
-        if (!playerData.isBossBarActive()) {
-            return;
-        }
 
         BossBar bossBar = playerData.getBossBar();
         float yawDifference = getYawDifference(player, playerData);

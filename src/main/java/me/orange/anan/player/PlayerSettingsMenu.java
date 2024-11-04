@@ -20,49 +20,59 @@ import org.bukkit.entity.Player;
 @InjectableComponent
 public class PlayerSettingsMenu {
     private final GuiFactory guiFactory;
+    private final PlayerDataManager playerDataManager;
 
-    public PlayerSettingsMenu(GuiFactory guiFactory) {
+    public PlayerSettingsMenu(GuiFactory guiFactory, PlayerDataManager playerDataManager) {
         this.guiFactory = guiFactory;
+        this.playerDataManager = playerDataManager;
     }
 
     public void open(Player player) {
         Gui gui = guiFactory.create(Component.text("Settings"));
         NormalPane pane = Pane.normal(PaneMapping.rectangle(1, 1, 7, 1));
         NormalPane border = Pane.normal(PaneMapping.outline(0, 0, 9, 3));
+        PlayerData playerData = playerDataManager.getPlayerData(player);
 
-        //hint
-        pane.setSlot(0, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_SIGN)
-                .name("§e新手提示")
-                .lore("§cNot implemented yet.")
-                .build()));
+        gui.onDrawCallback($ -> {
+            //hint
+            pane.setSlot(0, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_SIGN)
+                    .name("§6新手提示")
+                    .lore("§7點擊以開啟/關閉新手提示", "§7狀態: " + (playerData.isHint() ? "§a開啟" : "§c關閉"))
+                    .build(), clicker -> {
+                playerData.setHint(!playerData.isHint());
+                clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
+                gui.update(clicker);
+            }));
 
-        //friend login notification on/off
-        pane.setSlot(1, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                .skull(player)
-                .name("Friend Login Notification")
-                .lore("§cNot implemented yet.")
-                .build()));
+            //friend login notification on/off
+            pane.setSlot(1, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                    .skull(player)
+                    .name("Friend Login Notification")
+                    .lore("§cNot implemented yet.")
+                    .build()));
 
-        pane.setSlot(2, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
-                .transformItemStack(itemStack -> {
-                    return XSkull.of(itemStack).profile(Profileable.of(ProfileInputType.BASE64, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjE1MWNmZmRhZjMwMzY3MzUzMWE3NjUxYjM2NjM3Y2FkOTEyYmE0ODU2NDMxNThlNTQ4ZDU5YjJlYWQ1MDExIn19fQ==")).apply();
-                })
-                .name("Language!")
-                .lore("§cNot implemented yet.")
-                .build()));
+            pane.setSlot(2, GuiSlot.of(ItemBuilder.of(XMaterial.PLAYER_HEAD)
+                    .transformItemStack(itemStack -> {
+                        return XSkull.of(itemStack).profile(Profileable.of(ProfileInputType.BASE64, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjE1MWNmZmRhZjMwMzY3MzUzMWE3NjUxYjM2NjM3Y2FkOTEyYmE0ODU2NDMxNThlNTQ4ZDU5YjJlYWQ1MDExIn19fQ==")).apply();
+                    })
+                    .name("Language!")
+                    .lore("§cNot implemented yet.")
+                    .build()));
 
-        //back button
-        border.setSlot(4, 2, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_DOOR)
-                .name("§cBack")
-                .build(), clicker -> {
-            clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
-            Bukkit.dispatchCommand(player, "player menu " + player.getName());
-        }));
+            //back button
+            border.setSlot(4, 2, GuiSlot.of(ItemBuilder.of(XMaterial.OAK_DOOR)
+                    .name("§cBack")
+                    .build(), clicker -> {
+                clicker.playSound(clicker.getLocation(), Sound.CLICK, 1, 1);
+                Bukkit.dispatchCommand(player, "player menu " + player.getName());
+            }));
 
-        border.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
+            border.fillEmptySlots(GuiSlot.of(XMaterial.GRAY_STAINED_GLASS_PANE));
+        });
 
         gui.addPane(pane);
         gui.addPane(border);
         gui.open(player);
+
     }
 }

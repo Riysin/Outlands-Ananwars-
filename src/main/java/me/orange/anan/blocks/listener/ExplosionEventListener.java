@@ -50,7 +50,7 @@ public class ExplosionEventListener implements Listener {
             }
 
             BlockStats blockStats = blockStatsManager.getBlockStats(mainBlock);
-            blockStats.setHealth(blockStats.getHealth() - 100);
+            blockStats.setHealth(blockStats.getHealth() - 300);
             if (blockStats.getHealth() <= 0) {
                 blockStatsManager.getBlockStatsMap().remove(mainBlock);
                 mainBlock.setType(Material.AIR);

@@ -1,4 +1,4 @@
-package me.orange.anan.world.region;
+package me.orange.anan.world.safezone;
 
 import io.fairyproject.bukkit.command.event.BukkitCommandContext;
 import io.fairyproject.command.BaseCommand;

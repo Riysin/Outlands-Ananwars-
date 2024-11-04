@@ -67,16 +67,16 @@ public class JobUpgradeMenu {
                         .build(), clicker -> {
                     if (playerLevel + 1 < clickLevel) {
                         player.sendMessage("§eYou need to upgrade to level " + (playerLevel + 1) + " first");
-                        player.getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
                     } else if (playerLevel >= clickLevel) {
                         player.sendMessage("§eYou can't downgrade your level");
-                        player.getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
 
                     } else if (!hasMoney(player, clickLevel)) {
                         player.sendMessage("§eYou need: " + (-calculateRequire(player, clickLevel)) + " more emeralds!");
-                        player.getWorld().playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
                     } else {
-                        player.getWorld().playSound(player.getLocation(), Sound.ANVIL_USE, 0.5f, 1);
+                        player.playSound(player.getLocation(), Sound.ANVIL_USE, 0.5f, 1);
                         jobManager.addJobLevel(player.getUniqueId(), job);
                         craftManger.removeItemsFromInventory(player, craftManger.getItemStack(craftManger.getCraft(XMaterial.EMERALD), player), clickLevel * 5);
 
